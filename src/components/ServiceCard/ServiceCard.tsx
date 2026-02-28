@@ -22,15 +22,30 @@ export default function ServiceCard({service, onPress, horizontal}: Props) {
         sharedTransitionTag={`service-image-${service.id}`}
       />
       <View style={styles.info}>
-        <Text style={styles.name} numberOfLines={1}>
+        <Animated.Text
+          style={styles.name}
+          numberOfLines={1}
+          sharedTransitionTag={`service-name-${service.id}`}>
           {service.name}
-        </Text>
+        </Animated.Text>
         <View style={styles.meta}>
-          <Text style={styles.price}>${service.price}</Text>
+          <Animated.Text
+            style={styles.price}
+            sharedTransitionTag={`service-price-${service.id}`}>
+            ${service.price}
+          </Animated.Text>
           <Text style={styles.dot}>·</Text>
-          <Text style={styles.duration}>{service.duration_minutes} min</Text>
+          <Animated.Text
+            style={styles.duration}
+            sharedTransitionTag={`service-duration-${service.id}`}>
+            {service.duration_minutes} min
+          </Animated.Text>
           <Text style={styles.dot}>·</Text>
-          <Text style={styles.rating}>★ {service.rating}</Text>
+          <Animated.Text
+            style={styles.rating}
+            sharedTransitionTag={`service-rating-${service.id}`}>
+            ★ {service.rating}
+          </Animated.Text>
         </View>
       </View>
     </TouchableOpacity>

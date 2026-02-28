@@ -64,40 +64,46 @@ export default function ServiceListScreen({navigation}: Props) {
           horizontal
           showsHorizontalScrollIndicator={false}
           contentContainerStyle={styles.chips}>
-          <TouchableOpacity
-          style={[styles.chip, !selectedCategory && styles.chipSelected]}
-          onPress={() => dispatch(selectCategory(null))}>
-          <Text
-            style={[
-              styles.chipText,
-              !selectedCategory && styles.chipTextSelected,
-            ]}>
-            All
-          </Text>
-        </TouchableOpacity>
-        {categories.map(cat => (
-          <TouchableOpacity
-            key={cat.id}
-            style={[
-              styles.chip,
-              selectedCategory === cat.name && styles.chipSelected,
-            ]}
-            onPress={() =>
-              dispatch(
-                selectCategory(
-                  selectedCategory === cat.name ? null : cat.name,
-                ),
-              )
-            }>
-            <Text
-              style={[
-                styles.chipText,
-                selectedCategory === cat.name && styles.chipTextSelected,
-              ]}>
-              {cat.name}
-            </Text>
-          </TouchableOpacity>
-        ))}
+          <Animated.View
+            layout={LinearTransition.springify().damping(18).stiffness(120)}>
+            <TouchableOpacity
+              style={[styles.chip, !selectedCategory && styles.chipSelected]}
+              onPress={() => dispatch(selectCategory(null))}>
+              <Text
+                style={[
+                  styles.chipText,
+                  !selectedCategory && styles.chipTextSelected,
+                ]}>
+                All
+              </Text>
+            </TouchableOpacity>
+          </Animated.View>
+          {categories.map(cat => (
+            <Animated.View
+              key={cat.id}
+              layout={LinearTransition.springify().damping(18).stiffness(120)}>
+              <TouchableOpacity
+                style={[
+                  styles.chip,
+                  selectedCategory === cat.name && styles.chipSelected,
+                ]}
+                onPress={() =>
+                  dispatch(
+                    selectCategory(
+                      selectedCategory === cat.name ? null : cat.name,
+                    ),
+                  )
+                }>
+                <Text
+                  style={[
+                    styles.chipText,
+                    selectedCategory === cat.name && styles.chipTextSelected,
+                  ]}>
+                  {cat.name}
+                </Text>
+              </TouchableOpacity>
+            </Animated.View>
+          ))}
         </ScrollView>
       </View>
 

@@ -37,13 +37,29 @@ export default function ServiceDetailScreen({navigation}: Props) {
         sharedTransitionTag={`service-image-${service.id}`}
       />
       <View style={styles.body}>
-        <Text style={styles.name}>{service.name}</Text>
+        <Animated.Text
+          style={styles.name}
+          sharedTransitionTag={`service-name-${service.id}`}>
+          {service.name}
+        </Animated.Text>
         <View style={styles.metaRow}>
-          <Text style={styles.price}>${service.price}</Text>
+          <Animated.Text
+            style={styles.price}
+            sharedTransitionTag={`service-price-${service.id}`}>
+            ${service.price}
+          </Animated.Text>
           <Text style={styles.dot}>·</Text>
-          <Text style={styles.duration}>{service.duration_minutes} min</Text>
+          <Animated.Text
+            style={styles.duration}
+            sharedTransitionTag={`service-duration-${service.id}`}>
+            {service.duration_minutes} min
+          </Animated.Text>
           <Text style={styles.dot}>·</Text>
-          <Text style={styles.rating}>★ {service.rating}</Text>
+          <Animated.Text
+            style={styles.rating}
+            sharedTransitionTag={`service-rating-${service.id}`}>
+            ★ {service.rating}
+          </Animated.Text>
         </View>
         <Text style={styles.category}>{service.category}</Text>
         <Text style={styles.description}>{service.description}</Text>

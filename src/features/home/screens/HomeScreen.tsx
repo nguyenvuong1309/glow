@@ -4,13 +4,13 @@ import {
   Text,
   StyleSheet,
   ScrollView,
-  FlatList,
   TouchableOpacity,
   ActivityIndicator,
 } from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import Animated, {
   FadeInDown,
+  LinearTransition,
 } from 'react-native-reanimated';
 import {useDispatch, useSelector} from 'react-redux';
 import {loadCategories, selectCategory} from '../homeSlice';
@@ -105,11 +105,12 @@ export default function HomeScreen({navigation}: Props) {
 
         <Animated.View entering={FadeInDown.duration(500).delay(200)}>
           <Text style={styles.sectionTitle}>Popular Services</Text>
-          <FlatList
+          <Animated.FlatList
             data={popularServices}
             horizontal
             showsHorizontalScrollIndicator={false}
             keyExtractor={item => item.id}
+            itemLayoutAnimation={LinearTransition.springify().damping(18).stiffness(120)}
             renderItem={({item, index}) => (
               <Animated.View entering={FadeInDown.duration(400).delay(index * 80)}>
                 <ServiceCard
