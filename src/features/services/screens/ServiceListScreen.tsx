@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React, {useCallback, useEffect, useMemo, useRef, useState} from 'react';
 import {
   View,
   Text,
@@ -12,9 +12,10 @@ import Animated, {
   FadeOutUp,
   LinearTransition,
 } from 'react-native-reanimated';
+import {BottomSheetModal} from '@gorhom/bottom-sheet';
 import {useDispatch, useSelector} from 'react-redux';
 import {loadServices, selectService} from '../serviceSlice';
-import {selectCategory} from '@/features/home/homeSlice';
+import FilterBottomSheet from '@/components/FilterBottomSheet/FilterBottomSheet';
 import ServiceCard from '@/components/ServiceCard/ServiceCard';
 import {theme} from '@/utils/theme';
 import type {RootState} from '@/store';
@@ -27,12 +28,12 @@ interface Props {
 
 export default function ServiceListScreen({navigation}: Props) {
   const dispatch = useDispatch();
-  const {list: services, loading} = useSelector(
+  const {list: services, loading, filter} = useSelector(
     (state: RootState) => state.services,
   );
-  const {categories, selectedCategory} = useSelector(
-    (state: RootState) => state.home,
-  );
+  const {categories} = useSelector((state: RootState) => state.home);
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const bottomSheetRef = useRef<BottomSheetModal>(null);
 
   useEffect(() => {
     if (services.length === 0) {
@@ -40,14 +41,35 @@ export default function ServiceListScreen({navigation}: Props) {
     }
   }, [dispatch, services.length]);
 
-  const filtered = selectedCategory
-    ? services.filter(s => s.category === selectedCategory)
-    : services;
-
   const handleServicePress = (service: Service) => {
     dispatch(selectService(service));
     navigation.navigate('ServiceDetail', {serviceId: service.id});
   };
+
+  const handleOpenFilter = useCallback(() => {
+    bottomSheetRef.current?.present();
+  }, []);
+
+  const handleCategoryPress = (categoryName: string) => {
+    setSelectedCategory(prev =>
+      prev === categoryName ? null : categoryName,
+    );
+  };
+
+  // Client-side filter by selected category chip
+  const filteredServices = useMemo(() => {
+    if (!selectedCategory) {
+      return services;
+    }
+    return services.filter(s => s.category === selectedCategory);
+  }, [services, selectedCategory]);
+
+  const hasActiveFilter =
+    filter.categories.length > 0 ||
+    filter.dateFrom !== null ||
+    filter.dateTo !== null ||
+    filter.timeFrom !== null ||
+    filter.timeTo !== null;
 
   if (loading) {
     return (
@@ -59,65 +81,74 @@ export default function ServiceListScreen({navigation}: Props) {
 
   return (
     <View style={styles.container}>
-      <View style={styles.chipsWrapper}>
+      {/* Category Chips + Filter Button */}
+      <View style={styles.categoryRow}>
         <ScrollView
           horizontal
           showsHorizontalScrollIndicator={false}
-          contentContainerStyle={styles.chips}>
-          <Animated.View
-            layout={LinearTransition.springify().damping(18).stiffness(120)}>
+          contentContainerStyle={styles.categoryChips}>
+          <TouchableOpacity
+            style={[
+              styles.chip,
+              selectedCategory === null && styles.chipSelected,
+            ]}
+            onPress={() => setSelectedCategory(null)}>
+            <Text
+              style={[
+                styles.chipText,
+                selectedCategory === null && styles.chipTextSelected,
+              ]}>
+              All
+            </Text>
+          </TouchableOpacity>
+          {categories.map(cat => (
             <TouchableOpacity
-              style={[styles.chip, !selectedCategory && styles.chipSelected]}
-              onPress={() => dispatch(selectCategory(null))}>
+              key={cat.id}
+              style={[
+                styles.chip,
+                selectedCategory === cat.name && styles.chipSelected,
+              ]}
+              onPress={() => handleCategoryPress(cat.name)}>
               <Text
                 style={[
                   styles.chipText,
-                  !selectedCategory && styles.chipTextSelected,
+                  selectedCategory === cat.name && styles.chipTextSelected,
                 ]}>
-                All
+                {cat.name}
               </Text>
             </TouchableOpacity>
-          </Animated.View>
-          {categories.map(cat => (
-            <Animated.View
-              key={cat.id}
-              layout={LinearTransition.springify().damping(18).stiffness(120)}>
-              <TouchableOpacity
-                style={[
-                  styles.chip,
-                  selectedCategory === cat.name && styles.chipSelected,
-                ]}
-                onPress={() =>
-                  dispatch(
-                    selectCategory(
-                      selectedCategory === cat.name ? null : cat.name,
-                    ),
-                  )
-                }>
-                <Text
-                  style={[
-                    styles.chipText,
-                    selectedCategory === cat.name && styles.chipTextSelected,
-                  ]}>
-                  {cat.name}
-                </Text>
-              </TouchableOpacity>
-            </Animated.View>
           ))}
         </ScrollView>
+        <TouchableOpacity
+          style={[
+            styles.filterButton,
+            hasActiveFilter && styles.filterButtonActive,
+          ]}
+          onPress={handleOpenFilter}>
+          <Text
+            style={[
+              styles.filterButtonText,
+              hasActiveFilter && styles.filterButtonTextActive,
+            ]}>
+            Filter{hasActiveFilter ? ' \u25CF' : ''}
+          </Text>
+        </TouchableOpacity>
       </View>
 
-      {filtered.length === 0 ? (
+      {/* Service List */}
+      {filteredServices.length === 0 ? (
         <View style={styles.centered}>
           <Text style={styles.emptyText}>No services found</Text>
         </View>
       ) : (
         <Animated.FlatList
-          data={filtered}
+          data={filteredServices}
           keyExtractor={item => item.id}
           contentContainerStyle={styles.list}
           showsVerticalScrollIndicator={false}
-          itemLayoutAnimation={LinearTransition.springify().damping(18).stiffness(120)}
+          itemLayoutAnimation={LinearTransition.springify()
+            .damping(18)
+            .stiffness(120)}
           renderItem={({item, index}) => (
             <Animated.View
               entering={FadeInDown.duration(300).delay(index * 60)}
@@ -130,6 +161,13 @@ export default function ServiceListScreen({navigation}: Props) {
           )}
         />
       )}
+
+      {/* Filter Bottom Sheet */}
+      <FilterBottomSheet
+        ref={bottomSheetRef}
+        categories={categories}
+        filter={filter}
+      />
     </View>
   );
 }
@@ -144,14 +182,16 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-  chipsWrapper: {
-    paddingVertical: theme.spacing.sm,
-  },
-  chips: {
-    paddingLeft: theme.spacing.md,
-    paddingRight: theme.spacing.lg,
-    gap: theme.spacing.sm,
+  categoryRow: {
+    flexDirection: 'row',
     alignItems: 'center',
+    paddingVertical: theme.spacing.sm,
+    paddingLeft: theme.spacing.md,
+    gap: theme.spacing.sm,
+  },
+  categoryChips: {
+    gap: theme.spacing.sm,
+    paddingRight: theme.spacing.sm,
   },
   chip: {
     paddingHorizontal: theme.spacing.md,
@@ -166,12 +206,33 @@ const styles = StyleSheet.create({
     borderColor: theme.colors.primary,
   },
   chipText: {
-    fontSize: 14,
+    fontSize: 13,
     color: theme.colors.text,
   },
   chipTextSelected: {
     color: theme.colors.surface,
     fontWeight: '600',
+  },
+  filterButton: {
+    paddingHorizontal: theme.spacing.md,
+    paddingVertical: theme.spacing.sm,
+    borderRadius: theme.radius.full,
+    backgroundColor: theme.colors.surface,
+    borderWidth: 1,
+    borderColor: theme.colors.border,
+    marginRight: theme.spacing.md,
+  },
+  filterButtonActive: {
+    backgroundColor: theme.colors.primaryDark,
+    borderColor: theme.colors.primaryDark,
+  },
+  filterButtonText: {
+    fontSize: 13,
+    fontWeight: '600',
+    color: theme.colors.text,
+  },
+  filterButtonTextActive: {
+    color: theme.colors.surface,
   },
   list: {
     padding: theme.spacing.md,

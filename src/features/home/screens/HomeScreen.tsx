@@ -13,9 +13,8 @@ import Animated, {
   LinearTransition,
 } from 'react-native-reanimated';
 import {useDispatch, useSelector} from 'react-redux';
-import {loadCategories, selectCategory} from '../homeSlice';
-import {loadServices} from '@/features/services/serviceSlice';
-import {selectService} from '@/features/services/serviceSlice';
+import {loadCategories} from '../homeSlice';
+import {loadServices, selectService, setFilter} from '@/features/services/serviceSlice';
 import ServiceCard from '@/components/ServiceCard/ServiceCard';
 import {theme} from '@/utils/theme';
 import type {RootState} from '@/store';
@@ -28,10 +27,10 @@ interface Props {
 
 export default function HomeScreen({navigation}: Props) {
   const dispatch = useDispatch();
-  const {categories, selectedCategory, loading: catLoading} = useSelector(
+  const {categories, loading: catLoading} = useSelector(
     (state: RootState) => state.home,
   );
-  const {list: services, loading: svcLoading} = useSelector(
+  const {list: services, loading: svcLoading, filter} = useSelector(
     (state: RootState) => state.services,
   );
   const user = useSelector((state: RootState) => state.auth.user);
@@ -49,10 +48,11 @@ export default function HomeScreen({navigation}: Props) {
   };
 
   const handleCategoryPress = (categoryName: string) => {
+    const isSelected = filter.categories.includes(categoryName);
     dispatch(
-      selectCategory(
-        selectedCategory === categoryName ? null : categoryName,
-      ),
+      setFilter({
+        categories: isSelected ? [] : [categoryName],
+      }),
     );
     navigation.navigate('Services');
   };
@@ -88,13 +88,14 @@ export default function HomeScreen({navigation}: Props) {
                 key={cat.id}
                 style={[
                   styles.chip,
-                  selectedCategory === cat.name && styles.chipSelected,
+                  filter.categories.includes(cat.name) && styles.chipSelected,
                 ]}
                 onPress={() => handleCategoryPress(cat.name)}>
                 <Text
                   style={[
                     styles.chipText,
-                    selectedCategory === cat.name && styles.chipTextSelected,
+                    filter.categories.includes(cat.name) &&
+                      styles.chipTextSelected,
                   ]}>
                   {cat.name}
                 </Text>

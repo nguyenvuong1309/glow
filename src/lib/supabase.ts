@@ -1,7 +1,7 @@
 import 'react-native-url-polyfill/auto';
 import {createClient} from '@supabase/supabase-js';
 import {mmkvStorage} from './storage';
-import type {Service, Category, Booking, BookingDraft} from '@/types';
+import type {Service, Category, Booking, BookingDraft, ServiceFilter} from '@/types';
 
 const SUPABASE_URL = 'https://bdavvqgseigqmxerdytn.supabase.co';
 const SUPABASE_ANON_KEY =
@@ -40,6 +40,78 @@ export async function getServices(): Promise<Service[]> {
     image_url: row.image_url,
     rating: Number(row.rating),
   }));
+}
+
+export async function getAvailableServices(
+  filter: ServiceFilter,
+): Promise<Service[]> {
+  const {categories, dateFrom, dateTo, timeFrom, timeTo} = filter;
+
+  // Collect day_of_week values from the date range
+  const days: number[] = [];
+  if (dateFrom) {
+    const start = new Date(dateFrom + 'T00:00:00');
+    const end = dateTo ? new Date(dateTo + 'T00:00:00') : start;
+    const current = new Date(start);
+    while (current <= end) {
+      const dow = current.getDay();
+      if (!days.includes(dow)) {
+        days.push(dow);
+      }
+      current.setDate(current.getDate() + 1);
+    }
+  }
+
+  let query = supabase
+    .from('services')
+    .select('*, categories(name), service_availability(*)');
+
+  const {data, error} = await query;
+  if (error) {
+    throw error;
+  }
+
+  let results = data.map((row: any) => ({
+    id: row.id,
+    name: row.name,
+    category: row.categories.name,
+    description: row.description,
+    price: Number(row.price),
+    duration_minutes: row.duration_minutes,
+    image_url: row.image_url,
+    rating: Number(row.rating),
+    availability: row.service_availability,
+  }));
+
+  // Filter by categories
+  if (categories.length > 0) {
+    results = results.filter(s => categories.includes(s.category));
+  }
+
+  // Filter by day_of_week availability
+  if (days.length > 0) {
+    results = results.filter(s =>
+      s.availability.some((a: any) => days.includes(a.day_of_week)),
+    );
+  }
+
+  // Filter by time overlap
+  if (timeFrom || timeTo) {
+    results = results.filter(s =>
+      s.availability.some((a: any) => {
+        if (timeFrom && a.end_time <= timeFrom) {
+          return false;
+        }
+        if (timeTo && a.start_time >= timeTo) {
+          return false;
+        }
+        return true;
+      }),
+    );
+  }
+
+  // Strip availability from final result
+  return results.map(({availability: _, ...rest}) => rest);
 }
 
 export async function getBookings(): Promise<Booking[]> {

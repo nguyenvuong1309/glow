@@ -1,16 +1,26 @@
 import {createSlice, PayloadAction} from '@reduxjs/toolkit';
-import type {Service} from '@/types';
+import type {Service, ServiceFilter} from '@/types';
+
+const initialFilter: ServiceFilter = {
+  categories: [],
+  dateFrom: null,
+  dateTo: null,
+  timeFrom: null,
+  timeTo: null,
+};
 
 interface ServiceState {
   list: Service[];
   selected: Service | null;
   loading: boolean;
+  filter: ServiceFilter;
 }
 
 const initialState: ServiceState = {
   list: [],
   selected: null,
   loading: false,
+  filter: initialFilter,
 };
 
 const serviceSlice = createSlice({
@@ -30,9 +40,25 @@ const serviceSlice = createSlice({
     clearSelectedService(state) {
       state.selected = null;
     },
+    setFilter(state, action: PayloadAction<Partial<ServiceFilter>>) {
+      state.filter = {...state.filter, ...action.payload};
+    },
+    clearFilter(state) {
+      state.filter = initialFilter;
+    },
+    loadFilteredServices(state) {
+      state.loading = true;
+    },
   },
 });
 
-export const {loadServices, loadServicesSuccess, selectService, clearSelectedService} =
-  serviceSlice.actions;
+export const {
+  loadServices,
+  loadServicesSuccess,
+  selectService,
+  clearSelectedService,
+  setFilter,
+  clearFilter,
+  loadFilteredServices,
+} = serviceSlice.actions;
 export default serviceSlice.reducer;

@@ -38,3 +38,19 @@ export interface BookingDraft {
   time_slot: string;
   notes?: string;
 }
+
+export interface ServiceAvailability {
+  id: string;
+  service_id: string;
+  day_of_week: number;
+  start_time: string;
+  end_time: string;
+}
+
+export interface ServiceFilter {
+  categories: string[];
+  dateFrom: string | null;
+  dateTo: string | null;
+  timeFrom: string | null;
+  timeTo: string | null;
+}

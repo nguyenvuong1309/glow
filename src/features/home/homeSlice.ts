@@ -3,13 +3,11 @@ import type {Category} from '@/types';
 
 interface HomeState {
   categories: Category[];
-  selectedCategory: string | null;
   loading: boolean;
 }
 
 const initialState: HomeState = {
   categories: [],
-  selectedCategory: null,
   loading: false,
 };
 
@@ -24,12 +22,8 @@ const homeSlice = createSlice({
       state.categories = action.payload;
       state.loading = false;
     },
-    selectCategory(state, action: PayloadAction<string | null>) {
-      state.selectedCategory = action.payload;
-    },
   },
 });
 
-export const {loadCategories, loadCategoriesSuccess, selectCategory} =
-  homeSlice.actions;
+export const {loadCategories, loadCategoriesSuccess} = homeSlice.actions;
 export default homeSlice.reducer;
