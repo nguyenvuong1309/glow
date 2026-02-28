@@ -25,15 +25,19 @@ const bookingSchema = z.object({
 
 type BookingFormData = z.infer<typeof bookingSchema>;
 
-const MOCK_DATES = [
-  '2026-03-01',
-  '2026-03-02',
-  '2026-03-03',
-  '2026-03-04',
-  '2026-03-05',
-];
+function getNextDays(count: number): string[] {
+  const dates: string[] = [];
+  const today = new Date();
+  for (let i = 1; i <= count; i++) {
+    const d = new Date(today);
+    d.setDate(today.getDate() + i);
+    dates.push(d.toISOString().split('T')[0]);
+  }
+  return dates;
+}
 
-const MOCK_TIMES = ['09:00', '10:00', '11:30', '13:00', '14:30', '16:00'];
+const AVAILABLE_DATES = getNextDays(5);
+const AVAILABLE_TIMES = ['09:00', '10:00', '11:30', '13:00', '14:30', '16:00'];
 
 interface Props {
   navigation: NavigationProp<any>;
@@ -95,7 +99,7 @@ export default function BookingScreen({navigation}: Props) {
         horizontal
         showsHorizontalScrollIndicator={false}
         contentContainerStyle={styles.chips}>
-        {MOCK_DATES.map(date => (
+        {AVAILABLE_DATES.map(date => (
           <TouchableOpacity
             key={date}
             style={[
@@ -119,7 +123,7 @@ export default function BookingScreen({navigation}: Props) {
         <Text style={styles.error}>{errors.timeSlot.message}</Text>
       )}
       <View style={styles.timeGrid}>
-        {MOCK_TIMES.map(time => (
+        {AVAILABLE_TIMES.map(time => (
           <TouchableOpacity
             key={time}
             style={[

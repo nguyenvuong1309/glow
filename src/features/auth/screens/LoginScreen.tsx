@@ -1,5 +1,5 @@
 import React, {useEffect} from 'react';
-import {View, Text, StyleSheet, TouchableOpacity} from 'react-native';
+import {View, Text, StyleSheet, TouchableOpacity, Platform} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import Animated, {
   useSharedValue,
@@ -8,13 +8,13 @@ import Animated, {
   withDelay,
 } from 'react-native-reanimated';
 import {useDispatch, useSelector} from 'react-redux';
-import {loginRequest} from '../authSlice';
+import {googleLoginRequest, appleLoginRequest} from '../authSlice';
 import {theme} from '@/utils/theme';
 import type {RootState} from '@/store';
 
 export default function LoginScreen() {
   const dispatch = useDispatch();
-  const loading = useSelector((state: RootState) => state.auth.loading);
+  const {loading, error} = useSelector((state: RootState) => state.auth);
   const opacity = useSharedValue(0);
   const translateY = useSharedValue(30);
 
@@ -46,19 +46,27 @@ export default function LoginScreen() {
       <Animated.View style={[styles.buttons, buttonAnimatedStyle]}>
         <TouchableOpacity
           style={[styles.button, styles.googleButton]}
-          onPress={() => dispatch(loginRequest())}
+          onPress={() => dispatch(googleLoginRequest())}
           disabled={loading}>
           <Text style={styles.googleText}>
             {loading ? 'Signing in...' : 'Continue with Google'}
           </Text>
         </TouchableOpacity>
 
-        <TouchableOpacity
-          style={[styles.button, styles.appleButton]}
-          onPress={() => dispatch(loginRequest())}
-          disabled={loading}>
-          <Text style={styles.appleText}>Continue with Apple</Text>
-        </TouchableOpacity>
+        {Platform.OS === 'ios' && (
+          <TouchableOpacity
+            style={[styles.button, styles.appleButton]}
+            onPress={() => dispatch(appleLoginRequest())}
+            disabled={loading}>
+            <Text style={styles.appleText}>Continue with Apple</Text>
+          </TouchableOpacity>
+        )}
+
+        {error && (
+          <View style={styles.errorContainer}>
+            <Text style={styles.errorText}>{error}</Text>
+          </View>
+        )}
       </Animated.View>
     </SafeAreaView>
   );
@@ -113,5 +121,14 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '600',
     color: theme.colors.surface,
+  },
+  errorContainer: {
+    padding: theme.spacing.sm,
+    alignItems: 'center',
+  },
+  errorText: {
+    fontSize: 14,
+    color: '#E53935',
+    textAlign: 'center',
   },
 });

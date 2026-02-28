@@ -3,11 +3,15 @@ import {
   View,
   Text,
   StyleSheet,
-  FlatList,
   TouchableOpacity,
   ActivityIndicator,
   ScrollView,
 } from 'react-native';
+import Animated, {
+  FadeInDown,
+  FadeOutUp,
+  LinearTransition,
+} from 'react-native-reanimated';
 import {useDispatch, useSelector} from 'react-redux';
 import {loadServices, selectService} from '../serviceSlice';
 import {selectCategory} from '@/features/home/homeSlice';
@@ -55,11 +59,12 @@ export default function ServiceListScreen({navigation}: Props) {
 
   return (
     <View style={styles.container}>
-      <ScrollView
-        horizontal
-        showsHorizontalScrollIndicator={false}
-        contentContainerStyle={styles.chips}>
-        <TouchableOpacity
+      <View style={styles.chipsWrapper}>
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={styles.chips}>
+          <TouchableOpacity
           style={[styles.chip, !selectedCategory && styles.chipSelected]}
           onPress={() => dispatch(selectCategory(null))}>
           <Text
@@ -93,23 +98,29 @@ export default function ServiceListScreen({navigation}: Props) {
             </Text>
           </TouchableOpacity>
         ))}
-      </ScrollView>
+        </ScrollView>
+      </View>
 
       {filtered.length === 0 ? (
         <View style={styles.centered}>
           <Text style={styles.emptyText}>No services found</Text>
         </View>
       ) : (
-        <FlatList
+        <Animated.FlatList
           data={filtered}
           keyExtractor={item => item.id}
           contentContainerStyle={styles.list}
           showsVerticalScrollIndicator={false}
-          renderItem={({item}) => (
-            <ServiceCard
-              service={item}
-              onPress={() => handleServicePress(item)}
-            />
+          itemLayoutAnimation={LinearTransition.springify().damping(18).stiffness(120)}
+          renderItem={({item, index}) => (
+            <Animated.View
+              entering={FadeInDown.duration(300).delay(index * 60)}
+              exiting={FadeOutUp.duration(200)}>
+              <ServiceCard
+                service={item}
+                onPress={() => handleServicePress(item)}
+              />
+            </Animated.View>
           )}
         />
       )}
@@ -127,8 +138,12 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
+  chipsWrapper: {
+    paddingVertical: theme.spacing.sm,
+  },
   chips: {
-    padding: theme.spacing.md,
+    paddingLeft: theme.spacing.md,
+    paddingRight: theme.spacing.lg,
     gap: theme.spacing.sm,
     alignItems: 'center',
   },

@@ -1,7 +1,7 @@
 import React from 'react';
 import {View, Text, StyleSheet, TouchableOpacity} from 'react-native';
 import {useDispatch, useSelector} from 'react-redux';
-import {logout} from '@/features/auth/authSlice';
+import {logoutRequest} from '@/features/auth/authSlice';
 import {theme} from '@/utils/theme';
 import type {RootState} from '@/store';
 
@@ -21,7 +21,7 @@ export default function ProfileScreen() {
 
       <TouchableOpacity
         style={styles.logoutButton}
-        onPress={() => dispatch(logout())}>
+        onPress={() => dispatch(logoutRequest())}>
         <Text style={styles.logoutText}>Sign Out</Text>
       </TouchableOpacity>
     </View>
