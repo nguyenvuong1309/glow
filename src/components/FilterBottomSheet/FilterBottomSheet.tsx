@@ -9,6 +9,8 @@ import {
 } from '@gorhom/bottom-sheet';
 import DatePicker from 'react-native-date-picker';
 import {useDispatch} from 'react-redux';
+import {useTranslation} from 'react-i18next';
+import {getDateLocale} from '@/i18n';
 import {
   setFilter,
   clearFilter,
@@ -25,15 +27,16 @@ interface Props {
 
 type PickerField = 'dateFrom' | 'dateTo' | 'timeFrom' | 'timeTo';
 
-const PICKER_TITLES: Record<PickerField, string> = {
-  dateFrom: 'Date From',
-  dateTo: 'Date To',
-  timeFrom: 'Time From',
-  timeTo: 'Time To',
+const PICKER_TITLE_KEYS: Record<PickerField, string> = {
+  dateFrom: 'filterSheet.dateFrom',
+  dateTo: 'filterSheet.dateTo',
+  timeFrom: 'filterSheet.timeFrom',
+  timeTo: 'filterSheet.timeTo',
 };
 
 const FilterBottomSheet = forwardRef<BottomSheetModal, Props>(
   ({categories, filter}, ref) => {
+    const {t} = useTranslation();
     const dispatch = useDispatch();
     const snapPoints = useMemo(() => ['70%'], []);
 
@@ -119,10 +122,10 @@ const FilterBottomSheet = forwardRef<BottomSheetModal, Props>(
 
     const formatDate = (iso: string | null) => {
       if (!iso) {
-        return 'Select date';
+        return t('filterSheet.selectDate');
       }
       const d = new Date(iso + 'T00:00:00');
-      return d.toLocaleDateString('en-US', {
+      return d.toLocaleDateString(getDateLocale(), {
         weekday: 'short',
         month: 'short',
         day: 'numeric',
@@ -141,13 +144,13 @@ const FilterBottomSheet = forwardRef<BottomSheetModal, Props>(
           backgroundStyle={styles.sheetBackground}
           handleIndicatorStyle={styles.handleIndicator}>
           <BottomSheetView style={styles.contentContainer}>
-            <Text style={styles.title}>Filter Services</Text>
+            <Text style={styles.title}>{t('filterSheet.title')}</Text>
 
             <BottomSheetScrollView
               showsVerticalScrollIndicator={false}
               contentContainerStyle={styles.scrollContent}>
               {/* Category Multi-Select */}
-              <Text style={styles.sectionLabel}>Category</Text>
+              <Text style={styles.sectionLabel}>{t('filterSheet.category')}</Text>
               <View style={styles.chipsWrap}>
                 {categories.map(cat => (
                   <TouchableOpacity
@@ -171,7 +174,7 @@ const FilterBottomSheet = forwardRef<BottomSheetModal, Props>(
               </View>
 
               {/* Date From */}
-              <Text style={styles.sectionLabel}>Date From</Text>
+              <Text style={styles.sectionLabel}>{t('filterSheet.dateFrom')}</Text>
               <TouchableOpacity
                 style={styles.dateField}
                 onPress={() => openPicker('dateFrom')}>
@@ -185,7 +188,7 @@ const FilterBottomSheet = forwardRef<BottomSheetModal, Props>(
               </TouchableOpacity>
 
               {/* Date To */}
-              <Text style={styles.sectionLabel}>Date To</Text>
+              <Text style={styles.sectionLabel}>{t('filterSheet.dateTo')}</Text>
               <TouchableOpacity
                 style={styles.dateField}
                 onPress={() => openPicker('dateTo')}>
@@ -199,7 +202,7 @@ const FilterBottomSheet = forwardRef<BottomSheetModal, Props>(
               </TouchableOpacity>
 
               {/* Time From */}
-              <Text style={styles.sectionLabel}>Time From</Text>
+              <Text style={styles.sectionLabel}>{t('filterSheet.timeFrom')}</Text>
               <TouchableOpacity
                 style={styles.dateField}
                 onPress={() => openPicker('timeFrom')}>
@@ -208,12 +211,12 @@ const FilterBottomSheet = forwardRef<BottomSheetModal, Props>(
                     styles.dateFieldText,
                     filter.timeFrom && styles.dateFieldTextActive,
                   ]}>
-                  {filter.timeFrom || 'Select time'}
+                  {filter.timeFrom || t('filterSheet.selectTime')}
                 </Text>
               </TouchableOpacity>
 
               {/* Time To */}
-              <Text style={styles.sectionLabel}>Time To</Text>
+              <Text style={styles.sectionLabel}>{t('filterSheet.timeTo')}</Text>
               <TouchableOpacity
                 style={styles.dateField}
                 onPress={() => openPicker('timeTo')}>
@@ -222,7 +225,7 @@ const FilterBottomSheet = forwardRef<BottomSheetModal, Props>(
                     styles.dateFieldText,
                     filter.timeTo && styles.dateFieldTextActive,
                   ]}>
-                  {filter.timeTo || 'Select time'}
+                  {filter.timeTo || t('filterSheet.selectTime')}
                 </Text>
               </TouchableOpacity>
             </BottomSheetScrollView>
@@ -233,14 +236,14 @@ const FilterBottomSheet = forwardRef<BottomSheetModal, Props>(
                 <TouchableOpacity
                   style={styles.applyButton}
                   onPress={handleApply}>
-                  <Text style={styles.applyText}>Apply</Text>
+                  <Text style={styles.applyText}>{t('common.apply')}</Text>
                 </TouchableOpacity>
               </View>
               <View style={styles.actionButtonWrap}>
                 <TouchableOpacity
                   style={styles.clearButton}
                   onPress={handleClear}>
-                  <Text style={styles.clearText}>Clear</Text>
+                  <Text style={styles.clearText}>{t('common.clear')}</Text>
                 </TouchableOpacity>
               </View>
             </View>
@@ -262,9 +265,10 @@ const FilterBottomSheet = forwardRef<BottomSheetModal, Props>(
           }
           minuteInterval={!isDateField ? 15 : undefined}
           is24hourSource="locale"
-          title={activePicker ? PICKER_TITLES[activePicker] : ''}
-          confirmText="Done"
-          cancelText="Cancel"
+          locale={getDateLocale()}
+          title={activePicker ? t(PICKER_TITLE_KEYS[activePicker]) : ''}
+          confirmText={t('common.done')}
+          cancelText={t('common.cancel')}
           onConfirm={handleConfirm}
           onCancel={handleCancel}
         />

@@ -8,6 +8,7 @@ import {
 } from 'react-native';
 import Animated from 'react-native-reanimated';
 import {useSelector} from 'react-redux';
+import {useTranslation} from 'react-i18next';
 import {theme} from '@/utils/theme';
 import type {RootState} from '@/store';
 import type {NavigationProp} from '@react-navigation/native';
@@ -17,12 +18,13 @@ interface Props {
 }
 
 export default function ServiceDetailScreen({navigation}: Props) {
+  const {t} = useTranslation();
   const service = useSelector((state: RootState) => state.services.selected);
 
   if (!service) {
     return (
       <View style={styles.centered}>
-        <Text style={styles.emptyText}>Service not found</Text>
+        <Text style={styles.emptyText}>{t('services.serviceNotFound')}</Text>
       </View>
     );
   }
@@ -46,19 +48,19 @@ export default function ServiceDetailScreen({navigation}: Props) {
           <Animated.Text
             style={styles.price}
             sharedTransitionTag={`service-price-${service.id}`}>
-            ${service.price}
+            {t('services.price', {price: service.price})}
           </Animated.Text>
-          <Text style={styles.dot}>·</Text>
+          <Text style={styles.dot}>{'\u00b7'}</Text>
           <Animated.Text
             style={styles.duration}
             sharedTransitionTag={`service-duration-${service.id}`}>
-            {service.duration_minutes} min
+            {t('services.duration', {minutes: service.duration_minutes})}
           </Animated.Text>
-          <Text style={styles.dot}>·</Text>
+          <Text style={styles.dot}>{'\u00b7'}</Text>
           <Animated.Text
             style={styles.rating}
             sharedTransitionTag={`service-rating-${service.id}`}>
-            ★ {service.rating}
+            {t('services.rating', {rating: service.rating})}
           </Animated.Text>
         </View>
         <Text style={styles.category}>{service.category}</Text>
@@ -69,7 +71,7 @@ export default function ServiceDetailScreen({navigation}: Props) {
           onPress={() =>
             navigation.navigate('Booking', {serviceId: service.id})
           }>
-          <Text style={styles.bookButtonText}>Book Now</Text>
+          <Text style={styles.bookButtonText}>{t('services.bookNow')}</Text>
         </TouchableOpacity>
       </View>
     </ScrollView>

@@ -8,11 +8,13 @@ import Animated, {
   withDelay,
 } from 'react-native-reanimated';
 import {useDispatch, useSelector} from 'react-redux';
+import {useTranslation} from 'react-i18next';
 import {googleLoginRequest, appleLoginRequest} from '../authSlice';
 import {theme} from '@/utils/theme';
 import type {RootState} from '@/store';
 
 export default function LoginScreen() {
+  const {t} = useTranslation();
   const dispatch = useDispatch();
   const {loading, error} = useSelector((state: RootState) => state.auth);
   const opacity = useSharedValue(0);
@@ -39,8 +41,8 @@ export default function LoginScreen() {
   return (
     <SafeAreaView style={styles.container}>
       <Animated.View style={[styles.header, animatedStyle]}>
-        <Text style={styles.logo}>Glow</Text>
-        <Text style={styles.tagline}>Your beauty, your schedule</Text>
+        <Text style={styles.logo}>{t('auth.appName')}</Text>
+        <Text style={styles.tagline}>{t('auth.tagline')}</Text>
       </Animated.View>
 
       <Animated.View style={[styles.buttons, buttonAnimatedStyle]}>
@@ -49,7 +51,7 @@ export default function LoginScreen() {
           onPress={() => dispatch(googleLoginRequest())}
           disabled={loading}>
           <Text style={styles.googleText}>
-            {loading ? 'Signing in...' : 'Continue with Google'}
+            {loading ? t('auth.signingIn') : t('auth.continueWithGoogle')}
           </Text>
         </TouchableOpacity>
 
@@ -58,7 +60,7 @@ export default function LoginScreen() {
             style={[styles.button, styles.appleButton]}
             onPress={() => dispatch(appleLoginRequest())}
             disabled={loading}>
-            <Text style={styles.appleText}>Continue with Apple</Text>
+            <Text style={styles.appleText}>{t('auth.continueWithApple')}</Text>
           </TouchableOpacity>
         )}
 

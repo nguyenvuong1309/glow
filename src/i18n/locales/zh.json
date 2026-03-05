@@ -1,0 +1,126 @@
+{
+  "common": {
+    "cancel": "取消",
+    "done": "完成",
+    "apply": "应用",
+    "clear": "清除"
+  },
+  "auth": {
+    "appName": "Glow",
+    "tagline": "你的美丽，你的日程",
+    "signingIn": "登录中...",
+    "continueWithGoogle": "使用 Google 继续",
+    "continueWithApple": "使用 Apple 继续"
+  },
+  "home": {
+    "greeting": "你好，{{name}} ✨",
+    "defaultName": "美丽",
+    "whatWouldYouLike": "今天想要什么服务？",
+    "categories": "分类",
+    "popularServices": "热门服务"
+  },
+  "services": {
+    "all": "全部",
+    "filter": "筛选",
+    "noServicesFound": "未找到服务",
+    "serviceNotFound": "未找到服务",
+    "bookNow": "立即预约",
+    "price": "¥{{price}}",
+    "duration": "{{minutes}} 分钟",
+    "rating": "★ {{rating}}"
+  },
+  "filterSheet": {
+    "title": "筛选服务",
+    "category": "分类",
+    "dateFrom": "开始日期",
+    "dateTo": "结束日期",
+    "timeFrom": "开始时间",
+    "timeTo": "结束时间",
+    "selectDate": "选择日期",
+    "selectTime": "选择时间"
+  },
+  "booking": {
+    "selectDate": "选择日期",
+    "selectTime": "选择时间",
+    "notes": "备注（可选）",
+    "placeholder": "有特殊要求吗？",
+    "confirmBooking": "确认预约",
+    "validationDate": "请选择日期",
+    "validationTime": "请选择时间",
+    "serviceMeta": "¥{{price}} · {{minutes}} 分钟",
+    "noAvailableDates": "该服务暂无可用日期",
+    "noAvailableSlots": "该日期暂无可用时段",
+    "selectDateFirst": "请先选择日期"
+  },
+  "bookingHistory": {
+    "empty": "您还没有预约记录",
+    "status": {
+      "pending": "待确认",
+      "confirmed": "已确认",
+      "cancelled": "已取消"
+    }
+  },
+  "bookingConfirm": {
+    "title": "预约成功！",
+    "date": "日期",
+    "time": "时间",
+    "notes": "备注",
+    "done": "完成"
+  },
+  "postService": {
+    "title": "发布服务",
+    "name": "服务名称",
+    "namePlaceholder": "例如：深层组织按摩",
+    "category": "分类",
+    "description": "描述",
+    "descriptionPlaceholder": "描述您的服务...",
+    "price": "价格（¥）",
+    "pricePlaceholder": "0",
+    "duration": "时长",
+    "media": "照片和视频",
+    "addMedia": "添加照片/视频",
+    "durationValue": "{{hours}}小时 {{minutes}}分钟",
+    "submit": "发布服务",
+    "update": "更新服务",
+    "updateSuccessMessage": "您的服务已更新！",
+    "errorTitle": "错误",
+    "successTitle": "成功",
+    "successMessage": "您的服务已发布！",
+    "validationName": "请输入服务名称",
+    "validationCategory": "请选择分类",
+    "validationDescription": "请输入描述",
+    "validationPrice": "价格必须大于0",
+    "validationMedia": "请至少添加一张照片"
+  },
+  "myServices": {
+    "empty": "您还没有发布任何服务",
+    "min": "分钟"
+  },
+  "bookingRequests": {
+    "empty": "暂无预约请求",
+    "approve": "批准",
+    "reject": "拒绝",
+    "confirmApprove": "批准预约",
+    "confirmApproveMessage": "确定要批准此预约吗？",
+    "confirmReject": "拒绝预约",
+    "confirmRejectMessage": "确定要拒绝此预约吗？"
+  },
+  "profile": {
+    "guest": "访客",
+    "signOut": "退出登录",
+    "language": "语言",
+    "postService": "发布服务",
+    "myServices": "我的服务",
+    "bookingRequests": "预约请求"
+  },
+  "navigation": {
+    "home": "首页",
+    "services": "服务",
+    "profile": "我的",
+    "serviceDetails": "服务详情",
+    "bookAppointment": "预约",
+    "myBookings": "我的预约",
+    "myServices": "我的服务",
+    "bookingRequests": "预约请求"
+  }
+}

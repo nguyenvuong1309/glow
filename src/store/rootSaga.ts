@@ -3,7 +3,8 @@ import {authSaga} from '@/features/auth/authSaga';
 import {homeSaga} from '@/features/home/homeSaga';
 import {serviceSaga} from '@/features/services/serviceSaga';
 import {bookingSaga} from '@/features/booking/bookingSaga';
+import {postServiceSaga} from '@/features/postService/postServiceSaga';
 
 export default function* rootSaga() {
-  yield all([fork(authSaga), fork(homeSaga), fork(serviceSaga), fork(bookingSaga)]);
+  yield all([fork(authSaga), fork(homeSaga), fork(serviceSaga), fork(bookingSaga), fork(postServiceSaga)]);
 }

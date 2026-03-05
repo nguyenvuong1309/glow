@@ -13,6 +13,7 @@ import Animated, {
   LinearTransition,
 } from 'react-native-reanimated';
 import {useDispatch, useSelector} from 'react-redux';
+import {useTranslation} from 'react-i18next';
 import {loadCategories} from '../homeSlice';
 import {loadServices, selectService, setFilter} from '@/features/services/serviceSlice';
 import ServiceCard from '@/components/ServiceCard/ServiceCard';
@@ -26,6 +27,7 @@ interface Props {
 }
 
 export default function HomeScreen({navigation}: Props) {
+  const {t} = useTranslation();
   const dispatch = useDispatch();
   const {categories, loading: catLoading} = useSelector(
     (state: RootState) => state.home,
@@ -72,13 +74,13 @@ export default function HomeScreen({navigation}: Props) {
         showsVerticalScrollIndicator={false}>
         <Animated.View entering={FadeInDown.duration(500)}>
           <Text style={styles.greeting}>
-            Hello, {user?.name ?? 'Beautiful'} ✨
+            {t('home.greeting', {name: user?.name ?? t('home.defaultName')})}
           </Text>
-          <Text style={styles.subtitle}>What would you like today?</Text>
+          <Text style={styles.subtitle}>{t('home.whatWouldYouLike')}</Text>
         </Animated.View>
 
         <Animated.View entering={FadeInDown.duration(500).delay(100)}>
-          <Text style={styles.sectionTitle}>Categories</Text>
+          <Text style={styles.sectionTitle}>{t('home.categories')}</Text>
           <ScrollView
             horizontal
             showsHorizontalScrollIndicator={false}
@@ -105,7 +107,7 @@ export default function HomeScreen({navigation}: Props) {
         </Animated.View>
 
         <Animated.View entering={FadeInDown.duration(500).delay(200)}>
-          <Text style={styles.sectionTitle}>Popular Services</Text>
+          <Text style={styles.sectionTitle}>{t('home.popularServices')}</Text>
           <Animated.FlatList
             data={popularServices}
             horizontal

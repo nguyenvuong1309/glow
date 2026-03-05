@@ -15,6 +15,7 @@ export interface Service {
   id: string;
   name: string;
   category: string;
+  category_id?: string;
   description: string;
   price: number;
   duration_minutes: number;
@@ -22,14 +23,40 @@ export interface Service {
   rating: number;
 }
 
+export interface ServiceDraft {
+  name: string;
+  category_id: string;
+  description: string;
+  price: number;
+  duration_minutes: number;
+  image_url: string;
+}
+
+export interface MediaFile {
+  uri: string;
+  fileName: string;
+  type: string;
+}
+
+export interface SubmitServicePayload {
+  name: string;
+  category_id: string;
+  description: string;
+  price: number;
+  duration_minutes: number;
+  localMedia: MediaFile[];
+}
+
 export interface Booking {
   id: string;
   user_id: string;
   service_id: string;
+  service_name?: string;
   date: string;
   time_slot: string;
   status: 'pending' | 'confirmed' | 'cancelled';
   notes?: string;
+  created_at?: string;
 }
 
 export interface BookingDraft {

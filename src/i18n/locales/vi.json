@@ -1,0 +1,127 @@
+{
+  "common": {
+    "cancel": "Huỷ",
+    "done": "Xong",
+    "apply": "Áp dụng",
+    "clear": "Xóa"
+  },
+  "auth": {
+    "appName": "Glow",
+    "tagline": "Vẻ đẹp của bạn, lịch trình của bạn",
+    "signingIn": "Đang đăng nhập...",
+    "continueWithGoogle": "Tiếp tục với Google",
+    "continueWithApple": "Tiếp tục với Apple"
+  },
+  "home": {
+    "greeting": "Xin chào, {{name}} ✨",
+    "defaultName": "Bạn",
+    "whatWouldYouLike": "Bạn muốn gì hôm nay?",
+    "categories": "Danh mục",
+    "popularServices": "Dịch vụ phổ biến"
+  },
+  "services": {
+    "all": "Tất cả",
+    "filter": "Lọc",
+    "noServicesFound": "Không tìm thấy dịch vụ",
+    "serviceNotFound": "Không tìm thấy dịch vụ",
+    "bookNow": "Đặt ngay",
+    "price": "{{price}}đ",
+    "duration": "{{minutes}} phút",
+    "rating": "★ {{rating}}"
+  },
+  "filterSheet": {
+    "title": "Lọc dịch vụ",
+    "category": "Danh mục",
+    "dateFrom": "Từ ngày",
+    "dateTo": "Đến ngày",
+    "timeFrom": "Từ giờ",
+    "timeTo": "Đến giờ",
+    "selectDate": "Chọn ngày",
+    "selectTime": "Chọn giờ"
+  },
+  "booking": {
+    "selectDate": "Chọn ngày",
+    "selectTime": "Chọn giờ",
+    "notes": "Ghi chú (tuỳ chọn)",
+    "placeholder": "Yêu cầu đặc biệt?",
+    "confirmBooking": "Xác nhận đặt lịch",
+    "validationDate": "Vui lòng chọn ngày",
+    "validationTime": "Vui lòng chọn giờ",
+    "serviceMeta": "{{price}}đ · {{minutes}} phút",
+    "noAvailableDates": "Không có ngày trống cho dịch vụ này",
+    "noAvailableSlots": "Không có khung giờ trống cho ngày này",
+    "selectDateFirst": "Vui lòng chọn ngày trước"
+  },
+  "bookingHistory": {
+    "empty": "Bạn chưa có lịch hẹn nào",
+    "status": {
+      "pending": "Chờ xác nhận",
+      "confirmed": "Đã xác nhận",
+      "cancelled": "Đã huỷ"
+    }
+  },
+  "bookingConfirm": {
+    "title": "Đặt lịch thành công!",
+    "date": "Ngày",
+    "time": "Giờ",
+    "notes": "Ghi chú",
+    "done": "Xong"
+  },
+  "postService": {
+    "title": "Đăng dịch vụ",
+    "name": "Tên dịch vụ",
+    "namePlaceholder": "VD: Massage trị liệu",
+    "category": "Danh mục",
+    "description": "Mô tả",
+    "descriptionPlaceholder": "Mô tả dịch vụ của bạn...",
+    "price": "Giá (VNĐ)",
+    "pricePlaceholder": "0",
+    "duration": "Thời lượng",
+    "media": "Ảnh & Video",
+    "addMedia": "Thêm ảnh/video",
+    "durationValue": "{{hours}}h {{minutes}}m",
+    "submit": "Đăng dịch vụ",
+    "update": "Cập nhật dịch vụ",
+    "updateSuccessMessage": "Dịch vụ đã được cập nhật!",
+    "errorTitle": "Lỗi",
+    "successTitle": "Thành công",
+    "successMessage": "Dịch vụ của bạn đã được đăng!",
+    "validationName": "Vui lòng nhập tên dịch vụ",
+    "validationCategory": "Vui lòng chọn danh mục",
+    "validationDescription": "Vui lòng nhập mô tả",
+    "validationPrice": "Giá phải lớn hơn 0",
+    "validationMedia": "Thêm ít nhất một ảnh"
+  },
+  "myServices": {
+    "empty": "Bạn chưa đăng dịch vụ nào",
+    "min": "phút"
+  },
+  "bookingRequests": {
+    "empty": "Chưa có yêu cầu đặt lịch nào",
+    "approve": "Duyệt",
+    "reject": "Từ chối",
+    "confirmApprove": "Duyệt đặt lịch",
+    "confirmApproveMessage": "Bạn có chắc muốn duyệt đặt lịch này?",
+    "confirmReject": "Từ chối đặt lịch",
+    "confirmRejectMessage": "Bạn có chắc muốn từ chối đặt lịch này?"
+  },
+  "profile": {
+    "guest": "Khách",
+    "signOut": "Đăng xuất",
+    "language": "Ngôn ngữ",
+    "postService": "Đăng dịch vụ",
+    "myServices": "Dịch vụ của tôi",
+    "bookingRequests": "Yêu cầu đặt lịch"
+  },
+  "navigation": {
+    "home": "Trang chủ",
+    "services": "Dịch vụ",
+    "profile": "Cá nhân",
+    "serviceDetails": "Chi tiết dịch vụ",
+    "bookAppointment": "Đặt lịch hẹn",
+    "myBookings": "Lịch hẹn của tôi",
+    "postService": "Đăng dịch vụ",
+    "myServices": "Dịch vụ của tôi",
+    "bookingRequests": "Yêu cầu đặt lịch"
+  }
+}

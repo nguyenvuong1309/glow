@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import {
   View,
   Text,
@@ -12,41 +12,34 @@ import {useForm, Controller} from 'react-hook-form';
 import {zodResolver} from '@hookform/resolvers/zod';
 import {z} from 'zod';
 import {useDispatch, useSelector} from 'react-redux';
-import {setDraft, submitBooking} from '../bookingSlice';
+import {useTranslation} from 'react-i18next';
+import {getDateLocale} from '@/i18n';
+import {setDraft, submitBooking, loadAvailability, loadTimeSlots} from '../bookingSlice';
 import {theme} from '@/utils/theme';
 import type {RootState} from '@/store';
 import type {NavigationProp} from '@react-navigation/native';
-
-const bookingSchema = z.object({
-  date: z.string().min(1, 'Please select a date'),
-  timeSlot: z.string().min(1, 'Please select a time'),
-  notes: z.string().optional(),
-});
-
-type BookingFormData = z.infer<typeof bookingSchema>;
-
-function getNextDays(count: number): string[] {
-  const dates: string[] = [];
-  const today = new Date();
-  for (let i = 1; i <= count; i++) {
-    const d = new Date(today);
-    d.setDate(today.getDate() + i);
-    dates.push(d.toISOString().split('T')[0]);
-  }
-  return dates;
-}
-
-const AVAILABLE_DATES = getNextDays(5);
-const AVAILABLE_TIMES = ['09:00', '10:00', '11:30', '13:00', '14:30', '16:00'];
 
 interface Props {
   navigation: NavigationProp<any>;
 }
 
 export default function BookingScreen({navigation}: Props) {
+  const {t} = useTranslation();
   const dispatch = useDispatch();
   const service = useSelector((state: RootState) => state.services.selected);
   const loading = useSelector((state: RootState) => state.booking.loading);
+  const availableDates = useSelector((state: RootState) => state.booking.availableDates);
+  const availableTimeSlots = useSelector((state: RootState) => state.booking.availableTimeSlots);
+  const loadingAvailability = useSelector((state: RootState) => state.booking.loadingAvailability);
+  const loadingTimeSlots = useSelector((state: RootState) => state.booking.loadingTimeSlots);
+
+  const bookingSchema = z.object({
+    date: z.string().min(1, t('booking.validationDate')),
+    timeSlot: z.string().min(1, t('booking.validationTime')),
+    notes: z.string().optional(),
+  });
+
+  type BookingFormData = z.infer<typeof bookingSchema>;
 
   const {control, handleSubmit, setValue, watch, formState: {errors}} = useForm<BookingFormData>({
     resolver: zodResolver(bookingSchema),
@@ -55,6 +48,25 @@ export default function BookingScreen({navigation}: Props) {
 
   const selectedDate = watch('date');
   const selectedTime = watch('timeSlot');
+
+  useEffect(() => {
+    if (service) {
+      dispatch(loadAvailability(service.id));
+    }
+  }, [dispatch, service]);
+
+  useEffect(() => {
+    if (selectedDate && service) {
+      setValue('timeSlot', '', {shouldValidate: false});
+      dispatch(
+        loadTimeSlots({
+          serviceId: service.id,
+          date: selectedDate,
+          durationMinutes: service.duration_minutes,
+        }),
+      );
+    }
+  }, [selectedDate, service, dispatch, setValue]);
 
   const onSubmit = (data: BookingFormData) => {
     if (!service) {return;}
@@ -72,7 +84,7 @@ export default function BookingScreen({navigation}: Props) {
 
   const formatDate = (iso: string) => {
     const d = new Date(iso + 'T00:00:00');
-    return d.toLocaleDateString('en-US', {
+    return d.toLocaleDateString(getDateLocale(), {
       weekday: 'short',
       month: 'short',
       day: 'numeric',
@@ -88,68 +100,88 @@ export default function BookingScreen({navigation}: Props) {
         <View style={styles.serviceInfo}>
           <Text style={styles.serviceName}>{service.name}</Text>
           <Text style={styles.serviceMeta}>
-            ${service.price} · {service.duration_minutes} min
+            {t('booking.serviceMeta', {price: service.price, minutes: service.duration_minutes})}
           </Text>
         </View>
       )}
 
-      <Text style={styles.label}>Select Date</Text>
+      <Text style={styles.label}>{t('booking.selectDate')}</Text>
       {errors.date && <Text style={styles.error}>{errors.date.message}</Text>}
-      <ScrollView
-        horizontal
-        showsHorizontalScrollIndicator={false}
-        contentContainerStyle={styles.chips}>
-        {AVAILABLE_DATES.map(date => (
-          <TouchableOpacity
-            key={date}
-            style={[
-              styles.chip,
-              selectedDate === date && styles.chipSelected,
-            ]}
-            onPress={() => setValue('date', date, {shouldValidate: true})}>
-            <Text
+      {loadingAvailability ? (
+        <ActivityIndicator
+          color={theme.colors.primary}
+          style={styles.loader}
+        />
+      ) : availableDates.length === 0 ? (
+        <Text style={styles.emptyText}>{t('booking.noAvailableDates')}</Text>
+      ) : (
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={styles.chips}>
+          {availableDates.map(date => (
+            <TouchableOpacity
+              key={date}
               style={[
-                styles.chipText,
-                selectedDate === date && styles.chipTextSelected,
-              ]}>
-              {formatDate(date)}
-            </Text>
-          </TouchableOpacity>
-        ))}
-      </ScrollView>
+                styles.chip,
+                selectedDate === date && styles.chipSelected,
+              ]}
+              onPress={() => setValue('date', date, {shouldValidate: true})}>
+              <Text
+                style={[
+                  styles.chipText,
+                  selectedDate === date && styles.chipTextSelected,
+                ]}>
+                {formatDate(date)}
+              </Text>
+            </TouchableOpacity>
+          ))}
+        </ScrollView>
+      )}
 
-      <Text style={styles.label}>Select Time</Text>
+      <Text style={styles.label}>{t('booking.selectTime')}</Text>
       {errors.timeSlot && (
         <Text style={styles.error}>{errors.timeSlot.message}</Text>
       )}
-      <View style={styles.timeGrid}>
-        {AVAILABLE_TIMES.map(time => (
-          <TouchableOpacity
-            key={time}
-            style={[
-              styles.timeChip,
-              selectedTime === time && styles.chipSelected,
-            ]}
-            onPress={() => setValue('timeSlot', time, {shouldValidate: true})}>
-            <Text
+      {!selectedDate ? (
+        <Text style={styles.emptyText}>{t('booking.selectDateFirst')}</Text>
+      ) : loadingTimeSlots ? (
+        <ActivityIndicator
+          color={theme.colors.primary}
+          style={styles.loader}
+        />
+      ) : availableTimeSlots.length === 0 ? (
+        <Text style={styles.emptyText}>{t('booking.noAvailableSlots')}</Text>
+      ) : (
+        <View style={styles.timeGrid}>
+          {availableTimeSlots.map(time => (
+            <TouchableOpacity
+              key={time}
               style={[
-                styles.chipText,
-                selectedTime === time && styles.chipTextSelected,
-              ]}>
-              {time}
-            </Text>
-          </TouchableOpacity>
-        ))}
-      </View>
+                styles.timeChip,
+                selectedTime === time && styles.chipSelected,
+              ]}
+              onPress={() => setValue('timeSlot', time, {shouldValidate: true})}>
+              <Text
+                style={[
+                  styles.chipText,
+                  selectedTime === time && styles.chipTextSelected,
+                ]}>
+                {time}
+              </Text>
+            </TouchableOpacity>
+          ))}
+        </View>
+      )}
 
-      <Text style={styles.label}>Notes (optional)</Text>
+      <Text style={styles.label}>{t('booking.notes')}</Text>
       <Controller
         control={control}
         name="notes"
         render={({field: {onChange, value}}) => (
           <TextInput
             style={styles.textInput}
-            placeholder="Any special requests?"
+            placeholder={t('booking.placeholder')}
             placeholderTextColor={theme.colors.textSecondary}
             value={value}
             onChangeText={onChange}
@@ -166,7 +198,7 @@ export default function BookingScreen({navigation}: Props) {
         {loading ? (
           <ActivityIndicator color={theme.colors.surface} />
         ) : (
-          <Text style={styles.submitText}>Confirm Booking</Text>
+          <Text style={styles.submitText}>{t('booking.confirmBooking')}</Text>
         )}
       </TouchableOpacity>
     </ScrollView>
@@ -209,6 +241,14 @@ const styles = StyleSheet.create({
     fontSize: 13,
     color: '#E53935',
     marginBottom: theme.spacing.xs,
+  },
+  emptyText: {
+    fontSize: 14,
+    color: theme.colors.textSecondary,
+    paddingVertical: theme.spacing.sm,
+  },
+  loader: {
+    paddingVertical: theme.spacing.md,
   },
   chips: {
     gap: theme.spacing.sm,

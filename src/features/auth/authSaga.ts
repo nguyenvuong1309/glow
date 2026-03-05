@@ -82,6 +82,7 @@ function* handleAppleLogin() {
     > = yield call([supabase.auth, supabase.auth.signInWithIdToken], {
       provider: 'apple',
       token: appleAuthResponse.identityToken,
+      nonce: appleAuthResponse.nonce,
     });
 
     if (error || !data.session) {

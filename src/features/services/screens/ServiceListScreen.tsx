@@ -14,6 +14,7 @@ import Animated, {
 } from 'react-native-reanimated';
 import {BottomSheetModal} from '@gorhom/bottom-sheet';
 import {useDispatch, useSelector} from 'react-redux';
+import {useTranslation} from 'react-i18next';
 import {loadServices, selectService} from '../serviceSlice';
 import FilterBottomSheet from '@/components/FilterBottomSheet/FilterBottomSheet';
 import ServiceCard from '@/components/ServiceCard/ServiceCard';
@@ -27,6 +28,7 @@ interface Props {
 }
 
 export default function ServiceListScreen({navigation}: Props) {
+  const {t} = useTranslation();
   const dispatch = useDispatch();
   const {list: services, loading, filter} = useSelector(
     (state: RootState) => state.services,
@@ -98,7 +100,7 @@ export default function ServiceListScreen({navigation}: Props) {
                 styles.chipText,
                 selectedCategory === null && styles.chipTextSelected,
               ]}>
-              All
+              {t('services.all')}
             </Text>
           </TouchableOpacity>
           {categories.map(cat => (
@@ -130,7 +132,7 @@ export default function ServiceListScreen({navigation}: Props) {
               styles.filterButtonText,
               hasActiveFilter && styles.filterButtonTextActive,
             ]}>
-            Filter{hasActiveFilter ? ' \u25CF' : ''}
+            {t('services.filter')}{hasActiveFilter ? ' \u25CF' : ''}
           </Text>
         </TouchableOpacity>
       </View>
@@ -138,7 +140,7 @@ export default function ServiceListScreen({navigation}: Props) {
       {/* Service List */}
       {filteredServices.length === 0 ? (
         <View style={styles.centered}>
-          <Text style={styles.emptyText}>No services found</Text>
+          <Text style={styles.emptyText}>{t('services.noServicesFound')}</Text>
         </View>
       ) : (
         <Animated.FlatList

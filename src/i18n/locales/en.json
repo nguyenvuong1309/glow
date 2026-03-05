@@ -1,0 +1,127 @@
+{
+  "common": {
+    "cancel": "Cancel",
+    "done": "Done",
+    "apply": "Apply",
+    "clear": "Clear"
+  },
+  "auth": {
+    "appName": "Glow",
+    "tagline": "Your beauty, your schedule",
+    "signingIn": "Signing in...",
+    "continueWithGoogle": "Continue with Google",
+    "continueWithApple": "Continue with Apple"
+  },
+  "home": {
+    "greeting": "Hello, {{name}} \u2728",
+    "defaultName": "Beautiful",
+    "whatWouldYouLike": "What would you like today?",
+    "categories": "Categories",
+    "popularServices": "Popular Services"
+  },
+  "services": {
+    "all": "All",
+    "filter": "Filter",
+    "noServicesFound": "No services found",
+    "serviceNotFound": "Service not found",
+    "bookNow": "Book Now",
+    "price": "${{price}}",
+    "duration": "{{minutes}} min",
+    "rating": "\u2605 {{rating}}"
+  },
+  "filterSheet": {
+    "title": "Filter Services",
+    "category": "Category",
+    "dateFrom": "Date From",
+    "dateTo": "Date To",
+    "timeFrom": "Time From",
+    "timeTo": "Time To",
+    "selectDate": "Select date",
+    "selectTime": "Select time"
+  },
+  "booking": {
+    "selectDate": "Select Date",
+    "selectTime": "Select Time",
+    "notes": "Notes (optional)",
+    "placeholder": "Any special requests?",
+    "confirmBooking": "Confirm Booking",
+    "validationDate": "Please select a date",
+    "validationTime": "Please select a time",
+    "serviceMeta": "${{price}} \u00b7 {{minutes}} min",
+    "noAvailableDates": "No available dates for this service",
+    "noAvailableSlots": "No available time slots for this date",
+    "selectDateFirst": "Please select a date first"
+  },
+  "bookingHistory": {
+    "empty": "You have no bookings yet",
+    "status": {
+      "pending": "Pending",
+      "confirmed": "Confirmed",
+      "cancelled": "Cancelled"
+    }
+  },
+  "bookingConfirm": {
+    "title": "Booking Confirmed!",
+    "date": "Date",
+    "time": "Time",
+    "notes": "Notes",
+    "done": "Done"
+  },
+  "postService": {
+    "title": "Post Service",
+    "name": "Service Name",
+    "namePlaceholder": "e.g. Deep Tissue Massage",
+    "category": "Category",
+    "description": "Description",
+    "descriptionPlaceholder": "Describe your service...",
+    "price": "Price ($)",
+    "pricePlaceholder": "0",
+    "duration": "Duration",
+    "media": "Photos & Videos",
+    "addMedia": "Add Photo/Video",
+    "durationValue": "{{hours}}h {{minutes}}m",
+    "submit": "Post Service",
+    "update": "Update Service",
+    "updateSuccessMessage": "Your service has been updated!",
+    "errorTitle": "Error",
+    "successTitle": "Success",
+    "successMessage": "Your service has been posted!",
+    "validationName": "Service name is required",
+    "validationCategory": "Please select a category",
+    "validationDescription": "Description is required",
+    "validationPrice": "Price must be greater than 0",
+    "validationMedia": "Add at least one photo"
+  },
+  "myServices": {
+    "empty": "You haven't posted any services yet",
+    "min": "min"
+  },
+  "bookingRequests": {
+    "empty": "No booking requests yet",
+    "approve": "Approve",
+    "reject": "Reject",
+    "confirmApprove": "Approve Booking",
+    "confirmApproveMessage": "Are you sure you want to approve this booking?",
+    "confirmReject": "Reject Booking",
+    "confirmRejectMessage": "Are you sure you want to reject this booking?"
+  },
+  "profile": {
+    "guest": "Guest",
+    "signOut": "Sign Out",
+    "language": "Language",
+    "postService": "Post a Service",
+    "myServices": "My Services",
+    "bookingRequests": "Booking Requests"
+  },
+  "navigation": {
+    "home": "Home",
+    "services": "Services",
+    "profile": "Profile",
+    "serviceDetails": "Service Details",
+    "bookAppointment": "Book Appointment",
+    "myBookings": "My Bookings",
+    "postService": "Post Service",
+    "myServices": "My Services",
+    "bookingRequests": "Booking Requests"
+  }
+}

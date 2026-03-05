@@ -9,6 +9,8 @@ import Animated, {
   withTiming,
 } from 'react-native-reanimated';
 import {useSelector} from 'react-redux';
+import {useTranslation} from 'react-i18next';
+import {getDateLocale} from '@/i18n';
 import {theme} from '@/utils/theme';
 import type {RootState} from '@/store';
 import type {NavigationProp} from '@react-navigation/native';
@@ -18,6 +20,7 @@ interface Props {
 }
 
 export default function BookingConfirmScreen({navigation}: Props) {
+  const {t} = useTranslation();
   const latestBooking = useSelector(
     (state: RootState) => state.booking.history[0],
   );
@@ -41,7 +44,7 @@ export default function BookingConfirmScreen({navigation}: Props) {
 
   const formatDate = (iso: string) => {
     const d = new Date(iso + 'T00:00:00');
-    return d.toLocaleDateString('en-US', {
+    return d.toLocaleDateString(getDateLocale(), {
       weekday: 'long',
       month: 'long',
       day: 'numeric',
@@ -52,11 +55,11 @@ export default function BookingConfirmScreen({navigation}: Props) {
   return (
     <SafeAreaView style={styles.container}>
       <Animated.View style={[styles.checkCircle, checkmarkStyle]}>
-        <Text style={styles.checkmark}>✓</Text>
+        <Text style={styles.checkmark}>{'\u2713'}</Text>
       </Animated.View>
 
       <Animated.View style={[styles.details, detailsStyle]}>
-        <Text style={styles.title}>Booking Confirmed!</Text>
+        <Text style={styles.title}>{t('bookingConfirm.title')}</Text>
 
         {service && (
           <Text style={styles.serviceName}>{service.name}</Text>
@@ -65,18 +68,18 @@ export default function BookingConfirmScreen({navigation}: Props) {
         {latestBooking && (
           <>
             <View style={styles.infoRow}>
-              <Text style={styles.infoLabel}>Date</Text>
+              <Text style={styles.infoLabel}>{t('bookingConfirm.date')}</Text>
               <Text style={styles.infoValue}>
                 {formatDate(latestBooking.date)}
               </Text>
             </View>
             <View style={styles.infoRow}>
-              <Text style={styles.infoLabel}>Time</Text>
+              <Text style={styles.infoLabel}>{t('bookingConfirm.time')}</Text>
               <Text style={styles.infoValue}>{latestBooking.time_slot}</Text>
             </View>
             {latestBooking.notes && (
               <View style={styles.infoRow}>
-                <Text style={styles.infoLabel}>Notes</Text>
+                <Text style={styles.infoLabel}>{t('bookingConfirm.notes')}</Text>
                 <Text style={styles.infoValue}>{latestBooking.notes}</Text>
               </View>
             )}
@@ -86,7 +89,7 @@ export default function BookingConfirmScreen({navigation}: Props) {
         <TouchableOpacity
           style={styles.doneButton}
           onPress={() => navigation.navigate('Home')}>
-          <Text style={styles.doneText}>Done</Text>
+          <Text style={styles.doneText}>{t('bookingConfirm.done')}</Text>
         </TouchableOpacity>
       </Animated.View>
     </SafeAreaView>

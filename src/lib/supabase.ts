@@ -1,7 +1,7 @@
 import 'react-native-url-polyfill/auto';
 import {createClient} from '@supabase/supabase-js';
 import {mmkvStorage} from './storage';
-import type {Service, Category, Booking, BookingDraft, ServiceFilter} from '@/types';
+import type {Service, Category, Booking, BookingDraft, ServiceDraft, ServiceFilter, ServiceAvailability} from '@/types';
 
 const SUPABASE_URL = 'https://bdavvqgseigqmxerdytn.supabase.co';
 const SUPABASE_ANON_KEY =
@@ -18,6 +18,28 @@ export const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
     params: {eventsPerSecond: 1},
   },
 });
+
+export async function uploadServiceMedia(
+  uri: string,
+  fileName: string,
+  contentType: string,
+): Promise<string> {
+  const {data: {user}} = await supabase.auth.getUser();
+  if (!user) throw new Error('Not authenticated');
+
+  const path = `${user.id}/${Date.now()}_${fileName}`;
+
+  const response = await fetch(uri);
+  const arrayBuffer = await response.arrayBuffer();
+
+  const {error} = await supabase.storage
+    .from('service-media')
+    .upload(path, arrayBuffer, {contentType, upsert: false});
+  if (error) throw error;
+
+  const {data} = supabase.storage.from('service-media').getPublicUrl(path);
+  return data.publicUrl;
+}
 
 export async function getCategories(): Promise<Category[]> {
   const {data, error} = await supabase.from('categories').select('*');
@@ -114,13 +136,142 @@ export async function getAvailableServices(
   return results.map(({availability: _, ...rest}) => rest);
 }
 
-export async function getBookings(): Promise<Booking[]> {
+export async function getServiceAvailability(
+  serviceId: string,
+): Promise<ServiceAvailability[]> {
   const {data, error} = await supabase
-    .from('bookings')
+    .from('service_availability')
     .select('*')
-    .order('created_at', {ascending: false});
+    .eq('service_id', serviceId);
   if (error) throw error;
   return data;
+}
+
+export async function getBookedSlots(
+  serviceId: string,
+  date: string,
+): Promise<string[]> {
+  const {data, error} = await supabase
+    .from('bookings')
+    .select('time_slot')
+    .eq('service_id', serviceId)
+    .eq('date', date)
+    .neq('status', 'cancelled');
+  if (error) throw error;
+  return data.map((row: {time_slot: string}) => row.time_slot);
+}
+
+export async function getBookings(): Promise<Booking[]> {
+  const {data: {user}} = await supabase.auth.getUser();
+  if (!user) throw new Error('Not authenticated');
+
+  const {data, error} = await supabase
+    .from('bookings')
+    .select('*, services(name)')
+    .eq('user_id', user.id)
+    .order('created_at', {ascending: false});
+  if (error) throw error;
+  return data.map((row: any) => ({
+    id: row.id,
+    user_id: row.user_id,
+    service_id: row.service_id,
+    service_name: row.services?.name,
+    date: row.date,
+    time_slot: row.time_slot,
+    status: row.status,
+    notes: row.notes,
+    created_at: row.created_at,
+  }));
+}
+
+export async function getProviderBookings(): Promise<Booking[]> {
+  const {data: {user}} = await supabase.auth.getUser();
+  if (!user) throw new Error('Not authenticated');
+
+  const {data, error} = await supabase
+    .from('bookings')
+    .select('*, services!inner(name, user_id)')
+    .eq('services.user_id', user.id)
+    .order('created_at', {ascending: false});
+  if (error) throw error;
+  return data.map((row: any) => ({
+    id: row.id,
+    user_id: row.user_id,
+    service_id: row.service_id,
+    service_name: row.services?.name,
+    date: row.date,
+    time_slot: row.time_slot,
+    status: row.status,
+    notes: row.notes,
+    created_at: row.created_at,
+  }));
+}
+
+export async function updateBookingStatus(
+  bookingId: string,
+  status: Booking['status'],
+): Promise<void> {
+  const {error} = await supabase
+    .from('bookings')
+    .update({status})
+    .eq('id', bookingId);
+  if (error) throw error;
+}
+
+export async function getMyServices(): Promise<Service[]> {
+  const {data: {user}} = await supabase.auth.getUser();
+  if (!user) throw new Error('Not authenticated');
+
+  const {data, error} = await supabase
+    .from('services')
+    .select('*, categories(name)')
+    .eq('user_id', user.id)
+    .order('created_at', {ascending: false});
+  if (error) throw error;
+  return data.map((row: any) => ({
+    id: row.id,
+    name: row.name,
+    category: row.categories.name,
+    category_id: row.category_id,
+    description: row.description,
+    price: Number(row.price),
+    duration_minutes: row.duration_minutes,
+    image_url: row.image_url,
+    rating: Number(row.rating),
+  }));
+}
+
+export async function updateService(
+  id: string,
+  draft: Partial<ServiceDraft>,
+): Promise<void> {
+  const {error} = await supabase
+    .from('services')
+    .update(draft)
+    .eq('id', id);
+  if (error) throw error;
+}
+
+export async function createService(draft: ServiceDraft): Promise<Service> {
+  const {data: {user}} = await supabase.auth.getUser();
+  if (!user) throw new Error('Not authenticated');
+
+  const {data, error} = await supabase
+    .from('services')
+    .insert({...draft, user_id: user.id, rating: 0})
+    .select('*, categories(name)')
+    .single();
+  if (error) throw error;
+  return {
+    id: data.id,
+    name: data.name,
+    category: data.categories.name,
+    description: data.description,
+    price: Number(data.price),
+    duration_minutes: data.duration_minutes,
+    image_url: data.image_url,
+    rating: Number(data.rating),
+  };
 }
 
 export async function createBooking(draft: BookingDraft): Promise<Booking> {

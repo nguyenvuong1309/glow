@@ -1,6 +1,7 @@
 import React from 'react';
 import {View, Text, StyleSheet, TouchableOpacity} from 'react-native';
 import Animated from 'react-native-reanimated';
+import {useTranslation} from 'react-i18next';
 import {theme} from '@/utils/theme';
 import type {Service} from '@/types';
 
@@ -11,6 +12,7 @@ interface Props {
 }
 
 export default function ServiceCard({service, onPress, horizontal}: Props) {
+  const {t} = useTranslation();
   return (
     <TouchableOpacity
       style={[styles.card, horizontal && styles.cardHorizontal]}
@@ -32,19 +34,19 @@ export default function ServiceCard({service, onPress, horizontal}: Props) {
           <Animated.Text
             style={styles.price}
             sharedTransitionTag={`service-price-${service.id}`}>
-            ${service.price}
+            {t('services.price', {price: service.price})}
           </Animated.Text>
-          <Text style={styles.dot}>·</Text>
+          <Text style={styles.dot}>{'\u00b7'}</Text>
           <Animated.Text
             style={styles.duration}
             sharedTransitionTag={`service-duration-${service.id}`}>
-            {service.duration_minutes} min
+            {t('services.duration', {minutes: service.duration_minutes})}
           </Animated.Text>
-          <Text style={styles.dot}>·</Text>
+          <Text style={styles.dot}>{'\u00b7'}</Text>
           <Animated.Text
             style={styles.rating}
             sharedTransitionTag={`service-rating-${service.id}`}>
-            ★ {service.rating}
+            {t('services.rating', {rating: service.rating})}
           </Animated.Text>
         </View>
       </View>
