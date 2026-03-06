@@ -16,13 +16,18 @@ export type ServiceStackParamList = {
 
 export type BookingStackParamList = {
   BookingHistory: undefined;
+  Review: {bookingId: string; serviceId: string};
+  Spending: undefined;
 };
 
 export type ProfileStackParamList = {
   ProfileMain: undefined;
+  Dashboard: undefined;
+  Favorites: undefined;
   MyServices: undefined;
   PostService: {service?: Service} | undefined;
   BookingRequests: undefined;
+  ServiceDetail: {serviceId: string};
 };
 
 export type TabParamList = {

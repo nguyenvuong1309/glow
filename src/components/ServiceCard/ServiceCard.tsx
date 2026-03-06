@@ -9,20 +9,34 @@ interface Props {
   service: Service;
   onPress: () => void;
   horizontal?: boolean;
+  isFavorite?: boolean;
+  onToggleFavorite?: () => void;
 }
 
-function ServiceCard({service, onPress, horizontal}: Props) {
+function ServiceCard({service, onPress, horizontal, isFavorite, onToggleFavorite}: Props) {
   const {t} = useTranslation();
   return (
     <TouchableOpacity
       style={[styles.card, horizontal && styles.cardHorizontal]}
       onPress={onPress}
       activeOpacity={0.8}>
-      <Animated.Image
-        source={{uri: service.image_url}}
-        style={[styles.image, horizontal && styles.imageHorizontal]}
-        sharedTransitionTag={`service-image-${service.id}`}
-      />
+      <View>
+        <Animated.Image
+          source={{uri: service.image_url}}
+          style={[styles.image, horizontal && styles.imageHorizontal]}
+          sharedTransitionTag={`service-image-${service.id}`}
+        />
+        {onToggleFavorite && (
+          <TouchableOpacity
+            style={styles.heartButton}
+            onPress={onToggleFavorite}
+            hitSlop={{top: 8, bottom: 8, left: 8, right: 8}}>
+            <Text style={[styles.heart, isFavorite && styles.heartFilled]}>
+              {isFavorite ? '\u2764' : '\u2661'}
+            </Text>
+          </TouchableOpacity>
+        )}
+      </View>
       <View style={styles.info}>
         <Animated.Text
           style={styles.name}
@@ -104,5 +118,23 @@ const styles = StyleSheet.create({
   rating: {
     fontSize: 13,
     color: theme.colors.text,
+  },
+  heartButton: {
+    position: 'absolute',
+    top: theme.spacing.sm,
+    right: theme.spacing.sm,
+    backgroundColor: 'rgba(255,255,255,0.85)',
+    borderRadius: 14,
+    width: 28,
+    height: 28,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  heart: {
+    fontSize: 16,
+    color: theme.colors.textSecondary,
+  },
+  heartFilled: {
+    color: '#E53935',
   },
 });

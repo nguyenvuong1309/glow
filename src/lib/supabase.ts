@@ -2,7 +2,7 @@ import 'react-native-url-polyfill/auto';
 import {createClient} from '@supabase/supabase-js';
 import {mmkvStorage} from './storage';
 import {SUPABASE_URL, SUPABASE_ANON_KEY} from '@env';
-import type {Service, Category, Booking, BookingDraft, ServiceDraft, ServiceFilter, ServiceAvailability} from '@/types';
+import type {Service, Category, Booking, BookingDraft, ServiceDraft, ServiceFilter, ServiceAvailability, Review, ReviewDraft} from '@/types';
 
 export const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
   auth: {
@@ -269,6 +269,163 @@ export async function createService(draft: ServiceDraft): Promise<Service> {
     image_url: data.image_url,
     rating: Number(data.rating),
   };
+}
+
+export interface ProviderStatsRow {
+  date: string;
+  time_slot: string;
+  status: Booking['status'];
+  service_name: string;
+  price: number;
+}
+
+export async function getProviderStatsRows(
+  month: number,
+  year: number,
+): Promise<ProviderStatsRow[]> {
+  const {data: {user}} = await supabase.auth.getUser();
+  if (!user) throw new Error('Not authenticated');
+
+  const startDate = `${year}-${String(month).padStart(2, '0')}-01`;
+  const endMonth = month === 12 ? 1 : month + 1;
+  const endYear = month === 12 ? year + 1 : year;
+  const endDate = `${endYear}-${String(endMonth).padStart(2, '0')}-01`;
+
+  const {data, error} = await supabase
+    .from('bookings')
+    .select('date, time_slot, status, services!inner(name, price, user_id)')
+    .eq('services.user_id', user.id)
+    .gte('date', startDate)
+    .lt('date', endDate)
+    .order('date');
+  if (error) throw error;
+
+  return data.map((row: any) => ({
+    date: row.date,
+    time_slot: row.time_slot,
+    status: row.status,
+    service_name: row.services.name,
+    price: Number(row.services.price),
+  }));
+}
+
+export async function cancelBooking(bookingId: string): Promise<void> {
+  const {data: {user}} = await supabase.auth.getUser();
+  if (!user) throw new Error('Not authenticated');
+
+  const {error} = await supabase
+    .from('bookings')
+    .update({status: 'cancelled'})
+    .eq('id', bookingId)
+    .eq('user_id', user.id);
+  if (error) throw error;
+}
+
+export async function completeBooking(bookingId: string): Promise<void> {
+  const {error} = await supabase
+    .from('bookings')
+    .update({status: 'completed'})
+    .eq('id', bookingId);
+  if (error) throw error;
+}
+
+export async function getServiceReviews(serviceId: string): Promise<Review[]> {
+  const {data, error} = await supabase
+    .from('reviews')
+    .select('*')
+    .eq('service_id', serviceId)
+    .order('created_at', {ascending: false});
+  if (error) throw error;
+  return data;
+}
+
+export async function createReview(draft: ReviewDraft): Promise<Review> {
+  const {data: {user}} = await supabase.auth.getUser();
+  if (!user) throw new Error('Not authenticated');
+
+  const {data, error} = await supabase
+    .from('reviews')
+    .insert({
+      booking_id: draft.booking_id,
+      service_id: draft.service_id,
+      user_id: user.id,
+      rating: draft.rating,
+      comment: draft.comment || null,
+    })
+    .select()
+    .single();
+  if (error) throw error;
+  return data;
+}
+
+export async function getFavoriteIds(): Promise<string[]> {
+  const {data: {user}} = await supabase.auth.getUser();
+  if (!user) return [];
+
+  const {data, error} = await supabase
+    .from('favorites')
+    .select('service_id')
+    .eq('user_id', user.id);
+  if (error) throw error;
+  return data.map((row: {service_id: string}) => row.service_id);
+}
+
+export async function addFavorite(serviceId: string): Promise<void> {
+  const {data: {user}} = await supabase.auth.getUser();
+  if (!user) throw new Error('Not authenticated');
+
+  const {error} = await supabase
+    .from('favorites')
+    .insert({user_id: user.id, service_id: serviceId});
+  if (error) throw error;
+}
+
+export async function removeFavorite(serviceId: string): Promise<void> {
+  const {data: {user}} = await supabase.auth.getUser();
+  if (!user) throw new Error('Not authenticated');
+
+  const {error} = await supabase
+    .from('favorites')
+    .delete()
+    .eq('user_id', user.id)
+    .eq('service_id', serviceId);
+  if (error) throw error;
+}
+
+export interface UserSpendingRow {
+  date: string;
+  status: Booking['status'];
+  service_name: string;
+  price: number;
+}
+
+export async function getUserSpendingRows(
+  month: number,
+  year: number,
+): Promise<UserSpendingRow[]> {
+  const {data: {user}} = await supabase.auth.getUser();
+  if (!user) throw new Error('Not authenticated');
+
+  const startDate = `${year}-${String(month).padStart(2, '0')}-01`;
+  const endMonth = month === 12 ? 1 : month + 1;
+  const endYear = month === 12 ? year + 1 : year;
+  const endDate = `${endYear}-${String(endMonth).padStart(2, '0')}-01`;
+
+  const {data, error} = await supabase
+    .from('bookings')
+    .select('date, status, services!inner(name, price)')
+    .eq('user_id', user.id)
+    .gte('date', startDate)
+    .lt('date', endDate)
+    .order('date');
+  if (error) throw error;
+
+  return data.map((row: any) => ({
+    date: row.date,
+    status: row.status,
+    service_name: row.services.name,
+    price: Number(row.services.price),
+  }));
 }
 
 export async function createBooking(draft: BookingDraft): Promise<Booking> {

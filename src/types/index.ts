@@ -54,7 +54,7 @@ export interface Booking {
   service_name?: string;
   date: string;
   time_slot: string;
-  status: 'pending' | 'confirmed' | 'cancelled';
+  status: 'pending' | 'confirmed' | 'cancelled' | 'completed';
   notes?: string;
   created_at?: string;
 }
@@ -72,6 +72,25 @@ export interface ServiceAvailability {
   day_of_week: number;
   start_time: string;
   end_time: string;
+}
+
+export interface Review {
+  id: string;
+  booking_id: string;
+  service_id: string;
+  user_id: string;
+  rating: number;
+  comment?: string;
+  created_at: string;
+  user_name?: string;
+  user_avatar?: string;
+}
+
+export interface ReviewDraft {
+  booking_id: string;
+  service_id: string;
+  rating: number;
+  comment?: string;
 }
 
 export interface ServiceFilter {

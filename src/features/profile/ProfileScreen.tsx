@@ -36,6 +36,10 @@ export default function ProfileScreen({navigation}: Props) {
 
   const serviceMenuItems: MenuItem[] = [
     {
+      label: t('profile.dashboard'),
+      onPress: () => navigation.navigate('Dashboard'),
+    },
+    {
       label: t('profile.postService'),
       onPress: () => navigation.navigate('PostService'),
     },
@@ -50,6 +54,10 @@ export default function ProfileScreen({navigation}: Props) {
   ];
 
   const accountMenuItems: MenuItem[] = [
+    {
+      label: t('profile.favorites'),
+      onPress: () => navigation.navigate('Favorites'),
+    },
     {
       label: t('profile.signOut'),
       onPress: () => {

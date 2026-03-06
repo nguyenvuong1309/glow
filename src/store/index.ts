@@ -8,7 +8,7 @@ import {mmkvStorage} from '@/lib/storage';
 const persistConfig = {
   key: 'root',
   storage: mmkvStorage,
-  whitelist: ['auth'],
+  whitelist: ['auth', 'favorites'],
 };
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);

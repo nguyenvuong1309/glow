@@ -19,6 +19,10 @@ import ProfileScreen from '@/features/profile/ProfileScreen';
 import PostServiceScreen from '@/features/postService/screens/PostServiceScreen';
 import BookingRequestsScreen from '@/features/booking/screens/BookingRequestsScreen';
 import MyServicesScreen from '@/features/postService/screens/MyServicesScreen';
+import ProviderDashboardScreen from '@/features/provider/screens/ProviderDashboardScreen';
+import ReviewScreen from '@/features/booking/screens/ReviewScreen';
+import SpendingScreen from '@/features/booking/screens/SpendingScreen';
+import FavoritesScreen from '@/features/favorites/screens/FavoritesScreen';
 import {theme} from '@/utils/theme';
 
 const Tab = createBottomTabNavigator<TabParamList>();
@@ -107,6 +111,16 @@ function BookingStackScreen() {
         component={BookingHistoryScreen}
         options={{title: t('navigation.myBookings')}}
       />
+      <BookingStack.Screen
+        name="Review"
+        component={ReviewScreen}
+        options={{title: t('navigation.writeReview')}}
+      />
+      <BookingStack.Screen
+        name="Spending"
+        component={SpendingScreen}
+        options={{title: t('navigation.spending')}}
+      />
     </BookingStack.Navigator>
   );
 }
@@ -124,6 +138,21 @@ function ProfileStackScreen() {
         name="ProfileMain"
         component={ProfileScreen}
         options={{title: t('navigation.profile')}}
+      />
+      <ProfileStack.Screen
+        name="Dashboard"
+        component={ProviderDashboardScreen}
+        options={{title: t('navigation.dashboard')}}
+      />
+      <ProfileStack.Screen
+        name="Favorites"
+        component={FavoritesScreen}
+        options={{title: t('navigation.favorites')}}
+      />
+      <ProfileStack.Screen
+        name="ServiceDetail"
+        component={ServiceDetailScreen}
+        options={{title: t('navigation.serviceDetails')}}
       />
       <ProfileStack.Screen
         name="MyServices"

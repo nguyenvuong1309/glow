@@ -15,7 +15,16 @@ import {
   loadProviderBookingsSuccess,
   updateBookingStatus,
   updateBookingStatusSuccess,
+  cancelBooking,
+  cancelBookingSuccess,
+  cancelBookingFailure,
+  completeBooking,
+  completeBookingSuccess,
+  loadSpending,
+  loadSpendingSuccess,
+  loadSpendingFailure,
 } from './bookingSlice';
+import type {SpendingStats} from './bookingSlice';
 import {
   createBooking,
   getBookings,
@@ -23,7 +32,11 @@ import {
   getBookedSlots,
   getProviderBookings,
   updateBookingStatus as updateBookingStatusApi,
+  cancelBooking as cancelBookingApi,
+  completeBooking as completeBookingApi,
+  getUserSpendingRows,
 } from '@/lib/supabase';
+import type {UserSpendingRow} from '@/lib/supabase';
 import type {Booking, BookingDraft, ServiceAvailability} from '@/types';
 import type {RootState} from '@/store';
 import type {PayloadAction} from '@reduxjs/toolkit';
@@ -166,6 +179,63 @@ function* handleUpdateBookingStatus(
   }
 }
 
+function* handleCancelBooking(action: PayloadAction<string>) {
+  try {
+    const bookingId = action.payload;
+    yield put(cancelBookingSuccess(bookingId));
+    yield call(cancelBookingApi, bookingId);
+  } catch {
+    yield put(cancelBookingFailure());
+    yield put(loadBookings());
+  }
+}
+
+function* handleCompleteBooking(action: PayloadAction<string>) {
+  try {
+    const bookingId = action.payload;
+    yield put(completeBookingSuccess(bookingId));
+    yield call(completeBookingApi, bookingId);
+  } catch {
+    yield put(loadProviderBookings());
+  }
+}
+
+function computeSpending(rows: UserSpendingRow[]): SpendingStats {
+  let total = 0;
+  let completedCount = 0;
+  const svcMap = new Map<string, {count: number; total: number}>();
+
+  for (const row of rows) {
+    if (row.status === 'completed' || row.status === 'confirmed') {
+      total += row.price;
+      completedCount++;
+      const svc = svcMap.get(row.service_name) ?? {count: 0, total: 0};
+      svc.count++;
+      svc.total += row.price;
+      svcMap.set(row.service_name, svc);
+    }
+  }
+
+  const byService = Array.from(svcMap, ([name, v]) => ({name, ...v})).sort(
+    (a, b) => b.total - a.total,
+  );
+
+  return {total, completedCount, byService};
+}
+
+function* handleLoadSpending(
+  action: PayloadAction<{month: number; year: number}>,
+) {
+  try {
+    const {month, year} = action.payload;
+    const rows: UserSpendingRow[] = yield call(getUserSpendingRows, month, year);
+    const stats = computeSpending(rows);
+    yield put(loadSpendingSuccess(stats));
+  } catch {
+    yield put(loadSpendingFailure());
+  }
+}
+
 export function* bookingSaga() {
   yield takeLatest(loadAvailability.type, handleLoadAvailability);
   yield takeLatest(loadTimeSlots.type, handleLoadTimeSlots);
@@ -173,4 +243,7 @@ export function* bookingSaga() {
   yield takeLatest(loadBookings.type, handleLoadBookings);
   yield takeLatest(loadProviderBookings.type, handleLoadProviderBookings);
   yield takeLatest(updateBookingStatus.type, handleUpdateBookingStatus);
+  yield takeLatest(cancelBooking.type, handleCancelBooking);
+  yield takeLatest(completeBooking.type, handleCompleteBooking);
+  yield takeLatest(loadSpending.type, handleLoadSpending);
 }

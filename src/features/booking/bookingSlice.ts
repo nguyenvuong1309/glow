@@ -1,6 +1,12 @@
 import {createSlice, PayloadAction} from '@reduxjs/toolkit';
 import type {Booking, BookingDraft, ServiceAvailability} from '@/types';
 
+export interface SpendingStats {
+  total: number;
+  completedCount: number;
+  byService: {name: string; count: number; total: number}[];
+}
+
 interface BookingState {
   draft: BookingDraft | null;
   history: Booking[];
@@ -13,7 +19,13 @@ interface BookingState {
   loadingTimeSlots: boolean;
   providerBookings: Booking[];
   providerLoading: boolean;
+  spending: SpendingStats | null;
+  spendingLoading: boolean;
+  spendingMonth: number;
+  spendingYear: number;
 }
+
+const now = new Date();
 
 const initialState: BookingState = {
   draft: null,
@@ -27,6 +39,10 @@ const initialState: BookingState = {
   loadingTimeSlots: false,
   providerBookings: [],
   providerLoading: false,
+  spending: null,
+  spendingLoading: false,
+  spendingMonth: now.getMonth() + 1,
+  spendingYear: now.getFullYear(),
 };
 
 const bookingSlice = createSlice({
@@ -118,6 +134,48 @@ const bookingSlice = createSlice({
         booking.status = status;
       }
     },
+    cancelBooking(state, _action: PayloadAction<string>) {
+      state.loading = true;
+    },
+    cancelBookingSuccess(state, action: PayloadAction<string>) {
+      const booking = state.history.find(b => b.id === action.payload);
+      if (booking) {
+        booking.status = 'cancelled';
+      }
+      state.loading = false;
+    },
+    cancelBookingFailure(state) {
+      state.loading = false;
+    },
+    completeBooking(
+      state,
+      _action: PayloadAction<string>,
+    ) {
+      // saga handles
+    },
+    completeBookingSuccess(state, action: PayloadAction<string>) {
+      const booking = state.providerBookings.find(b => b.id === action.payload);
+      if (booking) {
+        booking.status = 'completed';
+      }
+    },
+    loadSpending(
+      state,
+      _action: PayloadAction<{month: number; year: number}>,
+    ) {
+      state.spendingLoading = true;
+    },
+    loadSpendingSuccess(state, action: PayloadAction<SpendingStats>) {
+      state.spending = action.payload;
+      state.spendingLoading = false;
+    },
+    loadSpendingFailure(state) {
+      state.spendingLoading = false;
+    },
+    setSpendingMonth(state, action: PayloadAction<{month: number; year: number}>) {
+      state.spendingMonth = action.payload.month;
+      state.spendingYear = action.payload.year;
+    },
   },
 });
 
@@ -139,5 +197,14 @@ export const {
   loadProviderBookingsSuccess,
   updateBookingStatus,
   updateBookingStatusSuccess,
+  cancelBooking,
+  cancelBookingSuccess,
+  cancelBookingFailure,
+  completeBooking,
+  completeBookingSuccess,
+  loadSpending,
+  loadSpendingSuccess,
+  loadSpendingFailure,
+  setSpendingMonth,
 } = bookingSlice.actions;
 export default bookingSlice.reducer;

@@ -1,5 +1,5 @@
 import {createSlice, PayloadAction} from '@reduxjs/toolkit';
-import type {Service, ServiceFilter} from '@/types';
+import type {Service, ServiceFilter, Review, ReviewDraft} from '@/types';
 
 const initialFilter: ServiceFilter = {
   categories: [],
@@ -15,6 +15,9 @@ interface ServiceState {
   loading: boolean;
   error: string | null;
   filter: ServiceFilter;
+  reviews: Review[];
+  reviewsLoading: boolean;
+  reviewSubmitting: boolean;
 }
 
 const initialState: ServiceState = {
@@ -23,6 +26,9 @@ const initialState: ServiceState = {
   loading: false,
   error: null,
   filter: initialFilter,
+  reviews: [],
+  reviewsLoading: false,
+  reviewSubmitting: false,
 };
 
 const serviceSlice = createSlice({
@@ -57,6 +63,26 @@ const serviceSlice = createSlice({
       state.loading = true;
       state.error = null;
     },
+    loadReviews(state, _action: PayloadAction<string>) {
+      state.reviewsLoading = true;
+    },
+    loadReviewsSuccess(state, action: PayloadAction<Review[]>) {
+      state.reviews = action.payload;
+      state.reviewsLoading = false;
+    },
+    loadReviewsFailure(state) {
+      state.reviewsLoading = false;
+    },
+    submitReview(state, _action: PayloadAction<ReviewDraft>) {
+      state.reviewSubmitting = true;
+    },
+    submitReviewSuccess(state, action: PayloadAction<Review>) {
+      state.reviews.unshift(action.payload);
+      state.reviewSubmitting = false;
+    },
+    submitReviewFailure(state) {
+      state.reviewSubmitting = false;
+    },
   },
 });
 
@@ -69,5 +95,11 @@ export const {
   setFilter,
   clearFilter,
   loadFilteredServices,
+  loadReviews,
+  loadReviewsSuccess,
+  loadReviewsFailure,
+  submitReview,
+  submitReviewSuccess,
+  submitReviewFailure,
 } = serviceSlice.actions;
 export default serviceSlice.reducer;

@@ -16,6 +16,7 @@ import {useDispatch, useSelector} from 'react-redux';
 import {useTranslation} from 'react-i18next';
 import {loadCategories} from '../homeSlice';
 import {loadServices, selectService, setFilter} from '@/features/services/serviceSlice';
+import {loadFavorites, toggleFavorite} from '@/features/favorites/favoritesSlice';
 import ServiceCard from '@/components/ServiceCard/ServiceCard';
 import {theme} from '@/utils/theme';
 import type {RootState} from '@/store';
@@ -43,10 +44,12 @@ export default function HomeScreen({navigation}: Props) {
     (state: RootState) => state.services,
   );
   const user = useSelector((state: RootState) => state.auth.user);
+  const favoriteIds = useSelector((state: RootState) => state.favorites.ids);
 
   useEffect(() => {
     dispatch(loadCategories());
     dispatch(loadServices());
+    dispatch(loadFavorites());
   }, [dispatch]);
 
   const popularServices = services.slice(0, 6);
@@ -127,6 +130,8 @@ export default function HomeScreen({navigation}: Props) {
                   service={item}
                   onPress={() => handleServicePress(item)}
                   horizontal
+                  isFavorite={favoriteIds.includes(item.id)}
+                  onToggleFavorite={() => dispatch(toggleFavorite(item.id))}
                 />
               </Animated.View>
             )}

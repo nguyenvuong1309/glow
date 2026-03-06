@@ -57,10 +57,15 @@
   },
   "bookingHistory": {
     "empty": "Bạn chưa có lịch hẹn nào",
+    "cancelBooking": "Huỷ lịch hẹn",
+    "confirmCancel": "Huỷ lịch hẹn",
+    "confirmCancelMessage": "Bạn có chắc muốn huỷ lịch hẹn này?",
+    "writeReview": "Viết đánh giá",
     "status": {
       "pending": "Chờ xác nhận",
       "confirmed": "Đã xác nhận",
-      "cancelled": "Đã huỷ"
+      "cancelled": "Đã huỷ",
+      "completed": "Hoàn thành"
     }
   },
   "bookingConfirm": {
@@ -108,7 +113,10 @@
     "confirmApprove": "Duyệt đặt lịch",
     "confirmApproveMessage": "Bạn có chắc muốn duyệt đặt lịch này?",
     "confirmReject": "Từ chối đặt lịch",
-    "confirmRejectMessage": "Bạn có chắc muốn từ chối đặt lịch này?"
+    "confirmRejectMessage": "Bạn có chắc muốn từ chối đặt lịch này?",
+    "complete": "Hoàn thành",
+    "confirmComplete": "Hoàn thành lịch hẹn",
+    "confirmCompleteMessage": "Đánh dấu lịch hẹn này đã hoàn thành?"
   },
   "profile": {
     "guest": "Khách",
@@ -118,7 +126,9 @@
     "language": "Ngôn ngữ",
     "postService": "Đăng dịch vụ",
     "myServices": "Dịch vụ của tôi",
+    "dashboard": "Bảng điều khiển",
     "bookingRequests": "Yêu cầu đặt lịch",
+    "favorites": "Yêu thích",
     "servicesSection": "Dịch vụ",
     "accountSection": "Tài khoản"
   },
@@ -131,6 +141,46 @@
     "myBookings": "Lịch hẹn của tôi",
     "postService": "Đăng dịch vụ",
     "myServices": "Dịch vụ của tôi",
-    "bookingRequests": "Yêu cầu đặt lịch"
+    "bookingRequests": "Yêu cầu đặt lịch",
+    "dashboard": "Bảng điều khiển",
+    "writeReview": "Viết đánh giá",
+    "favorites": "Yêu thích",
+    "spending": "Chi tiêu"
+  },
+  "review": {
+    "reviews": "Đánh giá",
+    "noReviews": "Chưa có đánh giá nào",
+    "rating": "Đánh giá",
+    "comment": "Nhận xét (tuỳ chọn)",
+    "commentPlaceholder": "Chia sẻ trải nghiệm của bạn...",
+    "submit": "Gửi đánh giá",
+    "errorTitle": "Lỗi",
+    "validationRating": "Vui lòng chọn đánh giá",
+    "successTitle": "Cảm ơn bạn!",
+    "successMessage": "Đánh giá của bạn đã được gửi."
+  },
+  "favorites": {
+    "empty": "Chưa có dịch vụ yêu thích nào"
+  },
+  "spending": {
+    "title": "Chi tiêu",
+    "totalSpent": "Tổng chi tiêu",
+    "bookings": "Lịch hẹn",
+    "byService": "Theo dịch vụ",
+    "noData": "Không có dữ liệu cho tháng này"
+  },
+  "dashboard": {
+    "revenue": "Doanh thu",
+    "confirmed": "Đã xác nhận",
+    "pending": "Đang chờ",
+    "cancelled": "Đã huỷ",
+    "topServices": "Dịch vụ nổi bật",
+    "revenueByDay": "Doanh thu theo ngày",
+    "noData": "Không có dữ liệu cho tháng này",
+    "bookings": "lịch hẹn",
+    "conversionRate": "Tỷ lệ chuyển đổi",
+    "totalBookings": "tổng lượt đặt",
+    "peakHours": "Giờ cao điểm",
+    "busiestDays": "Ngày bận nhất"
   }
 }

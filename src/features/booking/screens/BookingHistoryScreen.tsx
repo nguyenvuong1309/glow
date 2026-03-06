@@ -1,4 +1,4 @@
-import React, {useCallback} from 'react';
+import React, {useCallback, useEffect} from 'react';
 import {
   View,
   Text,
@@ -6,27 +6,46 @@ import {
   FlatList,
   ActivityIndicator,
   RefreshControl,
+  TouchableOpacity,
+  Alert,
 } from 'react-native';
 import {useDispatch, useSelector} from 'react-redux';
 import {useTranslation} from 'react-i18next';
 import {useFocusEffect} from '@react-navigation/native';
 import {getDateLocale} from '@/i18n';
-import {loadBookings} from '../bookingSlice';
+import {loadBookings, cancelBooking} from '../bookingSlice';
 import {theme} from '@/utils/theme';
 import type {RootState} from '@/store';
 import type {Booking} from '@/types';
+import type {NativeStackNavigationProp} from '@react-navigation/native-stack';
+import type {BookingStackParamList} from '@/navigation/types';
 
 const STATUS_COLORS: Record<Booking['status'], string> = {
   pending: '#FF9800',
   confirmed: theme.colors.success,
   cancelled: '#E53935',
+  completed: '#2196F3',
 };
 
-export default function BookingHistoryScreen() {
+interface Props {
+  navigation: NativeStackNavigationProp<BookingStackParamList>;
+}
+
+export default function BookingHistoryScreen({navigation}: Props) {
   const {t} = useTranslation();
   const dispatch = useDispatch();
   const bookings = useSelector((state: RootState) => state.booking.history);
   const loading = useSelector((state: RootState) => state.booking.loading);
+
+  useEffect(() => {
+    navigation.setOptions({
+      headerRight: () => (
+        <TouchableOpacity onPress={() => navigation.navigate('Spending')}>
+          <Text style={styles.headerButton}>{t('spending.title')}</Text>
+        </TouchableOpacity>
+      ),
+    });
+  }, [navigation, t]);
 
   useFocusEffect(
     useCallback(() => {
@@ -42,6 +61,21 @@ export default function BookingHistoryScreen() {
       day: 'numeric',
       year: 'numeric',
     });
+  };
+
+  const handleCancel = (bookingId: string) => {
+    Alert.alert(
+      t('bookingHistory.confirmCancel'),
+      t('bookingHistory.confirmCancelMessage'),
+      [
+        {text: t('common.cancel'), style: 'cancel'},
+        {
+          text: t('bookingHistory.cancelBooking'),
+          style: 'destructive',
+          onPress: () => dispatch(cancelBooking(bookingId)),
+        },
+      ],
+    );
   };
 
   const renderItem = ({item}: {item: Booking}) => (
@@ -73,6 +107,29 @@ export default function BookingHistoryScreen() {
           {item.notes}
         </Text>
       ) : null}
+      {(item.status === 'pending' || item.status === 'confirmed') && (
+        <TouchableOpacity
+          style={styles.cancelButton}
+          onPress={() => handleCancel(item.id)}>
+          <Text style={styles.cancelButtonText}>
+            {t('bookingHistory.cancelBooking')}
+          </Text>
+        </TouchableOpacity>
+      )}
+      {item.status === 'completed' && (
+        <TouchableOpacity
+          style={styles.reviewButton}
+          onPress={() =>
+            navigation.navigate('Review', {
+              bookingId: item.id,
+              serviceId: item.service_id,
+            })
+          }>
+          <Text style={styles.reviewButtonText}>
+            {t('bookingHistory.writeReview')}
+          </Text>
+        </TouchableOpacity>
+      )}
     </View>
   );
 
@@ -169,5 +226,35 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: theme.colors.textSecondary,
     textAlign: 'center',
+  },
+  cancelButton: {
+    marginTop: theme.spacing.sm,
+    paddingVertical: 8,
+    borderRadius: theme.radius.sm,
+    borderWidth: 1,
+    borderColor: '#E53935',
+    alignItems: 'center',
+  },
+  cancelButtonText: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#E53935',
+  },
+  reviewButton: {
+    marginTop: theme.spacing.sm,
+    paddingVertical: 8,
+    borderRadius: theme.radius.sm,
+    backgroundColor: theme.colors.primaryDark,
+    alignItems: 'center',
+  },
+  reviewButtonText: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#fff',
+  },
+  headerButton: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: theme.colors.primaryDark,
   },
 });

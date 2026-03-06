@@ -13,7 +13,7 @@ import {useDispatch, useSelector} from 'react-redux';
 import {useTranslation} from 'react-i18next';
 import {useFocusEffect} from '@react-navigation/native';
 import {getDateLocale} from '@/i18n';
-import {loadProviderBookings, updateBookingStatus} from '../bookingSlice';
+import {loadProviderBookings, updateBookingStatus, completeBooking} from '../bookingSlice';
 import {theme} from '@/utils/theme';
 import type {RootState} from '@/store';
 import type {Booking} from '@/types';
@@ -22,6 +22,7 @@ const STATUS_COLORS: Record<Booking['status'], string> = {
   pending: '#FF9800',
   confirmed: theme.colors.success,
   cancelled: '#E53935',
+  completed: '#2196F3',
 };
 
 export default function BookingRequestsScreen() {
@@ -81,6 +82,20 @@ export default function BookingRequestsScreen() {
     );
   };
 
+  const handleComplete = (bookingId: string) => {
+    Alert.alert(
+      t('bookingRequests.confirmComplete'),
+      t('bookingRequests.confirmCompleteMessage'),
+      [
+        {text: t('common.cancel'), style: 'cancel'},
+        {
+          text: t('bookingRequests.complete'),
+          onPress: () => dispatch(completeBooking(bookingId)),
+        },
+      ],
+    );
+  };
+
   const renderItem = ({item}: {item: Booking}) => (
     <View style={styles.card}>
       <View style={styles.cardHeader}>
@@ -124,6 +139,17 @@ export default function BookingRequestsScreen() {
             onPress={() => handleReject(item.id)}>
             <Text style={styles.rejectText}>
               {t('bookingRequests.reject')}
+            </Text>
+          </TouchableOpacity>
+        </View>
+      )}
+      {item.status === 'confirmed' && (
+        <View style={styles.actions}>
+          <TouchableOpacity
+            style={styles.completeButton}
+            onPress={() => handleComplete(item.id)}>
+            <Text style={styles.completeText}>
+              {t('bookingRequests.complete')}
             </Text>
           </TouchableOpacity>
         </View>
@@ -245,6 +271,18 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   rejectText: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#fff',
+  },
+  completeButton: {
+    flex: 1,
+    paddingVertical: 10,
+    borderRadius: theme.radius.md,
+    backgroundColor: '#2196F3',
+    alignItems: 'center',
+  },
+  completeText: {
     fontSize: 14,
     fontWeight: '600',
     color: '#fff',

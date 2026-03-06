@@ -16,6 +16,7 @@ import {BottomSheetModal} from '@gorhom/bottom-sheet';
 import {useDispatch, useSelector} from 'react-redux';
 import {useTranslation} from 'react-i18next';
 import {loadServices, selectService} from '../serviceSlice';
+import {toggleFavorite} from '@/features/favorites/favoritesSlice';
 import FilterBottomSheet from '@/components/FilterBottomSheet/FilterBottomSheet';
 import ServiceCard from '@/components/ServiceCard/ServiceCard';
 import {theme} from '@/utils/theme';
@@ -35,6 +36,7 @@ export default function ServiceListScreen({navigation}: Props) {
     (state: RootState) => state.services,
   );
   const {categories} = useSelector((state: RootState) => state.home);
+  const favoriteIds = useSelector((state: RootState) => state.favorites.ids);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const bottomSheetRef = useRef<BottomSheetModal>(null);
 
@@ -159,6 +161,8 @@ export default function ServiceListScreen({navigation}: Props) {
               <ServiceCard
                 service={item}
                 onPress={() => handleServicePress(item)}
+                isFavorite={favoriteIds.includes(item.id)}
+                onToggleFavorite={() => dispatch(toggleFavorite(item.id))}
               />
             </Animated.View>
           )}

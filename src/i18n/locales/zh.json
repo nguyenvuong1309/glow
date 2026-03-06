@@ -57,10 +57,15 @@
   },
   "bookingHistory": {
     "empty": "您还没有预约记录",
+    "cancelBooking": "取消预约",
+    "confirmCancel": "取消预约",
+    "confirmCancelMessage": "确定要取消此预约吗？",
+    "writeReview": "写评价",
     "status": {
       "pending": "待确认",
       "confirmed": "已确认",
-      "cancelled": "已取消"
+      "cancelled": "已取消",
+      "completed": "已完成"
     }
   },
   "bookingConfirm": {
@@ -108,7 +113,10 @@
     "confirmApprove": "批准预约",
     "confirmApproveMessage": "确定要批准此预约吗？",
     "confirmReject": "拒绝预约",
-    "confirmRejectMessage": "确定要拒绝此预约吗？"
+    "confirmRejectMessage": "确定要拒绝此预约吗？",
+    "complete": "标记完成",
+    "confirmComplete": "完成预约",
+    "confirmCompleteMessage": "将此预约标记为已完成？"
   },
   "profile": {
     "guest": "访客",
@@ -118,7 +126,9 @@
     "language": "语言",
     "postService": "发布服务",
     "myServices": "我的服务",
+    "dashboard": "数据面板",
     "bookingRequests": "预约请求",
+    "favorites": "收藏",
     "servicesSection": "服务管理",
     "accountSection": "账户"
   },
@@ -131,6 +141,46 @@
     "myBookings": "我的预约",
     "postService": "发布服务",
     "myServices": "我的服务",
-    "bookingRequests": "预约请求"
+    "bookingRequests": "预约请求",
+    "dashboard": "数据面板",
+    "writeReview": "写评价",
+    "favorites": "收藏",
+    "spending": "消费"
+  },
+  "review": {
+    "reviews": "评价",
+    "noReviews": "暂无评价",
+    "rating": "评分",
+    "comment": "评论（可选）",
+    "commentPlaceholder": "分享您的体验...",
+    "submit": "提交评价",
+    "errorTitle": "错误",
+    "validationRating": "请选择评分",
+    "successTitle": "感谢您！",
+    "successMessage": "您的评价已提交。"
+  },
+  "favorites": {
+    "empty": "暂无收藏"
+  },
+  "spending": {
+    "title": "消费",
+    "totalSpent": "总消费",
+    "bookings": "预约",
+    "byService": "按服务",
+    "noData": "本月暂无数据"
+  },
+  "dashboard": {
+    "revenue": "收入",
+    "confirmed": "已确认",
+    "pending": "待处理",
+    "cancelled": "已取消",
+    "topServices": "热门服务",
+    "revenueByDay": "每日收入",
+    "noData": "本月暂无数据",
+    "bookings": "预约",
+    "conversionRate": "转化率",
+    "totalBookings": "总预约数",
+    "peakHours": "高峰时段",
+    "busiestDays": "最忙碌的日子"
   }
 }
