@@ -46,7 +46,10 @@
     "placeholder": "Any special requests?",
     "confirmBooking": "Confirm Booking",
     "validationDate": "Please select a date",
+    "validationDateFuture": "Please select a future date",
     "validationTime": "Please select a time",
+    "confirmTitle": "Confirm Booking",
+    "confirmMessage": "Are you sure you want to book this appointment?",
     "serviceMeta": "${{price}} \u00b7 {{minutes}} min",
     "noAvailableDates": "No available dates for this service",
     "noAvailableSlots": "No available time slots for this date",
@@ -89,8 +92,10 @@
     "validationName": "Service name is required",
     "validationCategory": "Please select a category",
     "validationDescription": "Description is required",
-    "validationPrice": "Price must be greater than 0",
-    "validationMedia": "Add at least one photo"
+    "validationPrice": "Price must be between $1 and $100,000",
+    "validationMedia": "Add at least one photo",
+    "fileTooLarge": "File is too large (max 10MB)",
+    "invalidFileType": "Only JPEG, PNG, and WebP images are allowed"
   },
   "myServices": {
     "empty": "You haven't posted any services yet",
@@ -108,10 +113,14 @@
   "profile": {
     "guest": "Guest",
     "signOut": "Sign Out",
+    "signOutConfirmTitle": "Sign Out",
+    "signOutConfirmMessage": "Are you sure you want to sign out?",
     "language": "Language",
     "postService": "Post a Service",
     "myServices": "My Services",
-    "bookingRequests": "Booking Requests"
+    "bookingRequests": "Booking Requests",
+    "servicesSection": "Services",
+    "accountSection": "Account"
   },
   "navigation": {
     "home": "Home",

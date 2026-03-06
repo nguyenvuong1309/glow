@@ -20,12 +20,13 @@ import DatePicker from 'react-native-date-picker';
 import {submitService, updateServiceRequest, clearPostService} from '../postServiceSlice';
 import {theme} from '@/utils/theme';
 import type {RootState} from '@/store';
-import type {NavigationProp} from '@react-navigation/native';
-import type {Service} from '@/types';
+import type {NativeStackNavigationProp} from '@react-navigation/native-stack';
+import type {RouteProp} from '@react-navigation/native';
+import type {ProfileStackParamList} from '@/navigation/types';
 
 interface Props {
-  navigation: NavigationProp<any>;
-  route: {params?: {service?: Service}};
+  navigation: NativeStackNavigationProp<ProfileStackParamList>;
+  route: RouteProp<ProfileStackParamList, 'PostService'>;
 }
 
 export default function PostServiceScreen({navigation, route}: Props) {
@@ -73,8 +74,11 @@ export default function PostServiceScreen({navigation, route}: Props) {
     name: z.string().min(1, t('postService.validationName')),
     category_id: z.string().min(1, t('postService.validationCategory')),
     description: z.string().min(1, t('postService.validationDescription')),
-    price: z.string().refine(v => Number(v) > 0, t('postService.validationPrice')),
-    duration_minutes: z.number().min(1),
+    price: z.string().refine(v => {
+      const n = Number(v);
+      return n > 0 && n <= 100000;
+    }, t('postService.validationPrice')),
+    duration_minutes: z.number().min(5).max(480),
   });
 
   type FormData = z.infer<typeof schema>;
@@ -106,17 +110,29 @@ export default function PostServiceScreen({navigation, route}: Props) {
   };
 
   const handlePickMedia = () => {
+    const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
+    const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
     launchImageLibrary(
-      {mediaType: 'mixed', selectionLimit: 5},
+      {mediaType: 'photo', selectionLimit: 5},
       response => {
         if (response.didCancel || response.errorCode) return;
         if (response.assets) {
-          setMedia(prev => {
-            const combined = [...prev, ...response.assets!];
-            return combined.slice(0, 5);
+          const valid = response.assets.filter(asset => {
+            if (asset.fileSize && asset.fileSize > MAX_FILE_SIZE) {
+              setMediaError(t('postService.fileTooLarge'));
+              return false;
+            }
+            if (asset.type && !ALLOWED_TYPES.includes(asset.type)) {
+              setMediaError(t('postService.invalidFileType'));
+              return false;
+            }
+            return true;
           });
-          setExistingImageUrl('');
-          setMediaError(null);
+          if (valid.length > 0) {
+            setMedia(prev => [...prev, ...valid].slice(0, 5));
+            setExistingImageUrl('');
+            setMediaError(null);
+          }
         }
       },
     );
@@ -186,6 +202,7 @@ export default function PostServiceScreen({navigation, route}: Props) {
             placeholderTextColor={theme.colors.textSecondary}
             value={value}
             onChangeText={onChange}
+            maxLength={100}
           />
         )}
       />
@@ -226,6 +243,7 @@ export default function PostServiceScreen({navigation, route}: Props) {
             onChangeText={onChange}
             multiline
             numberOfLines={4}
+            maxLength={1000}
           />
         )}
       />

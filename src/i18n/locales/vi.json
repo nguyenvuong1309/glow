@@ -46,7 +46,10 @@
     "placeholder": "Yêu cầu đặc biệt?",
     "confirmBooking": "Xác nhận đặt lịch",
     "validationDate": "Vui lòng chọn ngày",
+    "validationDateFuture": "Vui lòng chọn ngày trong tương lai",
     "validationTime": "Vui lòng chọn giờ",
+    "confirmTitle": "Xác nhận đặt lịch",
+    "confirmMessage": "Bạn có chắc muốn đặt lịch hẹn này?",
     "serviceMeta": "{{price}}đ · {{minutes}} phút",
     "noAvailableDates": "Không có ngày trống cho dịch vụ này",
     "noAvailableSlots": "Không có khung giờ trống cho ngày này",
@@ -89,8 +92,10 @@
     "validationName": "Vui lòng nhập tên dịch vụ",
     "validationCategory": "Vui lòng chọn danh mục",
     "validationDescription": "Vui lòng nhập mô tả",
-    "validationPrice": "Giá phải lớn hơn 0",
-    "validationMedia": "Thêm ít nhất một ảnh"
+    "validationPrice": "Giá phải từ 1 đến 100.000",
+    "validationMedia": "Thêm ít nhất một ảnh",
+    "fileTooLarge": "File quá lớn (tối đa 10MB)",
+    "invalidFileType": "Chỉ chấp nhận ảnh JPEG, PNG và WebP"
   },
   "myServices": {
     "empty": "Bạn chưa đăng dịch vụ nào",
@@ -108,10 +113,14 @@
   "profile": {
     "guest": "Khách",
     "signOut": "Đăng xuất",
+    "signOutConfirmTitle": "Đăng xuất",
+    "signOutConfirmMessage": "Bạn có chắc muốn đăng xuất?",
     "language": "Ngôn ngữ",
     "postService": "Đăng dịch vụ",
     "myServices": "Dịch vụ của tôi",
-    "bookingRequests": "Yêu cầu đặt lịch"
+    "bookingRequests": "Yêu cầu đặt lịch",
+    "servicesSection": "Dịch vụ",
+    "accountSection": "Tài khoản"
   },
   "navigation": {
     "home": "Trang chủ",

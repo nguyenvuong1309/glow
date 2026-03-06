@@ -1,11 +1,8 @@
 import 'react-native-url-polyfill/auto';
 import {createClient} from '@supabase/supabase-js';
 import {mmkvStorage} from './storage';
+import {SUPABASE_URL, SUPABASE_ANON_KEY} from '@env';
 import type {Service, Category, Booking, BookingDraft, ServiceDraft, ServiceFilter, ServiceAvailability} from '@/types';
-
-const SUPABASE_URL = 'https://bdavvqgseigqmxerdytn.supabase.co';
-const SUPABASE_ANON_KEY =
-  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJkYXZ2cWdzZWlncW14ZXJkeXRuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzIyNjI1ODYsImV4cCI6MjA4NzgzODU4Nn0.I10osCW3J30x42Tx7RKuvNaJUn9OLwLesKzcODB8XiU';
 
 export const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
   auth: {

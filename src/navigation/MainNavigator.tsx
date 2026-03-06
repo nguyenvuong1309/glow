@@ -2,6 +2,13 @@ import React from 'react';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import {useTranslation} from 'react-i18next';
+import type {
+  HomeStackParamList,
+  ServiceStackParamList,
+  BookingStackParamList,
+  ProfileStackParamList,
+  TabParamList,
+} from './types';
 import HomeScreen from '@/features/home/screens/HomeScreen';
 import ServiceListScreen from '@/features/services/screens/ServiceListScreen';
 import ServiceDetailScreen from '@/features/services/screens/ServiceDetailScreen';
@@ -14,11 +21,11 @@ import BookingRequestsScreen from '@/features/booking/screens/BookingRequestsScr
 import MyServicesScreen from '@/features/postService/screens/MyServicesScreen';
 import {theme} from '@/utils/theme';
 
-const Tab = createBottomTabNavigator();
-const HomeStack = createNativeStackNavigator();
-const ServiceStack = createNativeStackNavigator();
-const BookingStack = createNativeStackNavigator();
-const ProfileStack = createNativeStackNavigator();
+const Tab = createBottomTabNavigator<TabParamList>();
+const HomeStack = createNativeStackNavigator<HomeStackParamList>();
+const ServiceStack = createNativeStackNavigator<ServiceStackParamList>();
+const BookingStack = createNativeStackNavigator<BookingStackParamList>();
+const ProfileStack = createNativeStackNavigator<ProfileStackParamList>();
 
 function HomeStackScreen() {
   const {t} = useTranslation();

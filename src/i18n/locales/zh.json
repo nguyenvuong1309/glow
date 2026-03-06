@@ -46,7 +46,10 @@
     "placeholder": "有特殊要求吗？",
     "confirmBooking": "确认预约",
     "validationDate": "请选择日期",
+    "validationDateFuture": "请选择未来的日期",
     "validationTime": "请选择时间",
+    "confirmTitle": "确认预约",
+    "confirmMessage": "确定要预约此服务吗？",
     "serviceMeta": "¥{{price}} · {{minutes}} 分钟",
     "noAvailableDates": "该服务暂无可用日期",
     "noAvailableSlots": "该日期暂无可用时段",
@@ -89,8 +92,10 @@
     "validationName": "请输入服务名称",
     "validationCategory": "请选择分类",
     "validationDescription": "请输入描述",
-    "validationPrice": "价格必须大于0",
-    "validationMedia": "请至少添加一张照片"
+    "validationPrice": "价格必须在1到100,000之间",
+    "validationMedia": "请至少添加一张照片",
+    "fileTooLarge": "文件太大（最大10MB）",
+    "invalidFileType": "仅支持JPEG、PNG和WebP格式的图片"
   },
   "myServices": {
     "empty": "您还没有发布任何服务",
@@ -108,10 +113,14 @@
   "profile": {
     "guest": "访客",
     "signOut": "退出登录",
+    "signOutConfirmTitle": "退出登录",
+    "signOutConfirmMessage": "确定要退出登录吗？",
     "language": "语言",
     "postService": "发布服务",
     "myServices": "我的服务",
-    "bookingRequests": "预约请求"
+    "bookingRequests": "预约请求",
+    "servicesSection": "服务管理",
+    "accountSection": "账户"
   },
   "navigation": {
     "home": "首页",
@@ -120,6 +129,7 @@
     "serviceDetails": "服务详情",
     "bookAppointment": "预约",
     "myBookings": "我的预约",
+    "postService": "发布服务",
     "myServices": "我的服务",
     "bookingRequests": "预约请求"
   }

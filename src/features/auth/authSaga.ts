@@ -10,14 +10,13 @@ import {
 import {supabase} from '@/lib/supabase';
 import {GoogleSignin} from '@react-native-google-signin/google-signin';
 import {appleAuth} from '@invertase/react-native-apple-authentication';
+import {GOOGLE_WEB_CLIENT_ID, GOOGLE_IOS_CLIENT_ID} from '@env';
 import type {User} from '@/types';
 import type {Session} from '@supabase/supabase-js';
 
 GoogleSignin.configure({
-  webClientId:
-    '26026437449-3l2kjie93jqjruie44t32jcsg7p1h833.apps.googleusercontent.com',
-  iosClientId:
-    '26026437449-2nm5l5duuuitm5079odokq5vriep3tuv.apps.googleusercontent.com',
+  webClientId: GOOGLE_WEB_CLIENT_ID,
+  iosClientId: GOOGLE_IOS_CLIENT_ID,
 });
 
 function mapSessionToUser(session: Session): User {

@@ -5,6 +5,7 @@ interface BookingState {
   draft: BookingDraft | null;
   history: Booking[];
   loading: boolean;
+  error: string | null;
   availability: ServiceAvailability[];
   availableDates: string[];
   availableTimeSlots: string[];
@@ -18,6 +19,7 @@ const initialState: BookingState = {
   draft: null,
   history: [],
   loading: false,
+  error: null,
   availability: [],
   availableDates: [],
   availableTimeSlots: [],
@@ -54,8 +56,9 @@ const bookingSlice = createSlice({
       state.availableDates = action.payload.dates;
       state.loadingAvailability = false;
     },
-    loadAvailabilityFailure(state) {
+    loadAvailabilityFailure(state, action: PayloadAction<string | undefined>) {
       state.loadingAvailability = false;
+      state.error = action.payload ?? 'Failed to load availability';
     },
     loadTimeSlots(
       state,
@@ -68,19 +71,22 @@ const bookingSlice = createSlice({
       state.availableTimeSlots = action.payload;
       state.loadingTimeSlots = false;
     },
-    loadTimeSlotsFailure(state) {
+    loadTimeSlotsFailure(state, action: PayloadAction<string | undefined>) {
       state.loadingTimeSlots = false;
+      state.error = action.payload ?? 'Failed to load time slots';
     },
     submitBooking(state) {
       state.loading = true;
+      state.error = null;
     },
     submitBookingSuccess(state, action: PayloadAction<Booking>) {
       state.history.unshift(action.payload);
       state.draft = null;
       state.loading = false;
     },
-    submitBookingFailure(state) {
+    submitBookingFailure(state, action: PayloadAction<string | undefined>) {
       state.loading = false;
+      state.error = action.payload ?? 'Failed to submit booking';
     },
     loadBookings(state) {
       state.loading = true;

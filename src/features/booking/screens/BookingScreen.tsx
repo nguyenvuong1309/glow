@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   TextInput,
   ActivityIndicator,
+  Alert,
 } from 'react-native';
 import {useForm, Controller} from 'react-hook-form';
 import {zodResolver} from '@hookform/resolvers/zod';
@@ -17,10 +18,11 @@ import {getDateLocale} from '@/i18n';
 import {setDraft, submitBooking, loadAvailability, loadTimeSlots} from '../bookingSlice';
 import {theme} from '@/utils/theme';
 import type {RootState} from '@/store';
-import type {NavigationProp} from '@react-navigation/native';
+import type {NativeStackNavigationProp} from '@react-navigation/native-stack';
+import type {HomeStackParamList} from '@/navigation/types';
 
 interface Props {
-  navigation: NavigationProp<any>;
+  navigation: NativeStackNavigationProp<HomeStackParamList>;
 }
 
 export default function BookingScreen({navigation}: Props) {
@@ -34,9 +36,12 @@ export default function BookingScreen({navigation}: Props) {
   const loadingTimeSlots = useSelector((state: RootState) => state.booking.loadingTimeSlots);
 
   const bookingSchema = z.object({
-    date: z.string().min(1, t('booking.validationDate')),
+    date: z.string().min(1, t('booking.validationDate')).refine(
+      v => new Date(v + 'T00:00:00') > new Date(),
+      t('booking.validationDateFuture'),
+    ),
     timeSlot: z.string().min(1, t('booking.validationTime')),
-    notes: z.string().optional(),
+    notes: z.string().max(500).optional(),
   });
 
   type BookingFormData = z.infer<typeof bookingSchema>;
@@ -70,16 +75,28 @@ export default function BookingScreen({navigation}: Props) {
 
   const onSubmit = (data: BookingFormData) => {
     if (!service) {return;}
-    dispatch(
-      setDraft({
-        service_id: service.id,
-        date: data.date,
-        time_slot: data.timeSlot,
-        notes: data.notes,
-      }),
+    Alert.alert(
+      t('booking.confirmTitle'),
+      t('booking.confirmMessage'),
+      [
+        {text: t('common.cancel'), style: 'cancel'},
+        {
+          text: t('booking.confirmBooking'),
+          onPress: () => {
+            dispatch(
+              setDraft({
+                service_id: service.id,
+                date: data.date,
+                time_slot: data.timeSlot,
+                notes: data.notes,
+              }),
+            );
+            dispatch(submitBooking());
+            navigation.navigate('BookingConfirm');
+          },
+        },
+      ],
     );
-    dispatch(submitBooking());
-    navigation.navigate('BookingConfirm');
   };
 
   const formatDate = (iso: string) => {
@@ -187,6 +204,7 @@ export default function BookingScreen({navigation}: Props) {
             onChangeText={onChange}
             multiline
             numberOfLines={3}
+            maxLength={500}
           />
         )}
       />

@@ -20,10 +20,17 @@ import ServiceCard from '@/components/ServiceCard/ServiceCard';
 import {theme} from '@/utils/theme';
 import type {RootState} from '@/store';
 import type {Service} from '@/types';
-import type {NavigationProp} from '@react-navigation/native';
+import type {NavigationProp, CompositeNavigationProp} from '@react-navigation/native';
+import type {NativeStackNavigationProp} from '@react-navigation/native-stack';
+import type {HomeStackParamList, TabParamList} from '@/navigation/types';
+
+type HomeNavProp = CompositeNavigationProp<
+  NativeStackNavigationProp<HomeStackParamList>,
+  NavigationProp<TabParamList>
+>;
 
 interface Props {
-  navigation: NavigationProp<any>;
+  navigation: HomeNavProp;
 }
 
 export default function HomeScreen({navigation}: Props) {

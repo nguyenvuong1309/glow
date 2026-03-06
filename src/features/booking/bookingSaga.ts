@@ -136,8 +136,12 @@ function* handleSubmitBooking() {
 }
 
 function* handleLoadBookings() {
-  const bookings: Booking[] = yield call(getBookings);
-  yield put(loadBookingsSuccess(bookings));
+  try {
+    const bookings: Booking[] = yield call(getBookings);
+    yield put(loadBookingsSuccess(bookings));
+  } catch {
+    yield put(loadBookingsSuccess([]));
+  }
 }
 
 function* handleLoadProviderBookings() {

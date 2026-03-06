@@ -7,6 +7,7 @@ import {Provider} from 'react-redux';
 import {PersistGate} from 'redux-persist/integration/react';
 import {store, persistor} from '@/store';
 import AppNavigator from '@/navigation/AppNavigator';
+import ErrorBoundary from '@/components/ErrorBoundary';
 import '@/i18n';
 
 export default function App() {
@@ -17,7 +18,9 @@ export default function App() {
           <PersistGate loading={null} persistor={persistor}>
             <BottomSheetModalProvider>
               <StatusBar barStyle="dark-content" />
-              <AppNavigator />
+              <ErrorBoundary>
+                <AppNavigator />
+              </ErrorBoundary>
             </BottomSheetModalProvider>
           </PersistGate>
         </Provider>

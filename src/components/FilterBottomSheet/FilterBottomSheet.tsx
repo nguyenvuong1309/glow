@@ -44,7 +44,7 @@ const FilterBottomSheet = forwardRef<BottomSheetModal, Props>(
     const [tempPickerValue, setTempPickerValue] = useState<Date>(new Date());
 
     const renderBackdrop = useCallback(
-      (props: any) => (
+      (props: React.ComponentProps<typeof BottomSheetBackdrop>) => (
         <BottomSheetBackdrop
           {...props}
           disappearsOnIndex={-1}

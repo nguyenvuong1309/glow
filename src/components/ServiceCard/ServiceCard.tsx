@@ -11,7 +11,7 @@ interface Props {
   horizontal?: boolean;
 }
 
-export default function ServiceCard({service, onPress, horizontal}: Props) {
+function ServiceCard({service, onPress, horizontal}: Props) {
   const {t} = useTranslation();
   return (
     <TouchableOpacity
@@ -53,6 +53,8 @@ export default function ServiceCard({service, onPress, horizontal}: Props) {
     </TouchableOpacity>
   );
 }
+
+export default React.memo(ServiceCard);
 
 const styles = StyleSheet.create({
   card: {

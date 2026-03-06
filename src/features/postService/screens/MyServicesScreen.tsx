@@ -16,10 +16,11 @@ import {loadMyServices} from '../postServiceSlice';
 import {theme} from '@/utils/theme';
 import type {RootState} from '@/store';
 import type {Service} from '@/types';
-import type {NavigationProp} from '@react-navigation/native';
+import type {NativeStackNavigationProp} from '@react-navigation/native-stack';
+import type {ProfileStackParamList} from '@/navigation/types';
 
 interface Props {
-  navigation: NavigationProp<any>;
+  navigation: NativeStackNavigationProp<ProfileStackParamList>;
 }
 
 export default function MyServicesScreen({navigation}: Props) {

@@ -5,7 +5,7 @@ let _storage: MMKV | null = null;
 
 function getStorage(): MMKV {
   if (!_storage) {
-    _storage = createMMKV({id: 'glow-storage'});
+    _storage = createMMKV({id: 'glow-storage', encryptionKey: 'glow-enc-key'});
   }
   return _storage;
 }

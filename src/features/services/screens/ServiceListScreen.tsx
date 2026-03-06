@@ -21,10 +21,11 @@ import ServiceCard from '@/components/ServiceCard/ServiceCard';
 import {theme} from '@/utils/theme';
 import type {RootState} from '@/store';
 import type {Service} from '@/types';
-import type {NavigationProp} from '@react-navigation/native';
+import type {NativeStackNavigationProp} from '@react-navigation/native-stack';
+import type {ServiceStackParamList} from '@/navigation/types';
 
 interface Props {
-  navigation: NavigationProp<any>;
+  navigation: NativeStackNavigationProp<ServiceStackParamList>;
 }
 
 export default function ServiceListScreen({navigation}: Props) {

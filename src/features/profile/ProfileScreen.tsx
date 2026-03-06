@@ -1,5 +1,13 @@
 import React from 'react';
-import {View, Text, StyleSheet, TouchableOpacity} from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  ScrollView,
+  Image,
+  Alert,
+} from 'react-native';
 import {useDispatch, useSelector} from 'react-redux';
 import {useTranslation} from 'react-i18next';
 import {logoutRequest} from '@/features/auth/authSlice';
@@ -7,10 +15,18 @@ import {changeLanguage} from '@/i18n';
 import {languages} from '@/i18n/languages';
 import {theme} from '@/utils/theme';
 import type {RootState} from '@/store';
-import type {NavigationProp} from '@react-navigation/native';
+import type {NativeStackNavigationProp} from '@react-navigation/native-stack';
+import type {ProfileStackParamList} from '@/navigation/types';
 
 interface Props {
-  navigation: NavigationProp<any>;
+  navigation: NativeStackNavigationProp<ProfileStackParamList>;
+}
+
+interface MenuItem {
+  label: string;
+  onPress: () => void;
+  icon?: string;
+  destructive?: boolean;
 }
 
 export default function ProfileScreen({navigation}: Props) {
@@ -18,66 +34,119 @@ export default function ProfileScreen({navigation}: Props) {
   const dispatch = useDispatch();
   const user = useSelector((state: RootState) => state.auth.user);
 
-  return (
-    <View style={styles.container}>
-      <View style={styles.avatar}>
-        <Text style={styles.avatarText}>
-          {user?.name?.charAt(0)?.toUpperCase() ?? '?'}
-        </Text>
-      </View>
-      <Text style={styles.name}>{user?.name ?? t('profile.guest')}</Text>
-      <Text style={styles.email}>{user?.email ?? ''}</Text>
+  const serviceMenuItems: MenuItem[] = [
+    {
+      label: t('profile.postService'),
+      onPress: () => navigation.navigate('PostService'),
+    },
+    {
+      label: t('profile.myServices'),
+      onPress: () => navigation.navigate('MyServices'),
+    },
+    {
+      label: t('profile.bookingRequests'),
+      onPress: () => navigation.navigate('BookingRequests'),
+    },
+  ];
 
+  const accountMenuItems: MenuItem[] = [
+    {
+      label: t('profile.signOut'),
+      onPress: () => {
+        Alert.alert(
+          t('profile.signOutConfirmTitle'),
+          t('profile.signOutConfirmMessage'),
+          [
+            {text: t('common.cancel'), style: 'cancel'},
+            {
+              text: t('profile.signOut'),
+              style: 'destructive',
+              onPress: () => dispatch(logoutRequest()),
+            },
+          ],
+        );
+      },
+      destructive: true,
+    },
+  ];
+
+  return (
+    <ScrollView
+      style={styles.container}
+      contentContainerStyle={styles.content}
+      showsVerticalScrollIndicator={false}>
+      {/* Header */}
+      <View style={styles.header}>
+        {user?.avatar_url ? (
+          <Image source={{uri: user.avatar_url}} style={styles.avatar} />
+        ) : (
+          <View style={styles.avatarFallback}>
+            <Text style={styles.avatarText}>
+              {user?.name?.charAt(0)?.toUpperCase() ?? '?'}
+            </Text>
+          </View>
+        )}
+        <Text style={styles.name}>{user?.name ?? t('profile.guest')}</Text>
+        {user?.email ? <Text style={styles.email}>{user.email}</Text> : null}
+      </View>
+
+      {/* Language */}
       <View style={styles.section}>
-        <Text style={styles.sectionLabel}>{t('profile.language')}</Text>
-        <View style={styles.languageRow}>
-          {languages.map(lang => (
-            <TouchableOpacity
-              key={lang.code}
-              style={[
-                styles.languageChip,
-                i18n.language === lang.code && styles.languageChipActive,
-              ]}
-              onPress={() => changeLanguage(lang.code)}>
-              <Text
+        <Text style={styles.sectionTitle}>{t('profile.language')}</Text>
+        <View style={styles.card}>
+          <View style={styles.languageRow}>
+            {languages.map(lang => (
+              <TouchableOpacity
+                key={lang.code}
                 style={[
-                  styles.languageChipText,
-                  i18n.language === lang.code && styles.languageChipTextActive,
-                ]}>
-                {lang.label}
-              </Text>
-            </TouchableOpacity>
-          ))}
+                  styles.languageChip,
+                  i18n.language === lang.code && styles.languageChipActive,
+                ]}
+                onPress={() => changeLanguage(lang.code)}>
+                <Text
+                  style={[
+                    styles.languageChipText,
+                    i18n.language === lang.code &&
+                      styles.languageChipTextActive,
+                  ]}>
+                  {lang.label}
+                </Text>
+              </TouchableOpacity>
+            ))}
+          </View>
         </View>
       </View>
 
-      <TouchableOpacity
-        style={styles.postServiceButton}
-        onPress={() => navigation.navigate('PostService')}>
-        <Text style={styles.postServiceText}>{t('profile.postService')}</Text>
-      </TouchableOpacity>
+      {/* Services */}
+      <MenuSection title={t('profile.servicesSection')} items={serviceMenuItems} />
 
-      <TouchableOpacity
-        style={styles.outlineButton}
-        onPress={() => navigation.navigate('MyServices')}>
-        <Text style={styles.outlineButtonText}>
-          {t('profile.myServices')}
-        </Text>
-      </TouchableOpacity>
+      {/* Account */}
+      <MenuSection title={t('profile.accountSection')} items={accountMenuItems} />
+    </ScrollView>
+  );
+}
 
-      <TouchableOpacity
-        style={styles.outlineButton}
-        onPress={() => navigation.navigate('BookingRequests')}>
-        <Text style={styles.outlineButtonText}>
-          {t('profile.bookingRequests')}
-        </Text>
-      </TouchableOpacity>
-
-      <TouchableOpacity
-        style={styles.outlineButton}
-        onPress={() => dispatch(logoutRequest())}>
-        <Text style={styles.outlineButtonText}>{t('profile.signOut')}</Text>
-      </TouchableOpacity>
+function MenuSection({title, items}: {title: string; items: MenuItem[]}) {
+  return (
+    <View style={styles.section}>
+      <Text style={styles.sectionTitle}>{title}</Text>
+      <View style={styles.card}>
+        {items.map((item, index) => (
+          <TouchableOpacity
+            key={item.label}
+            style={[styles.menuItem, index < items.length - 1 && styles.menuItemBorder]}
+            onPress={item.onPress}>
+            <Text
+              style={[
+                styles.menuItemText,
+                item.destructive && styles.menuItemDestructive,
+              ]}>
+              {item.label}
+            </Text>
+            <Text style={styles.chevron}>{'>'}</Text>
+          </TouchableOpacity>
+        ))}
+      </View>
     </View>
   );
 }
@@ -86,91 +155,113 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: theme.colors.background,
+  },
+  content: {
+    paddingBottom: 40,
+  },
+  header: {
     alignItems: 'center',
-    paddingTop: 80,
-    padding: theme.spacing.xl,
+    paddingTop: 32,
+    paddingBottom: 24,
+    paddingHorizontal: theme.spacing.xl,
+    backgroundColor: theme.colors.surface,
+    borderBottomWidth: 1,
+    borderBottomColor: theme.colors.border,
   },
   avatar: {
-    width: 80,
-    height: 80,
-    borderRadius: 40,
+    width: 88,
+    height: 88,
+    borderRadius: 44,
+    marginBottom: theme.spacing.md,
+  },
+  avatarFallback: {
+    width: 88,
+    height: 88,
+    borderRadius: 44,
     backgroundColor: theme.colors.primary,
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: theme.spacing.md,
   },
   avatarText: {
-    fontSize: 32,
+    fontSize: 34,
     fontWeight: '700',
     color: theme.colors.surface,
   },
   name: {
     fontSize: 22,
-    fontWeight: '600',
+    fontWeight: '700',
     color: theme.colors.text,
   },
   email: {
-    fontSize: 15,
+    fontSize: 14,
     color: theme.colors.textSecondary,
-    marginTop: theme.spacing.xs,
+    marginTop: 4,
   },
   section: {
-    width: '100%',
-    marginTop: theme.spacing.xl,
+    marginTop: theme.spacing.lg,
+    paddingHorizontal: theme.spacing.lg,
   },
-  sectionLabel: {
-    fontSize: 14,
+  sectionTitle: {
+    fontSize: 13,
     fontWeight: '600',
     color: theme.colors.textSecondary,
+    textTransform: 'uppercase',
+    letterSpacing: 0.5,
     marginBottom: theme.spacing.sm,
+    marginLeft: 4,
+  },
+  card: {
+    backgroundColor: theme.colors.surface,
+    borderRadius: theme.radius.md,
+    borderWidth: 1,
+    borderColor: theme.colors.border,
+    overflow: 'hidden',
   },
   languageRow: {
     flexDirection: 'row',
     gap: theme.spacing.sm,
+    padding: theme.spacing.md,
   },
   languageChip: {
-    paddingHorizontal: theme.spacing.md,
-    paddingVertical: theme.spacing.sm,
-    borderRadius: theme.radius.full,
-    backgroundColor: theme.colors.surface,
-    borderWidth: 1,
-    borderColor: theme.colors.border,
+    flex: 1,
+    paddingVertical: 10,
+    borderRadius: theme.radius.sm,
+    backgroundColor: theme.colors.background,
+    alignItems: 'center',
   },
   languageChipActive: {
     backgroundColor: theme.colors.primary,
-    borderColor: theme.colors.primary,
   },
   languageChipText: {
     fontSize: 14,
+    fontWeight: '500',
     color: theme.colors.text,
   },
   languageChipTextActive: {
     color: theme.colors.surface,
     fontWeight: '600',
   },
-  postServiceButton: {
-    marginTop: theme.spacing.xl,
+  menuItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
     paddingVertical: 14,
-    paddingHorizontal: 40,
-    borderRadius: theme.radius.md,
-    backgroundColor: theme.colors.primaryDark,
+    paddingHorizontal: theme.spacing.md,
   },
-  postServiceText: {
+  menuItemBorder: {
+    borderBottomWidth: 1,
+    borderBottomColor: theme.colors.border,
+  },
+  menuItemText: {
     fontSize: 16,
-    fontWeight: '600',
-    color: theme.colors.surface,
+    color: theme.colors.text,
   },
-  outlineButton: {
-    marginTop: theme.spacing.md,
-    paddingVertical: 14,
-    paddingHorizontal: 40,
-    borderRadius: theme.radius.md,
-    borderWidth: 1,
-    borderColor: theme.colors.primaryDark,
+  menuItemDestructive: {
+    color: '#E53935',
   },
-  outlineButtonText: {
+  chevron: {
     fontSize: 16,
-    fontWeight: '600',
-    color: theme.colors.primaryDark,
+    color: theme.colors.textSecondary,
   },
 });

@@ -13,10 +13,17 @@ import {useTranslation} from 'react-i18next';
 import {getDateLocale} from '@/i18n';
 import {theme} from '@/utils/theme';
 import type {RootState} from '@/store';
-import type {NavigationProp} from '@react-navigation/native';
+import type {NavigationProp, CompositeNavigationProp} from '@react-navigation/native';
+import type {NativeStackNavigationProp} from '@react-navigation/native-stack';
+import type {HomeStackParamList, TabParamList} from '@/navigation/types';
+
+type ConfirmNavProp = CompositeNavigationProp<
+  NativeStackNavigationProp<HomeStackParamList>,
+  NavigationProp<TabParamList>
+>;
 
 interface Props {
-  navigation: NavigationProp<any>;
+  navigation: ConfirmNavProp;
 }
 
 export default function BookingConfirmScreen({navigation}: Props) {
