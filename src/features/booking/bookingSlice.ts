@@ -1,10 +1,10 @@
-import {createSlice, PayloadAction} from '@reduxjs/toolkit';
-import type {Booking, BookingDraft, ServiceAvailability} from '@/types';
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import type { Booking, BookingDraft, ServiceAvailability } from '@/types';
 
 export interface SpendingStats {
   total: number;
   completedCount: number;
-  byService: {name: string; count: number; total: number}[];
+  byService: { name: string; count: number; total: number }[];
 }
 
 interface BookingState {
@@ -52,9 +52,6 @@ const bookingSlice = createSlice({
     setDraft(state, action: PayloadAction<BookingDraft>) {
       state.draft = action.payload;
     },
-    clearDraft(state) {
-      state.draft = null;
-    },
     loadAvailability(state, _action: PayloadAction<string>) {
       state.loadingAvailability = true;
       state.availability = [];
@@ -78,7 +75,11 @@ const bookingSlice = createSlice({
     },
     loadTimeSlots(
       state,
-      _action: PayloadAction<{serviceId: string; date: string; durationMinutes: number}>,
+      _action: PayloadAction<{
+        serviceId: string;
+        date: string;
+        durationMinutes: number;
+      }>,
     ) {
       state.loadingTimeSlots = true;
       state.availableTimeSlots = [];
@@ -119,16 +120,15 @@ const bookingSlice = createSlice({
       state.providerLoading = false;
     },
     updateBookingStatus(
-      state,
-      _action: PayloadAction<{bookingId: string; status: Booking['status']}>,
+      _action: PayloadAction<{ bookingId: string; status: Booking['status'] }>,
     ) {
       // saga handles the side effect
     },
     updateBookingStatusSuccess(
       state,
-      action: PayloadAction<{bookingId: string; status: Booking['status']}>,
+      action: PayloadAction<{ bookingId: string; status: Booking['status'] }>,
     ) {
-      const {bookingId, status} = action.payload;
+      const { bookingId, status } = action.payload;
       const booking = state.providerBookings.find(b => b.id === bookingId);
       if (booking) {
         booking.status = status;
@@ -147,10 +147,7 @@ const bookingSlice = createSlice({
     cancelBookingFailure(state) {
       state.loading = false;
     },
-    completeBooking(
-      state,
-      _action: PayloadAction<string>,
-    ) {
+    completeBooking(_action: PayloadAction<string>) {
       // saga handles
     },
     completeBookingSuccess(state, action: PayloadAction<string>) {
@@ -161,7 +158,7 @@ const bookingSlice = createSlice({
     },
     loadSpending(
       state,
-      _action: PayloadAction<{month: number; year: number}>,
+      _action: PayloadAction<{ month: number; year: number }>,
     ) {
       state.spendingLoading = true;
     },
@@ -172,7 +169,10 @@ const bookingSlice = createSlice({
     loadSpendingFailure(state) {
       state.spendingLoading = false;
     },
-    setSpendingMonth(state, action: PayloadAction<{month: number; year: number}>) {
+    setSpendingMonth(
+      state,
+      action: PayloadAction<{ month: number; year: number }>,
+    ) {
       state.spendingMonth = action.payload.month;
       state.spendingYear = action.payload.year;
     },
@@ -181,7 +181,6 @@ const bookingSlice = createSlice({
 
 export const {
   setDraft,
-  clearDraft,
   loadAvailability,
   loadAvailabilitySuccess,
   loadAvailabilityFailure,

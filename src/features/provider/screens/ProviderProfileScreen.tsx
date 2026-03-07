@@ -9,7 +9,7 @@ import {
 import {useDispatch, useSelector} from 'react-redux';
 import {useTranslation} from 'react-i18next';
 import {loadProviderProfile} from '../providerSlice';
-import {selectService} from '@/features/services/serviceSlice';
+import {selectService, loadReviews} from '@/features/services/serviceSlice';
 import {toggleFavorite} from '@/features/favorites/favoritesSlice';
 import ServiceCard from '@/components/ServiceCard/ServiceCard';
 import {theme} from '@/utils/theme';
@@ -41,6 +41,7 @@ export default function ProviderProfileScreen({navigation, route}: Props) {
 
   const handleServicePress = (service: Service) => {
     dispatch(selectService(service));
+    dispatch(loadReviews(service.id));
     navigation.navigate('ServiceDetail', {serviceId: service.id});
   };
 

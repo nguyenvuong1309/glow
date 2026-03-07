@@ -1,4 +1,4 @@
-import React, {useCallback, useEffect, useMemo, useState} from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import {
   View,
   Text,
@@ -8,17 +8,17 @@ import {
   TouchableOpacity,
   Alert,
 } from 'react-native';
-import {Calendar, DateData} from 'react-native-calendars';
-import {useDispatch, useSelector} from 'react-redux';
-import {useTranslation} from 'react-i18next';
-import {useFocusEffect} from '@react-navigation/native';
-import {getDateLocale} from '@/i18n';
-import {loadBookings, cancelBooking} from '../bookingSlice';
-import {theme} from '@/utils/theme';
-import type {RootState} from '@/store';
-import type {Booking} from '@/types';
-import type {NativeStackNavigationProp} from '@react-navigation/native-stack';
-import type {BookingStackParamList} from '@/navigation/types';
+import { Calendar, DateData } from 'react-native-calendars';
+import { useDispatch, useSelector } from 'react-redux';
+import { useTranslation } from 'react-i18next';
+import { useFocusEffect } from '@react-navigation/native';
+import { getDateLocale } from '@/i18n';
+import { loadBookings, cancelBooking } from '../bookingSlice';
+import { theme } from '@/utils/theme';
+import type { RootState } from '@/store';
+import type { Booking } from '@/types';
+import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import type { BookingStackParamList } from '@/navigation/types';
 import BookingCardSkeleton from '@/components/Skeleton/BookingCardSkeleton';
 
 const STATUS_COLORS: Record<Booking['status'], string> = {
@@ -32,8 +32,8 @@ interface Props {
   navigation: NativeStackNavigationProp<BookingStackParamList>;
 }
 
-export default function BookingHistoryScreen({navigation}: Props) {
-  const {t} = useTranslation();
+export default function BookingHistoryScreen({ navigation }: Props) {
+  const { t } = useTranslation();
   const dispatch = useDispatch();
   const bookings = useSelector((state: RootState) => state.booking.history);
   const loading = useSelector((state: RootState) => state.booking.loading);
@@ -45,8 +45,11 @@ export default function BookingHistoryScreen({navigation}: Props) {
       headerRight: () => (
         <View style={styles.headerActions}>
           <TouchableOpacity
-            onPress={() => setViewMode(v => (v === 'list' ? 'calendar' : 'list'))}
-            style={styles.headerBtn}>
+            onPress={() =>
+              setViewMode(v => (v === 'list' ? 'calendar' : 'list'))
+            }
+            style={styles.headerBtn}
+          >
             <Text style={styles.headerButton}>
               {viewMode === 'list'
                 ? t('bookingHistory.calendarView')
@@ -82,7 +85,7 @@ export default function BookingHistoryScreen({navigation}: Props) {
       t('bookingHistory.confirmCancel'),
       t('bookingHistory.confirmCancelMessage'),
       [
-        {text: t('common.cancel'), style: 'cancel'},
+        { text: t('common.cancel'), style: 'cancel' },
         {
           text: t('bookingHistory.cancelBooking'),
           style: 'destructive',
@@ -96,11 +99,11 @@ export default function BookingHistoryScreen({navigation}: Props) {
     const marks: Record<string, any> = {};
     bookings.forEach(b => {
       const existing = marks[b.date];
-      const dot = {key: b.id, color: STATUS_COLORS[b.status]};
+      const dot = { key: b.id, color: STATUS_COLORS[b.status] };
       if (existing) {
         existing.dots.push(dot);
       } else {
-        marks[b.date] = {dots: [dot]};
+        marks[b.date] = { dots: [dot] };
       }
     });
     if (selectedDate) {
@@ -122,7 +125,7 @@ export default function BookingHistoryScreen({navigation}: Props) {
     setSelectedDate(prev => (prev === day.dateString ? null : day.dateString));
   };
 
-  const renderItem = ({item}: {item: Booking}) => (
+  const renderItem = ({ item }: { item: Booking }) => (
     <View style={styles.card}>
       <View style={styles.cardHeader}>
         <Text style={styles.serviceName} numberOfLines={1}>
@@ -131,13 +134,12 @@ export default function BookingHistoryScreen({navigation}: Props) {
         <View
           style={[
             styles.statusBadge,
-            {backgroundColor: STATUS_COLORS[item.status] + '20'},
-          ]}>
+            { backgroundColor: STATUS_COLORS[item.status] + '20' },
+          ]}
+        >
           <Text
-            style={[
-              styles.statusText,
-              {color: STATUS_COLORS[item.status]},
-            ]}>
+            style={[styles.statusText, { color: STATUS_COLORS[item.status] }]}
+          >
             {t(`bookingHistory.status.${item.status}`)}
           </Text>
         </View>
@@ -154,7 +156,8 @@ export default function BookingHistoryScreen({navigation}: Props) {
       {(item.status === 'pending' || item.status === 'confirmed') && (
         <TouchableOpacity
           style={styles.cancelButton}
-          onPress={() => handleCancel(item.id)}>
+          onPress={() => handleCancel(item.id)}
+        >
           <Text style={styles.cancelButtonText}>
             {t('bookingHistory.cancelBooking')}
           </Text>
@@ -168,7 +171,8 @@ export default function BookingHistoryScreen({navigation}: Props) {
               bookingId: item.id,
               serviceId: item.service_id,
             })
-          }>
+          }
+        >
           <Text style={styles.reviewButtonText}>
             {t('bookingHistory.writeReview')}
           </Text>

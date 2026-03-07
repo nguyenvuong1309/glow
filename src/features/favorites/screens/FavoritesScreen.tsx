@@ -1,22 +1,22 @@
-import React, {useCallback} from 'react';
-import {View, Text, StyleSheet, FlatList} from 'react-native';
-import {useDispatch, useSelector} from 'react-redux';
-import {useTranslation} from 'react-i18next';
-import {selectService} from '@/features/services/serviceSlice';
-import {toggleFavorite} from '../favoritesSlice';
+import React, { useCallback } from 'react';
+import { Text, StyleSheet, FlatList } from 'react-native';
+import { useDispatch, useSelector } from 'react-redux';
+import { useTranslation } from 'react-i18next';
+import { selectService, loadReviews } from '@/features/services/serviceSlice';
+import { toggleFavorite } from '../favoritesSlice';
 import ServiceCard from '@/components/ServiceCard/ServiceCard';
-import {theme} from '@/utils/theme';
-import type {RootState} from '@/store';
-import type {Service} from '@/types';
-import type {NativeStackNavigationProp} from '@react-navigation/native-stack';
-import type {ProfileStackParamList} from '@/navigation/types';
+import { theme } from '@/utils/theme';
+import type { RootState } from '@/store';
+import type { Service } from '@/types';
+import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import type { ProfileStackParamList } from '@/navigation/types';
 
 interface Props {
   navigation: NativeStackNavigationProp<ProfileStackParamList>;
 }
 
-export default function FavoritesScreen({navigation}: Props) {
-  const {t} = useTranslation();
+export default function FavoritesScreen({ navigation }: Props) {
+  const { t } = useTranslation();
   const dispatch = useDispatch();
   const favoriteIds = useSelector((state: RootState) => state.favorites.ids);
   const allServices = useSelector((state: RootState) => state.services.list);
@@ -25,17 +25,21 @@ export default function FavoritesScreen({navigation}: Props) {
 
   const handlePress = (service: Service) => {
     dispatch(selectService(service));
-    navigation.navigate('ServiceDetail', {serviceId: service.id});
+    dispatch(loadReviews(service.id));
+    navigation.navigate('ServiceDetail', { serviceId: service.id });
   };
 
-  const renderItem = useCallback(({item}: {item: Service}) => (
-    <ServiceCard
-      service={item}
-      onPress={() => handlePress(item)}
-      isFavorite
-      onToggleFavorite={() => dispatch(toggleFavorite(item.id))}
-    />
-  ), [dispatch, handlePress]);
+  const renderItem = useCallback(
+    ({ item }: { item: Service }) => (
+      <ServiceCard
+        service={item}
+        onPress={() => handlePress(item)}
+        isFavorite
+        onToggleFavorite={() => dispatch(toggleFavorite(item.id))}
+      />
+    ),
+    [dispatch, handlePress],
+  );
 
   return (
     <FlatList

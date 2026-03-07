@@ -1,5 +1,5 @@
-import {createSlice, PayloadAction} from '@reduxjs/toolkit';
-import type {Service, ServiceFilter, Review, ReviewDraft} from '@/types';
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import type { Service, ServiceFilter, Review, ReviewDraft } from '@/types';
 
 const initialFilter: ServiceFilter = {
   searchQuery: '',
@@ -51,11 +51,8 @@ const serviceSlice = createSlice({
     selectService(state, action: PayloadAction<Service>) {
       state.selected = action.payload;
     },
-    clearSelectedService(state) {
-      state.selected = null;
-    },
     setFilter(state, action: PayloadAction<Partial<ServiceFilter>>) {
-      state.filter = {...state.filter, ...action.payload};
+      state.filter = { ...state.filter, ...action.payload };
     },
     clearFilter(state) {
       state.filter = initialFilter;
@@ -92,7 +89,6 @@ export const {
   loadServicesSuccess,
   loadServicesFailure,
   selectService,
-  clearSelectedService,
   setFilter,
   clearFilter,
   loadFilteredServices,

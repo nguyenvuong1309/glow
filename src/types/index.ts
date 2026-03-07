@@ -12,13 +12,6 @@ export interface Category {
   image_url?: string;
 }
 
-export interface Provider {
-  id: string;
-  name: string;
-  avatar_url?: string;
-  bio?: string;
-}
-
 export interface ProviderProfile {
   id: string;
   name: string;

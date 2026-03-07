@@ -41,4 +41,3 @@ export function getDateLocale(): string {
   return dateLocaleMap[i18n.language] ?? 'en-US';
 }
 
-export default i18n;

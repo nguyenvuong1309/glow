@@ -8,16 +8,16 @@ import {
   TextInput,
   ActivityIndicator,
   Alert,
-  Image,
 } from 'react-native';
 import {useForm, Controller} from 'react-hook-form';
 import {zodResolver} from '@hookform/resolvers/zod';
 import {z} from 'zod';
 import {useDispatch, useSelector} from 'react-redux';
 import {useTranslation} from 'react-i18next';
-import {launchImageLibrary, Asset} from 'react-native-image-picker';
+import {Asset} from 'react-native-image-picker';
 import DatePicker from 'react-native-date-picker';
 import {submitService, updateServiceRequest, clearPostService} from '../postServiceSlice';
+import MediaPicker from '../components/MediaPicker';
 import {theme} from '@/utils/theme';
 import type {RootState} from '@/store';
 import type {NativeStackNavigationProp} from '@react-navigation/native-stack';
@@ -107,42 +107,6 @@ export default function PostServiceScreen({navigation, route}: Props) {
     const h = Math.floor(minutes / 60);
     const m = minutes % 60;
     return t('postService.durationValue', {hours: h, minutes: m});
-  };
-
-  const handlePickMedia = () => {
-    const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
-    const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
-    launchImageLibrary(
-      {mediaType: 'photo', selectionLimit: 5},
-      response => {
-        if (response.didCancel || response.errorCode) return;
-        if (response.assets) {
-          const valid = response.assets.filter(asset => {
-            if (asset.fileSize && asset.fileSize > MAX_FILE_SIZE) {
-              setMediaError(t('postService.fileTooLarge'));
-              return false;
-            }
-            if (asset.type && !ALLOWED_TYPES.includes(asset.type)) {
-              setMediaError(t('postService.invalidFileType'));
-              return false;
-            }
-            return true;
-          });
-          if (valid.length > 0) {
-            setMedia(prev => {
-              const total = existingImageUrls.length + prev.length + valid.length;
-              const allowed = total <= 5 ? valid : valid.slice(0, 5 - existingImageUrls.length - prev.length);
-              return [...prev, ...allowed];
-            });
-            setMediaError(null);
-          }
-        }
-      },
-    );
-  };
-
-  const removeMedia = (index: number) => {
-    setMedia(prev => prev.filter((_, i) => i !== index));
   };
 
   const onSubmit = (data: FormData) => {
@@ -296,40 +260,14 @@ export default function PostServiceScreen({navigation, route}: Props) {
         onCancel={() => setDurationPickerOpen(false)}
       />
 
-      <Text style={styles.label}>{t('postService.media')}</Text>
-      {mediaError && <Text style={styles.error}>{mediaError}</Text>}
-      <ScrollView
-        horizontal
-        showsHorizontalScrollIndicator={false}
-        style={styles.mediaScroll}
-        contentContainerStyle={styles.mediaScrollContent}>
-        {existingImageUrls.map((url, index) => (
-          <View key={url} style={styles.mediaThumbnailWrap}>
-            <Image source={{uri: url}} style={styles.mediaThumbnail} />
-            <TouchableOpacity
-              style={styles.mediaRemoveButton}
-              onPress={() => setExistingImageUrls(prev => prev.filter((_, i) => i !== index))}>
-              <Text style={styles.mediaRemoveText}>X</Text>
-            </TouchableOpacity>
-          </View>
-        ))}
-        {media.map((asset, index) => (
-          <View key={asset.uri ?? index} style={styles.mediaThumbnailWrap}>
-            <Image source={{uri: asset.uri}} style={styles.mediaThumbnail} />
-            <TouchableOpacity
-              style={styles.mediaRemoveButton}
-              onPress={() => removeMedia(index)}>
-              <Text style={styles.mediaRemoveText}>X</Text>
-            </TouchableOpacity>
-          </View>
-        ))}
-        {existingImageUrls.length + media.length < 5 && (
-          <TouchableOpacity style={styles.addMediaButton} onPress={handlePickMedia}>
-            <Text style={styles.addMediaText}>+</Text>
-            <Text style={styles.addMediaLabel}>{t('postService.addMedia')}</Text>
-          </TouchableOpacity>
-        )}
-      </ScrollView>
+      <MediaPicker
+        media={media}
+        existingImageUrls={existingImageUrls}
+        mediaError={mediaError}
+        onMediaChange={setMedia}
+        onExistingUrlsChange={setExistingImageUrls}
+        onMediaError={setMediaError}
+      />
 
       <TouchableOpacity
         style={styles.submitButton}
@@ -417,60 +355,6 @@ const styles = StyleSheet.create({
     fontSize: 15,
     color: theme.colors.text,
     fontWeight: '500',
-  },
-  mediaScroll: {
-    marginTop: theme.spacing.xs,
-  },
-  mediaScrollContent: {
-    gap: theme.spacing.sm,
-  },
-  mediaThumbnailWrap: {
-    width: 100,
-    height: 100,
-    borderRadius: theme.radius.md,
-    overflow: 'hidden',
-  },
-  mediaThumbnail: {
-    width: '100%',
-    height: '100%',
-  },
-  mediaRemoveButton: {
-    position: 'absolute',
-    top: 4,
-    right: 4,
-    width: 24,
-    height: 24,
-    borderRadius: 12,
-    backgroundColor: 'rgba(0,0,0,0.6)',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  mediaRemoveText: {
-    color: '#fff',
-    fontSize: 12,
-    fontWeight: '700',
-  },
-  addMediaButton: {
-    width: 100,
-    height: 100,
-    borderRadius: theme.radius.md,
-    borderWidth: 1,
-    borderColor: theme.colors.border,
-    borderStyle: 'dashed',
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: theme.colors.surface,
-  },
-  addMediaText: {
-    fontSize: 28,
-    color: theme.colors.textSecondary,
-    lineHeight: 32,
-  },
-  addMediaLabel: {
-    fontSize: 11,
-    color: theme.colors.textSecondary,
-    marginTop: 2,
-    textAlign: 'center',
   },
   submitButton: {
     backgroundColor: theme.colors.primaryDark,

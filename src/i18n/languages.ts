@@ -2,7 +2,7 @@ import en from './locales/en.json';
 import vi from './locales/vi.json';
 import zh from './locales/zh.json';
 
-export interface Language {
+interface Language {
   code: string;
   label: string;
   dateLocale: string;

@@ -15,7 +15,7 @@ import {z} from 'zod';
 import {useDispatch, useSelector} from 'react-redux';
 import {useTranslation} from 'react-i18next';
 import {getDateLocale} from '@/i18n';
-import {setDraft, submitBooking, loadAvailability, loadTimeSlots} from '../bookingSlice';
+import {setDraft, submitBooking, loadTimeSlots} from '../bookingSlice';
 import {theme} from '@/utils/theme';
 import type {RootState} from '@/store';
 import type {NativeStackNavigationProp} from '@react-navigation/native-stack';
@@ -55,12 +55,6 @@ export default function BookingScreen({navigation}: Props) {
 
   const selectedDate = watch('date');
   const selectedTime = watch('timeSlot');
-
-  useEffect(() => {
-    if (service) {
-      dispatch(loadAvailability(service.id));
-    }
-  }, [dispatch, service]);
 
   useEffect(() => {
     if (selectedDate && service) {

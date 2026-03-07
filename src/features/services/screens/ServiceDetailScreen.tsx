@@ -1,4 +1,4 @@
-import React, {useCallback, useEffect, useRef, useState} from 'react';
+import React, { useCallback, useRef, useState } from 'react';
 import {
   View,
   Text,
@@ -13,25 +13,24 @@ import {
 import Animated from 'react-native-reanimated';
 import ImageViewing from 'react-native-image-viewing';
 import Skeleton from '@/components/Skeleton/Skeleton';
-import {useSelector, useDispatch} from 'react-redux';
-import {useTranslation} from 'react-i18next';
-import {loadReviews} from '../serviceSlice';
-import {toggleFavorite} from '@/features/favorites/favoritesSlice';
-import {theme} from '@/utils/theme';
-import type {RootState} from '@/store';
-import type {Review} from '@/types';
-import type {NativeStackNavigationProp} from '@react-navigation/native-stack';
-import type {ServiceStackParamList} from '@/navigation/types';
-import ServiceDetailSkeleton from '@/components/Skeleton/ServiceDetailSkeleton';
+import { useSelector, useDispatch } from 'react-redux';
+import { useTranslation } from 'react-i18next';
+import { toggleFavorite } from '@/features/favorites/favoritesSlice';
+import { loadAvailability } from '@/features/booking/bookingSlice';
+import { theme } from '@/utils/theme';
+import type { RootState } from '@/store';
+import type { Review } from '@/types';
+import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import type { ServiceStackParamList } from '@/navigation/types';
 
 interface Props {
   navigation: NativeStackNavigationProp<ServiceStackParamList>;
 }
 
-export default function ServiceDetailScreen({navigation}: Props) {
-  const {t} = useTranslation();
+export default function ServiceDetailScreen({ navigation }: Props) {
+  const { t } = useTranslation();
   const dispatch = useDispatch();
-  const {width: screenWidth} = useWindowDimensions();
+  const { width: screenWidth } = useWindowDimensions();
   const service = useSelector((state: RootState) => state.services.selected);
   const reviews = useSelector((state: RootState) => state.services.reviews);
   const reviewsLoading = useSelector(
@@ -46,42 +45,42 @@ export default function ServiceDetailScreen({navigation}: Props) {
   const [galleryIndex, setGalleryIndex] = useState(0);
 
   const onViewableItemsChanged = useCallback(
-    ({viewableItems}: {viewableItems: ViewToken[]}) => {
+    ({ viewableItems }: { viewableItems: ViewToken[] }) => {
       if (viewableItems.length > 0 && viewableItems[0].index != null) {
         setActiveImageIndex(viewableItems[0].index);
       }
     },
     [],
   );
-  const viewabilityConfig = useRef({viewAreaCoveragePercentThreshold: 50}).current;
+  const viewabilityConfig = useRef({
+    viewAreaCoveragePercentThreshold: 50,
+  }).current;
 
-  const renderImageItem = useCallback(({item, index}: {item: string; index: number}) => (
-    <TouchableOpacity
-      activeOpacity={0.9}
-      onPress={() => {
-        setGalleryIndex(index);
-        setGalleryVisible(true);
-      }}>
-      {index === 0 ? (
-        <Animated.Image
-          source={{uri: item}}
-          style={[styles.heroImage, {width: screenWidth}]}
-          sharedTransitionTag={`service-image-${service?.id}`}
-        />
-      ) : (
-        <Animated.Image
-          source={{uri: item}}
-          style={[styles.heroImage, {width: screenWidth}]}
-        />
-      )}
-    </TouchableOpacity>
-  ), [screenWidth, service?.id]);
-
-  useEffect(() => {
-    if (service) {
-      dispatch(loadReviews(service.id));
-    }
-  }, [dispatch, service]);
+  const renderImageItem = useCallback(
+    ({ item, index }: { item: string; index: number }) => (
+      <TouchableOpacity
+        activeOpacity={0.9}
+        onPress={() => {
+          setGalleryIndex(index);
+          setGalleryVisible(true);
+        }}
+      >
+        {index === 0 ? (
+          <Animated.Image
+            source={{ uri: item }}
+            style={[styles.heroImage, { width: screenWidth }]}
+            sharedTransitionTag={`service-image-${service?.id}`}
+          />
+        ) : (
+          <Animated.Image
+            source={{ uri: item }}
+            style={[styles.heroImage, { width: screenWidth }]}
+          />
+        )}
+      </TouchableOpacity>
+    ),
+    [screenWidth, service?.id],
+  );
 
   if (!service) {
     return (
@@ -92,9 +91,7 @@ export default function ServiceDetailScreen({navigation}: Props) {
   }
 
   return (
-    <ScrollView
-      style={styles.container}
-      showsVerticalScrollIndicator={false}>
+    <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
       {service.image_urls.length > 0 && (
         <View>
           <FlatList
@@ -112,7 +109,10 @@ export default function ServiceDetailScreen({navigation}: Props) {
               {service.image_urls.map((url, i) => (
                 <View
                   key={url}
-                  style={[styles.dot, i === activeImageIndex && styles.dotActive]}
+                  style={[
+                    styles.dot,
+                    i === activeImageIndex && styles.dotActive,
+                  ]}
                 />
               ))}
             </View>
@@ -123,13 +123,20 @@ export default function ServiceDetailScreen({navigation}: Props) {
         <View style={styles.nameRow}>
           <Animated.Text
             style={[styles.name, styles.nameFlex]}
-            sharedTransitionTag={`service-name-${service.id}`}>
+            sharedTransitionTag={`service-name-${service.id}`}
+          >
             {service.name}
           </Animated.Text>
           <TouchableOpacity
             onPress={() => dispatch(toggleFavorite(service.id))}
-            hitSlop={{top: 8, bottom: 8, left: 8, right: 8}}>
-            <Text style={[styles.detailHeart, isFavorite && styles.detailHeartFilled]}>
+            hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+          >
+            <Text
+              style={[
+                styles.detailHeart,
+                isFavorite && styles.detailHeartFilled,
+              ]}
+            >
               {isFavorite ? '\u2764' : '\u2661'}
             </Text>
           </TouchableOpacity>
@@ -137,20 +144,23 @@ export default function ServiceDetailScreen({navigation}: Props) {
         <View style={styles.metaRow}>
           <Animated.Text
             style={styles.price}
-            sharedTransitionTag={`service-price-${service.id}`}>
-            {t('services.price', {price: service.price})}
+            sharedTransitionTag={`service-price-${service.id}`}
+          >
+            {t('services.price', { price: service.price })}
           </Animated.Text>
           <Text style={styles.metaDot}>{'\u00b7'}</Text>
           <Animated.Text
             style={styles.duration}
-            sharedTransitionTag={`service-duration-${service.id}`}>
-            {t('services.duration', {minutes: service.duration_minutes})}
+            sharedTransitionTag={`service-duration-${service.id}`}
+          >
+            {t('services.duration', { minutes: service.duration_minutes })}
           </Animated.Text>
           <Text style={styles.metaDot}>{'\u00b7'}</Text>
           <Animated.Text
             style={styles.rating}
-            sharedTransitionTag={`service-rating-${service.id}`}>
-            {t('services.rating', {rating: service.rating})}
+            sharedTransitionTag={`service-rating-${service.id}`}
+          >
+            {t('services.rating', { rating: service.rating })}
           </Animated.Text>
         </View>
         <Text style={styles.category}>{service.category}</Text>
@@ -159,12 +169,15 @@ export default function ServiceDetailScreen({navigation}: Props) {
           <TouchableOpacity
             style={styles.providerRow}
             onPress={() =>
-              navigation.navigate('ProviderProfile', {userId: service.provider_id!})
+              navigation.navigate('ProviderProfile', {
+                userId: service.provider_id!,
+              })
             }
-            activeOpacity={0.7}>
+            activeOpacity={0.7}
+          >
             {service.provider_avatar ? (
               <Image
-                source={{uri: service.provider_avatar}}
+                source={{ uri: service.provider_avatar }}
                 style={styles.providerAvatar}
               />
             ) : (
@@ -186,17 +199,20 @@ export default function ServiceDetailScreen({navigation}: Props) {
         {isOwner ? (
           <TouchableOpacity
             style={styles.editButton}
-            onPress={() =>
-              navigation.navigate('PostService', {service})
-            }>
-            <Text style={styles.editButtonText}>{t('services.editService')}</Text>
+            onPress={() => navigation.navigate('PostService', { service })}
+          >
+            <Text style={styles.editButtonText}>
+              {t('services.editService')}
+            </Text>
           </TouchableOpacity>
         ) : (
           <TouchableOpacity
             style={styles.bookButton}
-            onPress={() =>
-              navigation.navigate('Booking', {serviceId: service.id})
-            }>
+            onPress={() => {
+              dispatch(loadAvailability(service.id));
+              navigation.navigate('Booking', { serviceId: service.id });
+            }}
+          >
             <Text style={styles.bookButtonText}>{t('services.bookNow')}</Text>
           </TouchableOpacity>
         )}
@@ -208,13 +224,18 @@ export default function ServiceDetailScreen({navigation}: Props) {
           </Text>
           {reviewsLoading ? (
             <>
-              {Array.from({length: 3}).map((_, i) => (
+              {Array.from({ length: 3 }).map((_, i) => (
                 <View key={i} style={styles.reviewCard}>
                   <View style={styles.reviewHeader}>
                     <Skeleton width={90} height={16} borderRadius={4} />
                     <Skeleton width={70} height={12} borderRadius={4} />
                   </View>
-                  <Skeleton width="90%" height={14} borderRadius={4} style={{marginTop: theme.spacing.sm}} />
+                  <Skeleton
+                    width="90%"
+                    height={14}
+                    borderRadius={4}
+                    style={{ marginTop: theme.spacing.sm }}
+                  />
                 </View>
               ))}
             </>
@@ -242,7 +263,7 @@ export default function ServiceDetailScreen({navigation}: Props) {
       </View>
 
       <ImageViewing
-        images={service.image_urls.map(url => ({uri: url}))}
+        images={service.image_urls.map(url => ({ uri: url }))}
         imageIndex={galleryIndex}
         visible={galleryVisible}
         onRequestClose={() => setGalleryVisible(false)}

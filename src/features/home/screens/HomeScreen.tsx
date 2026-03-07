@@ -11,7 +11,8 @@ import Animated, {FadeInDown} from 'react-native-reanimated';
 import {useDispatch, useSelector} from 'react-redux';
 import {useTranslation} from 'react-i18next';
 import {loadHome} from '../homeSlice';
-import {selectService, setFilter} from '@/features/services/serviceSlice';
+import {selectService, setFilter, loadReviews} from '@/features/services/serviceSlice';
+import {loadAvailability} from '@/features/booking/bookingSlice';
 import {loadFavorites, toggleFavorite} from '@/features/favorites/favoritesSlice';
 import ServiceCard from '@/components/ServiceCard/ServiceCard';
 import CategoryGrid from '@/components/CategoryGrid/CategoryGrid';
@@ -75,6 +76,7 @@ export default function HomeScreen({navigation}: Props) {
 
   const handleServicePress = (service: Service) => {
     dispatch(selectService(service));
+    dispatch(loadReviews(service.id));
     navigation.navigate('ServiceDetail', {serviceId: service.id});
   };
 
@@ -119,9 +121,10 @@ export default function HomeScreen({navigation}: Props) {
           <Animated.View entering={FadeInDown.duration(500).delay(50)}>
             <RecentBookingCard
               booking={recentBooking}
-              onBookAgain={() =>
-                navigation.navigate('Booking', {serviceId: recentBooking.service_id})
-              }
+              onBookAgain={() => {
+                dispatch(loadAvailability(recentBooking.service_id));
+                navigation.navigate('Booking', {serviceId: recentBooking.service_id});
+              }}
             />
           </Animated.View>
         )}

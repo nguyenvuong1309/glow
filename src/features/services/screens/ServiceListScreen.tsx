@@ -15,7 +15,7 @@ import Animated, {
 import {BottomSheetModal} from '@gorhom/bottom-sheet';
 import {useDispatch, useSelector} from 'react-redux';
 import {useTranslation} from 'react-i18next';
-import {loadServices, selectService, setFilter} from '../serviceSlice';
+import {loadServices, selectService, setFilter, loadReviews} from '../serviceSlice';
 import {toggleFavorite} from '@/features/favorites/favoritesSlice';
 import FilterBottomSheet from '@/components/FilterBottomSheet/FilterBottomSheet';
 import ServiceCard from '@/components/ServiceCard/ServiceCard';
@@ -55,6 +55,7 @@ export default function ServiceListScreen({navigation}: Props) {
 
   const handleServicePress = (service: Service) => {
     dispatch(selectService(service));
+    dispatch(loadReviews(service.id));
     navigation.navigate('ServiceDetail', {serviceId: service.id});
   };
 
