@@ -1,15 +1,14 @@
 import React from 'react';
-import {View, StyleSheet, Dimensions} from 'react-native';
+import {View, StyleSheet, useWindowDimensions} from 'react-native';
 import Skeleton from './Skeleton';
 import {theme} from '@/utils/theme';
 
-const SCREEN_WIDTH = Dimensions.get('window').width;
-
 export default function ServiceDetailSkeleton() {
+  const {width: screenWidth} = useWindowDimensions();
   return (
     <View style={styles.container}>
       {/* Hero image */}
-      <Skeleton width={SCREEN_WIDTH} height={280} borderRadius={0} />
+      <Skeleton width={screenWidth} height={280} borderRadius={0} />
 
       <View style={styles.body}>
         {/* Name */}

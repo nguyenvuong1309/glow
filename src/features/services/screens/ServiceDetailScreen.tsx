@@ -6,15 +6,13 @@ import {
   StyleSheet,
   ScrollView,
   TouchableOpacity,
-  Dimensions,
   FlatList,
   ViewToken,
+  useWindowDimensions,
 } from 'react-native';
 import Animated from 'react-native-reanimated';
 import ImageViewing from 'react-native-image-viewing';
 import Skeleton from '@/components/Skeleton/Skeleton';
-
-const SCREEN_WIDTH = Dimensions.get('window').width;
 import {useSelector, useDispatch} from 'react-redux';
 import {useTranslation} from 'react-i18next';
 import {loadReviews} from '../serviceSlice';
@@ -33,6 +31,7 @@ interface Props {
 export default function ServiceDetailScreen({navigation}: Props) {
   const {t} = useTranslation();
   const dispatch = useDispatch();
+  const {width: screenWidth} = useWindowDimensions();
   const service = useSelector((state: RootState) => state.services.selected);
   const reviews = useSelector((state: RootState) => state.services.reviews);
   const reviewsLoading = useSelector(
@@ -55,6 +54,28 @@ export default function ServiceDetailScreen({navigation}: Props) {
     [],
   );
   const viewabilityConfig = useRef({viewAreaCoveragePercentThreshold: 50}).current;
+
+  const renderImageItem = useCallback(({item, index}: {item: string; index: number}) => (
+    <TouchableOpacity
+      activeOpacity={0.9}
+      onPress={() => {
+        setGalleryIndex(index);
+        setGalleryVisible(true);
+      }}>
+      {index === 0 ? (
+        <Animated.Image
+          source={{uri: item}}
+          style={[styles.heroImage, {width: screenWidth}]}
+          sharedTransitionTag={`service-image-${service?.id}`}
+        />
+      ) : (
+        <Animated.Image
+          source={{uri: item}}
+          style={[styles.heroImage, {width: screenWidth}]}
+        />
+      )}
+    </TouchableOpacity>
+  ), [screenWidth, service?.id]);
 
   useEffect(() => {
     if (service) {
@@ -84,33 +105,13 @@ export default function ServiceDetailScreen({navigation}: Props) {
             keyExtractor={(_, i) => String(i)}
             onViewableItemsChanged={onViewableItemsChanged}
             viewabilityConfig={viewabilityConfig}
-            renderItem={({item, index}) => (
-              <TouchableOpacity
-                activeOpacity={0.9}
-                onPress={() => {
-                  setGalleryIndex(index);
-                  setGalleryVisible(true);
-                }}>
-                {index === 0 ? (
-                  <Animated.Image
-                    source={{uri: item}}
-                    style={styles.heroImage}
-                    sharedTransitionTag={`service-image-${service.id}`}
-                  />
-                ) : (
-                  <Animated.Image
-                    source={{uri: item}}
-                    style={styles.heroImage}
-                  />
-                )}
-              </TouchableOpacity>
-            )}
+            renderItem={renderImageItem}
           />
           {service.image_urls.length > 1 && (
             <View style={styles.dotRow}>
-              {service.image_urls.map((_, i) => (
+              {service.image_urls.map((url, i) => (
                 <View
-                  key={i}
+                  key={url}
                   style={[styles.dot, i === activeImageIndex && styles.dotActive]}
                 />
               ))}
@@ -265,7 +266,6 @@ const styles = StyleSheet.create({
     color: theme.colors.textSecondary,
   },
   heroImage: {
-    width: SCREEN_WIDTH,
     height: 280,
   },
   dotRow: {

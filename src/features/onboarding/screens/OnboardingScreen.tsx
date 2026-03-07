@@ -4,16 +4,14 @@ import {
   Text,
   StyleSheet,
   FlatList,
-  Dimensions,
   TouchableOpacity,
   ViewToken,
+  useWindowDimensions,
 } from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {useTranslation} from 'react-i18next';
 import {mmkvStorage} from '@/lib/storage';
 import {theme} from '@/utils/theme';
-
-const {width: SCREEN_WIDTH} = Dimensions.get('window');
 
 interface Slide {
   id: string;
@@ -35,6 +33,7 @@ interface Props {
 
 export default function OnboardingScreen({onComplete}: Props) {
   const {t} = useTranslation();
+  const {width: screenWidth} = useWindowDimensions();
   const flatListRef = useRef<FlatList>(null);
   const [activeIndex, setActiveIndex] = useState(0);
 
@@ -63,7 +62,7 @@ export default function OnboardingScreen({onComplete}: Props) {
   };
 
   const renderItem = ({item}: {item: Slide}) => (
-    <View style={styles.slide}>
+    <View style={[styles.slide, {width: screenWidth}]}>
       <View style={[styles.emojiCircle, {backgroundColor: item.color + '20'}]}>
         <Text style={styles.emoji}>{item.emoji}</Text>
       </View>
@@ -90,9 +89,9 @@ export default function OnboardingScreen({onComplete}: Props) {
 
       <View style={styles.footer}>
         <View style={styles.dots}>
-          {slides.map((_, i) => (
+          {slides.map((slide, i) => (
             <View
-              key={i}
+              key={slide.id}
               style={[styles.dot, i === activeIndex && styles.dotActive]}
             />
           ))}
@@ -120,7 +119,6 @@ const styles = StyleSheet.create({
     backgroundColor: theme.colors.background,
   },
   slide: {
-    width: SCREEN_WIDTH,
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',

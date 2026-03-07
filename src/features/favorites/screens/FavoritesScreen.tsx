@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useCallback} from 'react';
 import {View, Text, StyleSheet, FlatList} from 'react-native';
 import {useDispatch, useSelector} from 'react-redux';
 import {useTranslation} from 'react-i18next';
@@ -28,6 +28,15 @@ export default function FavoritesScreen({navigation}: Props) {
     navigation.navigate('ServiceDetail', {serviceId: service.id});
   };
 
+  const renderItem = useCallback(({item}: {item: Service}) => (
+    <ServiceCard
+      service={item}
+      onPress={() => handlePress(item)}
+      isFavorite
+      onToggleFavorite={() => dispatch(toggleFavorite(item.id))}
+    />
+  ), [dispatch, handlePress]);
+
   return (
     <FlatList
       style={styles.container}
@@ -36,14 +45,7 @@ export default function FavoritesScreen({navigation}: Props) {
       }
       data={favorites}
       keyExtractor={item => item.id}
-      renderItem={({item}) => (
-        <ServiceCard
-          service={item}
-          onPress={() => handlePress(item)}
-          isFavorite
-          onToggleFavorite={() => dispatch(toggleFavorite(item.id))}
-        />
-      )}
+      renderItem={renderItem}
       ListEmptyComponent={
         <Text style={styles.emptyText}>{t('favorites.empty')}</Text>
       }

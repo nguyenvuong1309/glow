@@ -4,8 +4,8 @@ import {
   Text,
   StyleSheet,
   FlatList,
-  Dimensions,
   ViewToken,
+  useWindowDimensions,
 } from 'react-native';
 import {theme} from '@/utils/theme';
 
@@ -20,11 +20,11 @@ interface Props {
   banners: Banner[];
 }
 
-const {width: SCREEN_WIDTH} = Dimensions.get('window');
-const BANNER_WIDTH = SCREEN_WIDTH - theme.spacing.lg * 2;
 const AUTO_SCROLL_INTERVAL = 4000;
 
 export default function PromoBanner({banners}: Props) {
+  const {width: screenWidth} = useWindowDimensions();
+  const bannerWidth = screenWidth - theme.spacing.lg * 2;
   const flatListRef = useRef<FlatList<Banner>>(null);
   const [activeIndex, setActiveIndex] = useState(0);
   const timerRef = useRef<ReturnType<typeof setInterval>>(undefined);
@@ -53,12 +53,12 @@ export default function PromoBanner({banners}: Props) {
     };
   }, [banners.length]);
 
-  const renderItem = ({item}: {item: Banner}) => (
-    <View style={[styles.banner, {backgroundColor: item.color}]}>
+  const renderItem = useCallback(({item}: {item: Banner}) => (
+    <View style={[styles.banner, {backgroundColor: item.color, width: bannerWidth}]}>
       <Text style={styles.title}>{item.title}</Text>
       <Text style={styles.subtitle}>{item.subtitle}</Text>
     </View>
-  );
+  ), [bannerWidth]);
 
   return (
     <View>
@@ -73,15 +73,15 @@ export default function PromoBanner({banners}: Props) {
         onViewableItemsChanged={onViewableItemsChanged}
         viewabilityConfig={viewabilityConfig}
         getItemLayout={(_, index) => ({
-          length: BANNER_WIDTH,
-          offset: BANNER_WIDTH * index,
+          length: bannerWidth,
+          offset: bannerWidth * index,
           index,
         })}
       />
       <View style={styles.dots}>
-        {banners.map((_, i) => (
+        {banners.map((banner, i) => (
           <View
-            key={i}
+            key={banner.id}
             style={[styles.dot, i === activeIndex && styles.dotActive]}
           />
         ))}
@@ -92,7 +92,6 @@ export default function PromoBanner({banners}: Props) {
 
 const styles = StyleSheet.create({
   banner: {
-    width: BANNER_WIDTH,
     height: 140,
     borderRadius: theme.radius.lg,
     justifyContent: 'center',

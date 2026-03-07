@@ -85,6 +85,20 @@ export default function ServiceListScreen({navigation}: Props) {
     return result;
   }, [services, selectedCategory, searchText]);
 
+  const renderItem = useCallback(({item, index}: {item: Service; index: number}) => (
+    <Animated.View
+      entering={FadeInDown.duration(300).delay(index * 60)}
+      exiting={FadeOutUp.duration(200)}>
+      <ServiceCard
+        service={item}
+        onPress={() => handleServicePress(item)}
+        isFavorite={favoriteIds.includes(item.id)}
+        onToggleFavorite={() => dispatch(toggleFavorite(item.id))}
+        isOwner={item.provider_id === user?.id}
+      />
+    </Animated.View>
+  ), [dispatch, favoriteIds, handleServicePress, user?.id]);
+
   const hasActiveFilter =
     filter.categories.length > 0 ||
     filter.dateFrom !== null ||
@@ -177,19 +191,7 @@ export default function ServiceListScreen({navigation}: Props) {
           itemLayoutAnimation={LinearTransition.springify()
             .damping(18)
             .stiffness(120)}
-          renderItem={({item, index}) => (
-            <Animated.View
-              entering={FadeInDown.duration(300).delay(index * 60)}
-              exiting={FadeOutUp.duration(200)}>
-              <ServiceCard
-                service={item}
-                onPress={() => handleServicePress(item)}
-                isFavorite={favoriteIds.includes(item.id)}
-                onToggleFavorite={() => dispatch(toggleFavorite(item.id))}
-                isOwner={item.provider_id === user?.id}
-              />
-            </Animated.View>
-          )}
+          renderItem={renderItem}
         />
       )}
 
