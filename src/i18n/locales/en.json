@@ -16,8 +16,19 @@
     "greeting": "Hello, {{name}} \u2728",
     "defaultName": "Beautiful",
     "whatWouldYouLike": "What would you like today?",
+    "searchPlaceholder": "Search services...",
     "categories": "Categories",
-    "popularServices": "Popular Services"
+    "newServices": "New Services",
+    "topRated": "Top Rated",
+    "topRatedBadge": "Top Rated",
+    "recentBooking": "Recent Booking",
+    "bookAgain": "Book Again",
+    "promoTitle1": "Spring Special",
+    "promoSubtitle1": "20% off all spa treatments",
+    "promoTitle2": "New Customer",
+    "promoSubtitle2": "First booking free consultation",
+    "promoTitle3": "Refer a Friend",
+    "promoSubtitle3": "Both get $10 credit"
   },
   "services": {
     "all": "All",
@@ -25,6 +36,9 @@
     "noServicesFound": "No services found",
     "serviceNotFound": "Service not found",
     "bookNow": "Book Now",
+    "editService": "Edit Service",
+    "yourService": "Your Service",
+    "cannotBookOwn": "You cannot book your own service",
     "price": "${{price}}",
     "duration": "{{minutes}} min",
     "rating": "\u2605 {{rating}}"
@@ -61,6 +75,9 @@
     "confirmCancel": "Cancel Booking",
     "confirmCancelMessage": "Are you sure you want to cancel this booking?",
     "writeReview": "Write Review",
+    "listView": "List",
+    "calendarView": "Calendar",
+    "noBookingsOnDate": "No bookings on this date",
     "status": {
       "pending": "Pending",
       "confirmed": "Confirmed",
@@ -130,7 +147,11 @@
     "bookingRequests": "Booking Requests",
     "favorites": "Favorites",
     "servicesSection": "Services",
-    "accountSection": "Account"
+    "accountSection": "Account",
+    "deleteAccount": "Delete Account",
+    "deleteAccountTitle": "Permanently Delete Account",
+    "deleteAccountWarning": "This action CANNOT BE UNDONE. All of the following data will be permanently deleted:\n\n• Your personal information\n• All services you have posted\n• Booking history\n• Reviews you have written\n• Favorites list\n• Uploaded photos and media\n\nAny pending bookings will also be cancelled.",
+    "deleteAccountConfirm": "Delete Permanently"
   },
   "navigation": {
     "home": "Home",
@@ -161,6 +182,22 @@
   },
   "favorites": {
     "empty": "No favorites yet"
+  },
+  "provider": {
+    "services": "Services",
+    "avgRating": "Avg Rating",
+    "totalBookings": "Bookings",
+    "noBio": "No bio yet"
+  },
+  "onboarding": {
+    "title1": "Find Services",
+    "subtitle1": "Discover beauty & wellness services tailored for you",
+    "title2": "Book Instantly",
+    "subtitle2": "Choose your date, time and book in seconds",
+    "title3": "Rate & Review",
+    "subtitle3": "Share your experience and help others choose",
+    "next": "Next",
+    "getStarted": "Get Started"
   },
   "spending": {
     "title": "Spending",

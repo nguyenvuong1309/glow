@@ -9,7 +9,8 @@ interface UpdateServicePayload {
   price: number;
   duration_minutes: number;
   localMedia: {uri: string; fileName: string; type: string}[];
-  existingImageUrl: string;
+  existingImageUrls: string[];
+  originalImageUrls: string[];
 }
 
 interface PostServiceState {

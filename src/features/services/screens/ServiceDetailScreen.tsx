@@ -1,13 +1,20 @@
-import React, {useEffect} from 'react';
+import React, {useCallback, useEffect, useRef, useState} from 'react';
 import {
   View,
   Text,
+  Image,
   StyleSheet,
   ScrollView,
   TouchableOpacity,
-  ActivityIndicator,
+  Dimensions,
+  FlatList,
+  ViewToken,
 } from 'react-native';
 import Animated from 'react-native-reanimated';
+import ImageViewing from 'react-native-image-viewing';
+import Skeleton from '@/components/Skeleton/Skeleton';
+
+const SCREEN_WIDTH = Dimensions.get('window').width;
 import {useSelector, useDispatch} from 'react-redux';
 import {useTranslation} from 'react-i18next';
 import {loadReviews} from '../serviceSlice';
@@ -17,6 +24,7 @@ import type {RootState} from '@/store';
 import type {Review} from '@/types';
 import type {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import type {ServiceStackParamList} from '@/navigation/types';
+import ServiceDetailSkeleton from '@/components/Skeleton/ServiceDetailSkeleton';
 
 interface Props {
   navigation: NativeStackNavigationProp<ServiceStackParamList>;
@@ -31,7 +39,22 @@ export default function ServiceDetailScreen({navigation}: Props) {
     (state: RootState) => state.services.reviewsLoading,
   );
   const favoriteIds = useSelector((state: RootState) => state.favorites.ids);
+  const user = useSelector((state: RootState) => state.auth.user);
+  const isOwner = service?.provider_id === user?.id;
   const isFavorite = service ? favoriteIds.includes(service.id) : false;
+  const [activeImageIndex, setActiveImageIndex] = useState(0);
+  const [galleryVisible, setGalleryVisible] = useState(false);
+  const [galleryIndex, setGalleryIndex] = useState(0);
+
+  const onViewableItemsChanged = useCallback(
+    ({viewableItems}: {viewableItems: ViewToken[]}) => {
+      if (viewableItems.length > 0 && viewableItems[0].index != null) {
+        setActiveImageIndex(viewableItems[0].index);
+      }
+    },
+    [],
+  );
+  const viewabilityConfig = useRef({viewAreaCoveragePercentThreshold: 50}).current;
 
   useEffect(() => {
     if (service) {
@@ -51,11 +74,50 @@ export default function ServiceDetailScreen({navigation}: Props) {
     <ScrollView
       style={styles.container}
       showsVerticalScrollIndicator={false}>
-      <Animated.Image
-        source={{uri: service.image_url}}
-        style={styles.heroImage}
-        sharedTransitionTag={`service-image-${service.id}`}
-      />
+      {service.image_urls.length > 0 && (
+        <View>
+          <FlatList
+            data={service.image_urls}
+            horizontal
+            pagingEnabled
+            showsHorizontalScrollIndicator={false}
+            keyExtractor={(_, i) => String(i)}
+            onViewableItemsChanged={onViewableItemsChanged}
+            viewabilityConfig={viewabilityConfig}
+            renderItem={({item, index}) => (
+              <TouchableOpacity
+                activeOpacity={0.9}
+                onPress={() => {
+                  setGalleryIndex(index);
+                  setGalleryVisible(true);
+                }}>
+                {index === 0 ? (
+                  <Animated.Image
+                    source={{uri: item}}
+                    style={styles.heroImage}
+                    sharedTransitionTag={`service-image-${service.id}`}
+                  />
+                ) : (
+                  <Animated.Image
+                    source={{uri: item}}
+                    style={styles.heroImage}
+                  />
+                )}
+              </TouchableOpacity>
+            )}
+          />
+          {service.image_urls.length > 1 && (
+            <View style={styles.dotRow}>
+              {service.image_urls.map((_, i) => (
+                <View
+                  key={i}
+                  style={[styles.dot, i === activeImageIndex && styles.dotActive]}
+                />
+              ))}
+            </View>
+          )}
+        </View>
+      )}
       <View style={styles.body}>
         <View style={styles.nameRow}>
           <Animated.Text
@@ -77,13 +139,13 @@ export default function ServiceDetailScreen({navigation}: Props) {
             sharedTransitionTag={`service-price-${service.id}`}>
             {t('services.price', {price: service.price})}
           </Animated.Text>
-          <Text style={styles.dot}>{'\u00b7'}</Text>
+          <Text style={styles.metaDot}>{'\u00b7'}</Text>
           <Animated.Text
             style={styles.duration}
             sharedTransitionTag={`service-duration-${service.id}`}>
             {t('services.duration', {minutes: service.duration_minutes})}
           </Animated.Text>
-          <Text style={styles.dot}>{'\u00b7'}</Text>
+          <Text style={styles.metaDot}>{'\u00b7'}</Text>
           <Animated.Text
             style={styles.rating}
             sharedTransitionTag={`service-rating-${service.id}`}>
@@ -91,15 +153,52 @@ export default function ServiceDetailScreen({navigation}: Props) {
           </Animated.Text>
         </View>
         <Text style={styles.category}>{service.category}</Text>
+
+        {service.provider_id && (
+          <TouchableOpacity
+            style={styles.providerRow}
+            onPress={() =>
+              navigation.navigate('ProviderProfile', {userId: service.provider_id!})
+            }
+            activeOpacity={0.7}>
+            {service.provider_avatar ? (
+              <Image
+                source={{uri: service.provider_avatar}}
+                style={styles.providerAvatar}
+              />
+            ) : (
+              <View style={styles.providerAvatarFallback}>
+                <Text style={styles.providerAvatarText}>
+                  {service.provider_name?.charAt(0)?.toUpperCase() ?? '?'}
+                </Text>
+              </View>
+            )}
+            <Text style={styles.providerName} numberOfLines={1}>
+              {service.provider_name}
+            </Text>
+            <Text style={styles.providerChevron}>{'>'}</Text>
+          </TouchableOpacity>
+        )}
+
         <Text style={styles.description}>{service.description}</Text>
 
-        <TouchableOpacity
-          style={styles.bookButton}
-          onPress={() =>
-            navigation.navigate('Booking', {serviceId: service.id})
-          }>
-          <Text style={styles.bookButtonText}>{t('services.bookNow')}</Text>
-        </TouchableOpacity>
+        {isOwner ? (
+          <TouchableOpacity
+            style={styles.editButton}
+            onPress={() =>
+              navigation.navigate('PostService', {service})
+            }>
+            <Text style={styles.editButtonText}>{t('services.editService')}</Text>
+          </TouchableOpacity>
+        ) : (
+          <TouchableOpacity
+            style={styles.bookButton}
+            onPress={() =>
+              navigation.navigate('Booking', {serviceId: service.id})
+            }>
+            <Text style={styles.bookButtonText}>{t('services.bookNow')}</Text>
+          </TouchableOpacity>
+        )}
 
         {/* Reviews */}
         <View style={styles.reviewsSection}>
@@ -107,11 +206,17 @@ export default function ServiceDetailScreen({navigation}: Props) {
             {t('review.reviews')} ({reviews.length})
           </Text>
           {reviewsLoading ? (
-            <ActivityIndicator
-              size="small"
-              color={theme.colors.primary}
-              style={styles.reviewsLoader}
-            />
+            <>
+              {Array.from({length: 3}).map((_, i) => (
+                <View key={i} style={styles.reviewCard}>
+                  <View style={styles.reviewHeader}>
+                    <Skeleton width={90} height={16} borderRadius={4} />
+                    <Skeleton width={70} height={12} borderRadius={4} />
+                  </View>
+                  <Skeleton width="90%" height={14} borderRadius={4} style={{marginTop: theme.spacing.sm}} />
+                </View>
+              ))}
+            </>
           ) : reviews.length === 0 ? (
             <Text style={styles.noReviews}>{t('review.noReviews')}</Text>
           ) : (
@@ -134,6 +239,13 @@ export default function ServiceDetailScreen({navigation}: Props) {
           )}
         </View>
       </View>
+
+      <ImageViewing
+        images={service.image_urls.map(url => ({uri: url}))}
+        imageIndex={galleryIndex}
+        visible={galleryVisible}
+        onRequestClose={() => setGalleryVisible(false)}
+      />
     </ScrollView>
   );
 }
@@ -153,8 +265,26 @@ const styles = StyleSheet.create({
     color: theme.colors.textSecondary,
   },
   heroImage: {
-    width: '100%',
+    width: SCREEN_WIDTH,
     height: 280,
+  },
+  dotRow: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    gap: 6,
+    position: 'absolute',
+    bottom: 12,
+    left: 0,
+    right: 0,
+  },
+  dot: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    backgroundColor: 'rgba(255,255,255,0.5)',
+  },
+  dotActive: {
+    backgroundColor: '#fff',
   },
   body: {
     padding: theme.spacing.lg,
@@ -190,7 +320,7 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     color: theme.colors.primaryDark,
   },
-  dot: {
+  metaDot: {
     marginHorizontal: theme.spacing.sm,
     color: theme.colors.textSecondary,
   },
@@ -207,6 +337,46 @@ const styles = StyleSheet.create({
     color: theme.colors.primary,
     fontWeight: '500',
     marginTop: theme.spacing.sm,
+  },
+  providerRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: theme.spacing.md,
+    backgroundColor: theme.colors.surface,
+    padding: theme.spacing.md,
+    borderRadius: theme.radius.md,
+    borderWidth: 1,
+    borderColor: theme.colors.border,
+  },
+  providerAvatar: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    marginRight: theme.spacing.sm,
+  },
+  providerAvatarFallback: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: theme.colors.primary,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: theme.spacing.sm,
+  },
+  providerAvatarText: {
+    fontSize: 14,
+    fontWeight: '700',
+    color: theme.colors.surface,
+  },
+  providerName: {
+    flex: 1,
+    fontSize: 15,
+    fontWeight: '600',
+    color: theme.colors.text,
+  },
+  providerChevron: {
+    fontSize: 16,
+    color: theme.colors.textSecondary,
   },
   description: {
     fontSize: 15,
@@ -225,6 +395,20 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '600',
     color: theme.colors.surface,
+  },
+  editButton: {
+    backgroundColor: theme.colors.surface,
+    paddingVertical: 16,
+    borderRadius: theme.radius.md,
+    alignItems: 'center',
+    marginTop: theme.spacing.xl,
+    borderWidth: 1,
+    borderColor: theme.colors.primaryDark,
+  },
+  editButtonText: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: theme.colors.primaryDark,
   },
   reviewsSection: {
     marginTop: theme.spacing.xl,

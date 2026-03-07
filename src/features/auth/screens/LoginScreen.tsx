@@ -1,5 +1,5 @@
 import React, {useEffect} from 'react';
-import {View, Text, StyleSheet, TouchableOpacity, Platform} from 'react-native';
+import {View, Text, Image, StyleSheet, TouchableOpacity, Platform} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import Animated, {
   useSharedValue,
@@ -12,6 +12,9 @@ import {useTranslation} from 'react-i18next';
 import {googleLoginRequest, appleLoginRequest} from '../authSlice';
 import {theme} from '@/utils/theme';
 import type {RootState} from '@/store';
+
+const googleIcon = require('@/assets/icons/google.png');
+const appleIcon = require('@/assets/icons/apple.png');
 
 export default function LoginScreen() {
   const {t} = useTranslation();
@@ -50,6 +53,7 @@ export default function LoginScreen() {
           style={[styles.button, styles.googleButton]}
           onPress={() => dispatch(googleLoginRequest())}
           disabled={loading}>
+          <Image source={googleIcon} style={styles.buttonIcon} />
           <Text style={styles.googleText}>
             {loading ? t('auth.signingIn') : t('auth.continueWithGoogle')}
           </Text>
@@ -60,6 +64,7 @@ export default function LoginScreen() {
             style={[styles.button, styles.appleButton]}
             onPress={() => dispatch(appleLoginRequest())}
             disabled={loading}>
+            <Image source={appleIcon} style={styles.buttonIcon} tintColor="#FFFFFF" />
             <Text style={styles.appleText}>{t('auth.continueWithApple')}</Text>
           </TouchableOpacity>
         )}
@@ -102,9 +107,17 @@ const styles = StyleSheet.create({
     gap: theme.spacing.md,
   },
   button: {
+    flexDirection: 'row',
     paddingVertical: 16,
     borderRadius: theme.radius.md,
     alignItems: 'center',
+    justifyContent: 'center',
+    gap: theme.spacing.sm,
+  },
+  buttonIcon: {
+    width: 20,
+    height: 20,
+    resizeMode: 'contain',
   },
   googleButton: {
     backgroundColor: theme.colors.surface,

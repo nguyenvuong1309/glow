@@ -6,8 +6,11 @@ import {
   loginFailure,
   logoutRequest,
   logout,
+  deleteAccountRequest,
+  deleteAccountSuccess,
+  deleteAccountFailure,
 } from './authSlice';
-import {supabase} from '@/lib/supabase';
+import {supabase, deleteUserAccount} from '@/lib/supabase';
 import {GoogleSignin} from '@react-native-google-signin/google-signin';
 import {appleAuth} from '@invertase/react-native-apple-authentication';
 import {GOOGLE_WEB_CLIENT_ID, GOOGLE_IOS_CLIENT_ID} from '@env';
@@ -113,8 +116,19 @@ function* handleLogout() {
   }
 }
 
+function* handleDeleteAccount() {
+  try {
+    yield call(deleteUserAccount);
+    yield call([supabase.auth, supabase.auth.signOut]);
+    yield put(deleteAccountSuccess());
+  } catch (err: any) {
+    yield put(deleteAccountFailure(err?.message ?? 'Failed to delete account'));
+  }
+}
+
 export function* authSaga() {
   yield takeLatest(googleLoginRequest.type, handleGoogleLogin);
   yield takeLatest(appleLoginRequest.type, handleAppleLogin);
   yield takeLatest(logoutRequest.type, handleLogout);
+  yield takeLatest(deleteAccountRequest.type, handleDeleteAccount);
 }

@@ -16,8 +16,19 @@
     "greeting": "你好，{{name}} ✨",
     "defaultName": "美丽",
     "whatWouldYouLike": "今天想要什么服务？",
+    "searchPlaceholder": "搜索服务...",
     "categories": "分类",
-    "popularServices": "热门服务"
+    "newServices": "新服务",
+    "topRated": "好评推荐",
+    "topRatedBadge": "好评",
+    "recentBooking": "最近预约",
+    "bookAgain": "再次预约",
+    "promoTitle1": "春季特惠",
+    "promoSubtitle1": "所有水疗项目8折",
+    "promoTitle2": "新客户",
+    "promoSubtitle2": "首次预约免费咨询",
+    "promoTitle3": "推荐好友",
+    "promoSubtitle3": "双方各得10元优惠"
   },
   "services": {
     "all": "全部",
@@ -25,6 +36,9 @@
     "noServicesFound": "未找到服务",
     "serviceNotFound": "未找到服务",
     "bookNow": "立即预约",
+    "editService": "编辑服务",
+    "yourService": "您的服务",
+    "cannotBookOwn": "您不能预约自己的服务",
     "price": "¥{{price}}",
     "duration": "{{minutes}} 分钟",
     "rating": "★ {{rating}}"
@@ -61,6 +75,9 @@
     "confirmCancel": "取消预约",
     "confirmCancelMessage": "确定要取消此预约吗？",
     "writeReview": "写评价",
+    "listView": "列表",
+    "calendarView": "日历",
+    "noBookingsOnDate": "该日期没有预约",
     "status": {
       "pending": "待确认",
       "confirmed": "已确认",
@@ -130,7 +147,11 @@
     "bookingRequests": "预约请求",
     "favorites": "收藏",
     "servicesSection": "服务管理",
-    "accountSection": "账户"
+    "accountSection": "账户",
+    "deleteAccount": "删除账户",
+    "deleteAccountTitle": "永久删除账户",
+    "deleteAccountWarning": "此操作无法撤销。以下所有数据将被永久删除：\n\n• 您的个人信息\n• 您发布的所有服务\n• 预约历史记录\n• 您撰写的评价\n• 收藏列表\n• 已上传的照片和媒体\n\n所有待处理的预约也将被取消。",
+    "deleteAccountConfirm": "永久删除"
   },
   "navigation": {
     "home": "首页",
@@ -161,6 +182,22 @@
   },
   "favorites": {
     "empty": "暂无收藏"
+  },
+  "provider": {
+    "services": "服务",
+    "avgRating": "平均评分",
+    "totalBookings": "预约数",
+    "noBio": "暂无简介"
+  },
+  "onboarding": {
+    "title1": "发现服务",
+    "subtitle1": "探索为您量身定制的美容与健康服务",
+    "title2": "即时预约",
+    "subtitle2": "选择日期、时间，几秒钟即可预约",
+    "title3": "评价与评论",
+    "subtitle3": "分享您的体验，帮助他人做出选择",
+    "next": "下一步",
+    "getStarted": "开始使用"
   },
   "spending": {
     "title": "消费",

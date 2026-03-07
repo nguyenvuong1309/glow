@@ -9,6 +9,24 @@ export interface Category {
   id: string;
   name: string;
   icon: string;
+  image_url?: string;
+}
+
+export interface Provider {
+  id: string;
+  name: string;
+  avatar_url?: string;
+  bio?: string;
+}
+
+export interface ProviderProfile {
+  id: string;
+  name: string;
+  avatar_url?: string;
+  bio?: string;
+  services: Service[];
+  averageRating: number;
+  totalBookings: number;
 }
 
 export interface Service {
@@ -19,8 +37,11 @@ export interface Service {
   description: string;
   price: number;
   duration_minutes: number;
-  image_url: string;
+  image_urls: string[];
   rating: number;
+  provider_id?: string;
+  provider_name?: string;
+  provider_avatar?: string;
 }
 
 export interface ServiceDraft {
@@ -29,7 +50,6 @@ export interface ServiceDraft {
   description: string;
   price: number;
   duration_minutes: number;
-  image_url: string;
 }
 
 export interface MediaFile {
@@ -94,6 +114,7 @@ export interface ReviewDraft {
 }
 
 export interface ServiceFilter {
+  searchQuery: string;
   categories: string[];
   dateFrom: string | null;
   dateTo: string | null;

@@ -29,6 +29,8 @@ export default function BookingScreen({navigation}: Props) {
   const {t} = useTranslation();
   const dispatch = useDispatch();
   const service = useSelector((state: RootState) => state.services.selected);
+  const user = useSelector((state: RootState) => state.auth.user);
+  const isOwner = service?.provider_id === user?.id;
   const loading = useSelector((state: RootState) => state.booking.loading);
   const availableDates = useSelector((state: RootState) => state.booking.availableDates);
   const availableTimeSlots = useSelector((state: RootState) => state.booking.availableTimeSlots);
@@ -107,6 +109,14 @@ export default function BookingScreen({navigation}: Props) {
       day: 'numeric',
     });
   };
+
+  if (isOwner) {
+    return (
+      <View style={styles.ownerBlock}>
+        <Text style={styles.ownerBlockText}>{t('services.cannotBookOwn')}</Text>
+      </View>
+    );
+  }
 
   return (
     <ScrollView
@@ -224,6 +234,18 @@ export default function BookingScreen({navigation}: Props) {
 }
 
 const styles = StyleSheet.create({
+  ownerBlock: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: theme.colors.background,
+    padding: theme.spacing.xl,
+  },
+  ownerBlockText: {
+    fontSize: 16,
+    color: theme.colors.textSecondary,
+    textAlign: 'center',
+  },
   container: {
     flex: 1,
     backgroundColor: theme.colors.background,

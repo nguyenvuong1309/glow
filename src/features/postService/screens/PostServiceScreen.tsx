@@ -41,7 +41,7 @@ export default function PostServiceScreen({navigation, route}: Props) {
   const isEdit = !!editService;
 
   const [media, setMedia] = useState<Asset[]>([]);
-  const [existingImageUrl, setExistingImageUrl] = useState(editService?.image_url ?? '');
+  const [existingImageUrls, setExistingImageUrls] = useState<string[]>(editService?.image_urls ?? []);
   const [mediaError, setMediaError] = useState<string | null>(null);
   const [durationPickerOpen, setDurationPickerOpen] = useState(false);
   const hasSubmitted = useRef(false);
@@ -129,8 +129,11 @@ export default function PostServiceScreen({navigation, route}: Props) {
             return true;
           });
           if (valid.length > 0) {
-            setMedia(prev => [...prev, ...valid].slice(0, 5));
-            setExistingImageUrl('');
+            setMedia(prev => {
+              const total = existingImageUrls.length + prev.length + valid.length;
+              const allowed = total <= 5 ? valid : valid.slice(0, 5 - existingImageUrls.length - prev.length);
+              return [...prev, ...allowed];
+            });
             setMediaError(null);
           }
         }
@@ -143,7 +146,7 @@ export default function PostServiceScreen({navigation, route}: Props) {
   };
 
   const onSubmit = (data: FormData) => {
-    if (media.length === 0 && !existingImageUrl) {
+    if (media.length === 0 && existingImageUrls.length === 0) {
       setMediaError(t('postService.validationMedia'));
       return;
     }
@@ -168,7 +171,8 @@ export default function PostServiceScreen({navigation, route}: Props) {
           price: Number(data.price),
           duration_minutes: data.duration_minutes,
           localMedia,
-          existingImageUrl,
+          existingImageUrls,
+          originalImageUrls: editService!.image_urls ?? [],
         }),
       );
     } else {
@@ -299,16 +303,16 @@ export default function PostServiceScreen({navigation, route}: Props) {
         showsHorizontalScrollIndicator={false}
         style={styles.mediaScroll}
         contentContainerStyle={styles.mediaScrollContent}>
-        {existingImageUrl ? (
-          <View style={styles.mediaThumbnailWrap}>
-            <Image source={{uri: existingImageUrl}} style={styles.mediaThumbnail} />
+        {existingImageUrls.map((url, index) => (
+          <View key={url} style={styles.mediaThumbnailWrap}>
+            <Image source={{uri: url}} style={styles.mediaThumbnail} />
             <TouchableOpacity
               style={styles.mediaRemoveButton}
-              onPress={() => setExistingImageUrl('')}>
+              onPress={() => setExistingImageUrls(prev => prev.filter((_, i) => i !== index))}>
               <Text style={styles.mediaRemoveText}>X</Text>
             </TouchableOpacity>
           </View>
-        ) : null}
+        ))}
         {media.map((asset, index) => (
           <View key={asset.uri ?? index} style={styles.mediaThumbnailWrap}>
             <Image source={{uri: asset.uri}} style={styles.mediaThumbnail} />
@@ -319,7 +323,7 @@ export default function PostServiceScreen({navigation, route}: Props) {
             </TouchableOpacity>
           </View>
         ))}
-        {media.length < 5 && !existingImageUrl && (
+        {existingImageUrls.length + media.length < 5 && (
           <TouchableOpacity style={styles.addMediaButton} onPress={handlePickMedia}>
             <Text style={styles.addMediaText}>+</Text>
             <Text style={styles.addMediaLabel}>{t('postService.addMedia')}</Text>

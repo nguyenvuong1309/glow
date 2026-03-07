@@ -1,9 +1,13 @@
 import {takeLatest, put, call} from 'redux-saga/effects';
-import {loadStats, loadStatsSuccess, loadStatsFailure} from './providerSlice';
+import {
+  loadStats, loadStatsSuccess, loadStatsFailure,
+  loadProviderProfile, loadProviderProfileSuccess, loadProviderProfileFailure,
+} from './providerSlice';
 import type {ProviderStats} from './providerSlice';
-import {getProviderStatsRows} from '@/lib/supabase';
+import {getProviderStatsRows, getProviderProfileData} from '@/lib/supabase';
 import type {ProviderStatsRow} from '@/lib/supabase';
 import type {PayloadAction} from '@reduxjs/toolkit';
+import type {ProviderProfile} from '@/types';
 
 const DAY_NAMES = [
   'Sunday',
@@ -105,6 +109,16 @@ function* handleLoadStats(
   }
 }
 
+function* handleLoadProviderProfile(action: PayloadAction<string>) {
+  try {
+    const profile: ProviderProfile = yield call(getProviderProfileData, action.payload);
+    yield put(loadProviderProfileSuccess(profile));
+  } catch {
+    yield put(loadProviderProfileFailure());
+  }
+}
+
 export function* providerSaga() {
   yield takeLatest(loadStats.type, handleLoadStats);
+  yield takeLatest(loadProviderProfile.type, handleLoadProviderProfile);
 }

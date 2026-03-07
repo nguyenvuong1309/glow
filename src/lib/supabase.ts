@@ -2,7 +2,7 @@ import 'react-native-url-polyfill/auto';
 import {createClient} from '@supabase/supabase-js';
 import {mmkvStorage} from './storage';
 import {SUPABASE_URL, SUPABASE_ANON_KEY} from '@env';
-import type {Service, Category, Booking, BookingDraft, ServiceDraft, ServiceFilter, ServiceAvailability, Review, ReviewDraft} from '@/types';
+import type {Service, Category, Booking, BookingDraft, ServiceDraft, ServiceFilter, ServiceAvailability, Review, ReviewDraft, MediaFile, ProviderProfile} from '@/types';
 
 export const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
   auth: {
@@ -38,33 +38,54 @@ export async function uploadServiceMedia(
   return data.publicUrl;
 }
 
+export async function deleteServiceMedia(publicUrls: string[]): Promise<void> {
+  if (publicUrls.length === 0) return;
+
+  const bucketBase = supabase.storage.from('service-media').getPublicUrl('').data.publicUrl;
+  const paths = publicUrls.map(url => url.replace(bucketBase, ''));
+
+  const {error} = await supabase.storage.from('service-media').remove(paths);
+  if (error) throw error;
+}
+
 export async function getCategories(): Promise<Category[]> {
   const {data, error} = await supabase.from('categories').select('*');
   if (error) throw error;
   return data;
 }
 
-export async function getServices(): Promise<Service[]> {
-  const {data, error} = await supabase
-    .from('services')
-    .select('*, categories(name)');
-  if (error) throw error;
-  return data.map((row: any) => ({
+const SERVICE_SELECT = '*, categories(name), service_images(url, sort_order), profiles!user_id(id, name, avatar_url)';
+
+function mapServiceRow(row: any): Service {
+  return {
     id: row.id,
     name: row.name,
     category: row.categories.name,
     description: row.description,
     price: Number(row.price),
     duration_minutes: row.duration_minutes,
-    image_url: row.image_url,
+    image_urls: (row.service_images || [])
+      .sort((a: any, b: any) => a.sort_order - b.sort_order)
+      .map((img: any) => img.url),
     rating: Number(row.rating),
-  }));
+    provider_id: row.profiles?.id ?? row.user_id,
+    provider_name: row.profiles?.name,
+    provider_avatar: row.profiles?.avatar_url,
+  };
+}
+
+export async function getServices(): Promise<Service[]> {
+  const {data, error} = await supabase
+    .from('services')
+    .select(SERVICE_SELECT);
+  if (error) throw error;
+  return data.map(mapServiceRow);
 }
 
 export async function getAvailableServices(
   filter: ServiceFilter,
 ): Promise<Service[]> {
-  const {categories, dateFrom, dateTo, timeFrom, timeTo} = filter;
+  const {searchQuery, categories, dateFrom, dateTo, timeFrom, timeTo} = filter;
 
   // Collect day_of_week values from the date range
   const days: number[] = [];
@@ -83,7 +104,11 @@ export async function getAvailableServices(
 
   let query = supabase
     .from('services')
-    .select('*, categories(name), service_availability(*)');
+    .select('*, categories(name), service_availability(*), service_images(url, sort_order), profiles!user_id(id, name, avatar_url)');
+
+  if (searchQuery) {
+    query = query.ilike('name', `%${searchQuery}%`);
+  }
 
   const {data, error} = await query;
   if (error) {
@@ -91,14 +116,7 @@ export async function getAvailableServices(
   }
 
   let results = data.map((row: any) => ({
-    id: row.id,
-    name: row.name,
-    category: row.categories.name,
-    description: row.description,
-    price: Number(row.price),
-    duration_minutes: row.duration_minutes,
-    image_url: row.image_url,
-    rating: Number(row.rating),
+    ...mapServiceRow(row),
     availability: row.service_availability,
   }));
 
@@ -221,35 +239,52 @@ export async function getMyServices(): Promise<Service[]> {
 
   const {data, error} = await supabase
     .from('services')
-    .select('*, categories(name)')
+    .select(SERVICE_SELECT)
     .eq('user_id', user.id)
     .order('created_at', {ascending: false});
   if (error) throw error;
   return data.map((row: any) => ({
-    id: row.id,
-    name: row.name,
-    category: row.categories.name,
+    ...mapServiceRow(row),
     category_id: row.category_id,
-    description: row.description,
-    price: Number(row.price),
-    duration_minutes: row.duration_minutes,
-    image_url: row.image_url,
-    rating: Number(row.rating),
   }));
 }
 
 export async function updateService(
   id: string,
   draft: Partial<ServiceDraft>,
+  imageUrls?: string[],
 ): Promise<void> {
   const {error} = await supabase
     .from('services')
     .update(draft)
     .eq('id', id);
   if (error) throw error;
+
+  if (imageUrls) {
+    const {error: delError} = await supabase
+      .from('service_images')
+      .delete()
+      .eq('service_id', id);
+    if (delError) throw delError;
+
+    if (imageUrls.length > 0) {
+      const rows = imageUrls.map((url, i) => ({
+        service_id: id,
+        url,
+        sort_order: i,
+      }));
+      const {error: insError} = await supabase
+        .from('service_images')
+        .insert(rows);
+      if (insError) throw insError;
+    }
+  }
 }
 
-export async function createService(draft: ServiceDraft): Promise<Service> {
+export async function createService(
+  draft: ServiceDraft,
+  imageUrls: string[],
+): Promise<Service> {
   const {data: {user}} = await supabase.auth.getUser();
   if (!user) throw new Error('Not authenticated');
 
@@ -259,6 +294,19 @@ export async function createService(draft: ServiceDraft): Promise<Service> {
     .select('*, categories(name)')
     .single();
   if (error) throw error;
+
+  if (imageUrls.length > 0) {
+    const rows = imageUrls.map((url, i) => ({
+      service_id: data.id,
+      url,
+      sort_order: i,
+    }));
+    const {error: imgError} = await supabase
+      .from('service_images')
+      .insert(rows);
+    if (imgError) throw imgError;
+  }
+
   return {
     id: data.id,
     name: data.name,
@@ -266,7 +314,7 @@ export async function createService(draft: ServiceDraft): Promise<Service> {
     description: data.description,
     price: Number(data.price),
     duration_minutes: data.duration_minutes,
-    image_url: data.image_url,
+    image_urls: imageUrls,
     rating: Number(data.rating),
   };
 }
@@ -428,9 +476,72 @@ export async function getUserSpendingRows(
   }));
 }
 
+export async function deleteUserAccount(): Promise<void> {
+  const {error} = await supabase.rpc('delete_user_account');
+  if (error) throw error;
+}
+
+export async function getNewServices(): Promise<Service[]> {
+  const {data, error} = await supabase
+    .from('services')
+    .select(SERVICE_SELECT)
+    .order('created_at', {ascending: false})
+    .limit(6);
+  if (error) throw error;
+  return data.map(mapServiceRow);
+}
+
+export async function getTopRatedServices(): Promise<Service[]> {
+  const {data, error} = await supabase
+    .from('services')
+    .select(SERVICE_SELECT)
+    .gte('rating', 4.5)
+    .order('rating', {ascending: false})
+    .limit(6);
+  if (error) throw error;
+  return data.map(mapServiceRow);
+}
+
+export async function getRecentBooking(): Promise<Booking | null> {
+  const {data: {user}} = await supabase.auth.getUser();
+  if (!user) return null;
+
+  const {data, error} = await supabase
+    .from('bookings')
+    .select('*, services(name)')
+    .eq('user_id', user.id)
+    .in('status', ['completed', 'confirmed'])
+    .order('created_at', {ascending: false})
+    .limit(1)
+    .maybeSingle();
+  if (error) throw error;
+  if (!data) return null;
+  return {
+    id: data.id,
+    user_id: data.user_id,
+    service_id: data.service_id,
+    service_name: data.services?.name,
+    date: data.date,
+    time_slot: data.time_slot,
+    status: data.status,
+    notes: data.notes,
+    created_at: data.created_at,
+  };
+}
+
 export async function createBooking(draft: BookingDraft): Promise<Booking> {
   const {data: {user}} = await supabase.auth.getUser();
   if (!user) throw new Error('Not authenticated');
+
+  const {data: service, error: svcError} = await supabase
+    .from('services')
+    .select('user_id')
+    .eq('id', draft.service_id)
+    .single();
+  if (svcError) throw svcError;
+  if (service.user_id === user.id) {
+    throw new Error('Cannot book your own service');
+  }
 
   const {data, error} = await supabase
     .from('bookings')
@@ -439,4 +550,56 @@ export async function createBooking(draft: BookingDraft): Promise<Booking> {
     .single();
   if (error) throw error;
   return data;
+}
+
+export async function getProviderProfileData(userId: string): Promise<ProviderProfile> {
+  const {data: profile, error: profileError} = await supabase
+    .from('profiles')
+    .select('*')
+    .eq('id', userId)
+    .single();
+  if (profileError) throw profileError;
+
+  const {data: services, error: svcError} = await supabase
+    .from('services')
+    .select(SERVICE_SELECT)
+    .eq('user_id', userId)
+    .order('created_at', {ascending: false});
+  if (svcError) throw svcError;
+
+  const mappedServices = services.map(mapServiceRow);
+  const averageRating =
+    mappedServices.length > 0
+      ? mappedServices.reduce((sum, s) => sum + s.rating, 0) / mappedServices.length
+      : 0;
+
+  const {count, error: countError} = await supabase
+    .from('bookings')
+    .select('id', {count: 'exact', head: true})
+    .in(
+      'service_id',
+      mappedServices.map(s => s.id),
+    );
+  if (countError) throw countError;
+
+  return {
+    id: profile.id,
+    name: profile.name,
+    avatar_url: profile.avatar_url,
+    bio: profile.bio,
+    services: mappedServices,
+    averageRating: Math.round(averageRating * 10) / 10,
+    totalBookings: count ?? 0,
+  };
+}
+
+export async function updateProfileBio(bio: string): Promise<void> {
+  const {data: {user}} = await supabase.auth.getUser();
+  if (!user) throw new Error('Not authenticated');
+
+  const {error} = await supabase
+    .from('profiles')
+    .update({bio})
+    .eq('id', user.id);
+  if (error) throw error;
 }

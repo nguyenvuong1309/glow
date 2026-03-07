@@ -1,17 +1,34 @@
-import {takeLatest, put, call} from 'redux-saga/effects';
-import {loadCategories, loadCategoriesSuccess, loadCategoriesFailure} from './homeSlice';
-import {getCategories} from '@/lib/supabase';
-import type {Category} from '@/types';
+import {takeLatest, put, call, all} from 'redux-saga/effects';
+import {loadHome, loadHomeSuccess, loadHomeFailure} from './homeSlice';
+import {
+  getCategories,
+  getNewServices,
+  getTopRatedServices,
+  getRecentBooking,
+} from '@/lib/supabase';
+import type {Category, Service, Booking} from '@/types';
 
-function* handleLoadCategories() {
+function* handleLoadHome() {
   try {
-    const categories: Category[] = yield call(getCategories);
-    yield put(loadCategoriesSuccess(categories));
+    const [categories, newServices, topRatedServices, recentBooking]: [
+      Category[],
+      Service[],
+      Service[],
+      Booking | null,
+    ] = yield all([
+      call(getCategories),
+      call(getNewServices),
+      call(getTopRatedServices),
+      call(getRecentBooking),
+    ]);
+    yield put(
+      loadHomeSuccess({categories, newServices, topRatedServices, recentBooking}),
+    );
   } catch (e: any) {
-    yield put(loadCategoriesFailure(e.message ?? 'Failed to load categories'));
+    yield put(loadHomeFailure(e.message ?? 'Failed to load home'));
   }
 }
 
 export function* homeSaga() {
-  yield takeLatest(loadCategories.type, handleLoadCategories);
+  yield takeLatest(loadHome.type, handleLoadHome);
 }

@@ -46,6 +46,20 @@ const authSlice = createSlice({
       state.loading = false;
       state.error = null;
     },
+    deleteAccountRequest(state) {
+      state.loading = true;
+      state.error = null;
+    },
+    deleteAccountSuccess(state) {
+      state.user = null;
+      state.isAuthenticated = false;
+      state.loading = false;
+      state.error = null;
+    },
+    deleteAccountFailure(state, action: PayloadAction<string>) {
+      state.loading = false;
+      state.error = action.payload;
+    },
   },
 });
 
@@ -56,5 +70,8 @@ export const {
   loginFailure,
   logoutRequest,
   logout,
+  deleteAccountRequest,
+  deleteAccountSuccess,
+  deleteAccountFailure,
 } = authSlice.actions;
 export default authSlice.reducer;

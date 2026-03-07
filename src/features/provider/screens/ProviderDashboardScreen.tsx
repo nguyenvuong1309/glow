@@ -5,7 +5,6 @@ import {
   StyleSheet,
   ScrollView,
   TouchableOpacity,
-  ActivityIndicator,
   RefreshControl,
 } from 'react-native';
 import {useDispatch, useSelector} from 'react-redux';
@@ -14,6 +13,7 @@ import {useFocusEffect} from '@react-navigation/native';
 import {loadStats, setMonth} from '../providerSlice';
 import {theme} from '@/utils/theme';
 import type {RootState} from '@/store';
+import DashboardSkeleton from '@/components/Skeleton/DashboardSkeleton';
 
 const MONTH_NAMES = [
   'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
@@ -76,9 +76,7 @@ export default function ProviderDashboardScreen() {
       </View>
 
       {loading && !stats ? (
-        <View style={styles.centered}>
-          <ActivityIndicator size="large" color={theme.colors.primary} />
-        </View>
+        <DashboardSkeleton />
       ) : !stats ? (
         <Text style={styles.emptyText}>{t('dashboard.noData')}</Text>
       ) : (

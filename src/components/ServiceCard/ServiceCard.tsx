@@ -9,11 +9,13 @@ interface Props {
   service: Service;
   onPress: () => void;
   horizontal?: boolean;
+  featured?: boolean;
   isFavorite?: boolean;
   onToggleFavorite?: () => void;
+  isOwner?: boolean;
 }
 
-function ServiceCard({service, onPress, horizontal, isFavorite, onToggleFavorite}: Props) {
+function ServiceCard({service, onPress, horizontal, featured, isFavorite, onToggleFavorite, isOwner}: Props) {
   const {t} = useTranslation();
   return (
     <TouchableOpacity
@@ -21,11 +23,28 @@ function ServiceCard({service, onPress, horizontal, isFavorite, onToggleFavorite
       onPress={onPress}
       activeOpacity={0.8}>
       <View>
-        <Animated.Image
-          source={{uri: service.image_url}}
-          style={[styles.image, horizontal && styles.imageHorizontal]}
-          sharedTransitionTag={`service-image-${service.id}`}
-        />
+        {service.image_urls.length > 0 && (
+          <Animated.Image
+            source={{uri: service.image_urls[0]}}
+            style={[styles.image, horizontal && styles.imageHorizontal, featured && styles.imageFeatured]}
+            sharedTransitionTag={`service-image-${service.id}`}
+          />
+        )}
+        {featured && (
+          <View style={styles.featuredBadge}>
+            <Text style={styles.featuredBadgeText}>{t('home.topRatedBadge')}</Text>
+          </View>
+        )}
+        {isOwner && (
+          <View style={styles.ownerBadge}>
+            <Text style={styles.ownerBadgeText}>{t('services.yourService')}</Text>
+          </View>
+        )}
+        {service.image_urls.length > 1 && (
+          <View style={styles.photoBadge}>
+            <Text style={styles.photoBadgeText}>{service.image_urls.length}</Text>
+          </View>
+        )}
         {onToggleFavorite && (
           <TouchableOpacity
             style={styles.heartButton}
@@ -89,6 +108,37 @@ const styles = StyleSheet.create({
   imageHorizontal: {
     height: 120,
   },
+  imageFeatured: {
+    height: 200,
+  },
+  featuredBadge: {
+    position: 'absolute',
+    top: 8,
+    left: 8,
+    backgroundColor: '#FF9800',
+    borderRadius: 10,
+    paddingHorizontal: 8,
+    paddingVertical: 3,
+  },
+  featuredBadgeText: {
+    color: '#FFFFFF',
+    fontSize: 11,
+    fontWeight: '700',
+  },
+  ownerBadge: {
+    position: 'absolute',
+    top: 8,
+    left: 8,
+    backgroundColor: theme.colors.primaryDark,
+    borderRadius: 10,
+    paddingHorizontal: 8,
+    paddingVertical: 3,
+  },
+  ownerBadgeText: {
+    color: '#FFFFFF',
+    fontSize: 11,
+    fontWeight: '700',
+  },
   info: {
     padding: theme.spacing.md,
   },
@@ -118,6 +168,22 @@ const styles = StyleSheet.create({
   rating: {
     fontSize: 13,
     color: theme.colors.text,
+  },
+  photoBadge: {
+    position: 'absolute',
+    bottom: theme.spacing.sm,
+    left: theme.spacing.sm,
+    backgroundColor: 'rgba(0,0,0,0.6)',
+    borderRadius: 10,
+    paddingHorizontal: 8,
+    paddingVertical: 2,
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  photoBadgeText: {
+    color: '#fff',
+    fontSize: 11,
+    fontWeight: '600',
   },
   heartButton: {
     position: 'absolute',

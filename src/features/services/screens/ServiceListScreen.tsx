@@ -2,9 +2,9 @@ import React, {useCallback, useEffect, useMemo, useRef, useState} from 'react';
 import {
   View,
   Text,
+  TextInput,
   StyleSheet,
   TouchableOpacity,
-  ActivityIndicator,
   ScrollView,
 } from 'react-native';
 import Animated, {
@@ -15,7 +15,7 @@ import Animated, {
 import {BottomSheetModal} from '@gorhom/bottom-sheet';
 import {useDispatch, useSelector} from 'react-redux';
 import {useTranslation} from 'react-i18next';
-import {loadServices, selectService} from '../serviceSlice';
+import {loadServices, selectService, setFilter} from '../serviceSlice';
 import {toggleFavorite} from '@/features/favorites/favoritesSlice';
 import FilterBottomSheet from '@/components/FilterBottomSheet/FilterBottomSheet';
 import ServiceCard from '@/components/ServiceCard/ServiceCard';
@@ -24,6 +24,7 @@ import type {RootState} from '@/store';
 import type {Service} from '@/types';
 import type {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import type {ServiceStackParamList} from '@/navigation/types';
+import ServiceListSkeleton from '@/components/Skeleton/ServiceListSkeleton';
 
 interface Props {
   navigation: NativeStackNavigationProp<ServiceStackParamList>;
@@ -37,7 +38,9 @@ export default function ServiceListScreen({navigation}: Props) {
   );
   const {categories} = useSelector((state: RootState) => state.home);
   const favoriteIds = useSelector((state: RootState) => state.favorites.ids);
+  const user = useSelector((state: RootState) => state.auth.user);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const [searchText, setSearchText] = useState(filter.searchQuery ?? '');
   const bottomSheetRef = useRef<BottomSheetModal>(null);
 
   useEffect(() => {
@@ -45,6 +48,10 @@ export default function ServiceListScreen({navigation}: Props) {
       dispatch(loadServices());
     }
   }, [dispatch, services.length]);
+
+  useEffect(() => {
+    setSearchText(filter.searchQuery ?? '');
+  }, [filter.searchQuery]);
 
   const handleServicePress = (service: Service) => {
     dispatch(selectService(service));
@@ -61,13 +68,22 @@ export default function ServiceListScreen({navigation}: Props) {
     );
   };
 
-  // Client-side filter by selected category chip
+  const handleSearch = () => {
+    dispatch(setFilter({searchQuery: searchText.trim()}));
+  };
+
+  // Client-side filter by selected category chip and search query
   const filteredServices = useMemo(() => {
-    if (!selectedCategory) {
-      return services;
+    let result = services;
+    if (selectedCategory) {
+      result = result.filter(s => s.category === selectedCategory);
     }
-    return services.filter(s => s.category === selectedCategory);
-  }, [services, selectedCategory]);
+    const q = searchText.trim().toLowerCase();
+    if (q) {
+      result = result.filter(s => s.name.toLowerCase().includes(q));
+    }
+    return result;
+  }, [services, selectedCategory, searchText]);
 
   const hasActiveFilter =
     filter.categories.length > 0 ||
@@ -77,15 +93,22 @@ export default function ServiceListScreen({navigation}: Props) {
     filter.timeTo !== null;
 
   if (loading) {
-    return (
-      <View style={styles.centered}>
-        <ActivityIndicator size="large" color={theme.colors.primary} />
-      </View>
-    );
+    return <ServiceListSkeleton />;
   }
 
   return (
     <View style={styles.container}>
+      {/* Search Bar */}
+      <TextInput
+        style={styles.searchBar}
+        placeholder={t('home.searchPlaceholder')}
+        placeholderTextColor={theme.colors.textSecondary}
+        value={searchText}
+        onChangeText={setSearchText}
+        onSubmitEditing={handleSearch}
+        returnKeyType="search"
+      />
+
       {/* Category Chips + Filter Button */}
       <View style={styles.categoryRow}>
         <ScrollView
@@ -163,6 +186,7 @@ export default function ServiceListScreen({navigation}: Props) {
                 onPress={() => handleServicePress(item)}
                 isFavorite={favoriteIds.includes(item.id)}
                 onToggleFavorite={() => dispatch(toggleFavorite(item.id))}
+                isOwner={item.provider_id === user?.id}
               />
             </Animated.View>
           )}
@@ -243,6 +267,18 @@ const styles = StyleSheet.create({
   },
   list: {
     padding: theme.spacing.md,
+  },
+  searchBar: {
+    backgroundColor: theme.colors.surface,
+    borderRadius: theme.radius.full,
+    paddingHorizontal: theme.spacing.lg,
+    paddingVertical: 10,
+    fontSize: 15,
+    color: theme.colors.text,
+    borderWidth: 1,
+    borderColor: theme.colors.border,
+    marginHorizontal: theme.spacing.md,
+    marginTop: theme.spacing.sm,
   },
   emptyText: {
     fontSize: 16,

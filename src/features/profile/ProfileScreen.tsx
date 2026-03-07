@@ -10,7 +10,7 @@ import {
 } from 'react-native';
 import {useDispatch, useSelector} from 'react-redux';
 import {useTranslation} from 'react-i18next';
-import {logoutRequest} from '@/features/auth/authSlice';
+import {logoutRequest, deleteAccountRequest} from '@/features/auth/authSlice';
 import {changeLanguage} from '@/i18n';
 import {languages} from '@/i18n/languages';
 import {theme} from '@/utils/theme';
@@ -70,6 +70,24 @@ export default function ProfileScreen({navigation}: Props) {
               text: t('profile.signOut'),
               style: 'destructive',
               onPress: () => dispatch(logoutRequest()),
+            },
+          ],
+        );
+      },
+      destructive: true,
+    },
+    {
+      label: t('profile.deleteAccount'),
+      onPress: () => {
+        Alert.alert(
+          t('profile.deleteAccountTitle'),
+          t('profile.deleteAccountWarning'),
+          [
+            {text: t('common.cancel'), style: 'cancel'},
+            {
+              text: t('profile.deleteAccountConfirm'),
+              style: 'destructive',
+              onPress: () => dispatch(deleteAccountRequest()),
             },
           ],
         );

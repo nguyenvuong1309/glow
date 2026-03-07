@@ -1,4 +1,5 @@
 import {createSlice, PayloadAction} from '@reduxjs/toolkit';
+import type {ProviderProfile} from '@/types';
 
 interface RevenueByDay {
   date: string;
@@ -40,6 +41,8 @@ interface ProviderState {
   loading: boolean;
   selectedMonth: number;
   selectedYear: number;
+  profile: ProviderProfile | null;
+  profileLoading: boolean;
 }
 
 const now = new Date();
@@ -49,6 +52,8 @@ const initialState: ProviderState = {
   loading: false,
   selectedMonth: now.getMonth() + 1,
   selectedYear: now.getFullYear(),
+  profile: null,
+  profileLoading: false,
 };
 
 const providerSlice = createSlice({
@@ -72,9 +77,26 @@ const providerSlice = createSlice({
       state.selectedMonth = action.payload.month;
       state.selectedYear = action.payload.year;
     },
+    loadProviderProfile(state, _action: PayloadAction<string>) {
+      state.profileLoading = true;
+    },
+    loadProviderProfileSuccess(state, action: PayloadAction<ProviderProfile>) {
+      state.profile = action.payload;
+      state.profileLoading = false;
+    },
+    loadProviderProfileFailure(state) {
+      state.profileLoading = false;
+    },
   },
 });
 
-export const {loadStats, loadStatsSuccess, loadStatsFailure, setMonth} =
-  providerSlice.actions;
+export const {
+  loadStats,
+  loadStatsSuccess,
+  loadStatsFailure,
+  setMonth,
+  loadProviderProfile,
+  loadProviderProfileSuccess,
+  loadProviderProfileFailure,
+} = providerSlice.actions;
 export default providerSlice.reducer;

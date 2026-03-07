@@ -1,0 +1,193 @@
+import React, {useRef, useState, useCallback} from 'react';
+import {
+  View,
+  Text,
+  StyleSheet,
+  FlatList,
+  Dimensions,
+  TouchableOpacity,
+  ViewToken,
+} from 'react-native';
+import {SafeAreaView} from 'react-native-safe-area-context';
+import {useTranslation} from 'react-i18next';
+import {mmkvStorage} from '@/lib/storage';
+import {theme} from '@/utils/theme';
+
+const {width: SCREEN_WIDTH} = Dimensions.get('window');
+
+interface Slide {
+  id: string;
+  emoji: string;
+  titleKey: string;
+  subtitleKey: string;
+  color: string;
+}
+
+const slides: Slide[] = [
+  {id: '1', emoji: '\u{1F489}', titleKey: 'onboarding.title1', subtitleKey: 'onboarding.subtitle1', color: '#E07A94'},
+  {id: '2', emoji: '\u{1F4C5}', titleKey: 'onboarding.title2', subtitleKey: 'onboarding.subtitle2', color: '#7B68EE'},
+  {id: '3', emoji: '\u2B50', titleKey: 'onboarding.title3', subtitleKey: 'onboarding.subtitle3', color: '#4CAF50'},
+];
+
+interface Props {
+  onComplete: () => void;
+}
+
+export default function OnboardingScreen({onComplete}: Props) {
+  const {t} = useTranslation();
+  const flatListRef = useRef<FlatList>(null);
+  const [activeIndex, setActiveIndex] = useState(0);
+
+  const onViewableItemsChanged = useCallback(
+    ({viewableItems}: {viewableItems: ViewToken[]}) => {
+      if (viewableItems.length > 0 && viewableItems[0].index != null) {
+        setActiveIndex(viewableItems[0].index);
+      }
+    },
+    [],
+  );
+
+  const viewabilityConfig = useRef({viewAreaCoveragePercentThreshold: 50}).current;
+
+  const handleNext = () => {
+    if (activeIndex < slides.length - 1) {
+      flatListRef.current?.scrollToIndex({index: activeIndex + 1, animated: true});
+    } else {
+      handleComplete();
+    }
+  };
+
+  const handleComplete = () => {
+    mmkvStorage.setItem('onboarding_completed', 'true');
+    onComplete();
+  };
+
+  const renderItem = ({item}: {item: Slide}) => (
+    <View style={styles.slide}>
+      <View style={[styles.emojiCircle, {backgroundColor: item.color + '20'}]}>
+        <Text style={styles.emoji}>{item.emoji}</Text>
+      </View>
+      <Text style={styles.title}>{t(item.titleKey)}</Text>
+      <Text style={styles.subtitle}>{t(item.subtitleKey)}</Text>
+    </View>
+  );
+
+  const isLast = activeIndex === slides.length - 1;
+
+  return (
+    <SafeAreaView style={styles.container}>
+      <FlatList
+        ref={flatListRef}
+        data={slides}
+        horizontal
+        pagingEnabled
+        showsHorizontalScrollIndicator={false}
+        keyExtractor={item => item.id}
+        renderItem={renderItem}
+        onViewableItemsChanged={onViewableItemsChanged}
+        viewabilityConfig={viewabilityConfig}
+      />
+
+      <View style={styles.footer}>
+        <View style={styles.dots}>
+          {slides.map((_, i) => (
+            <View
+              key={i}
+              style={[styles.dot, i === activeIndex && styles.dotActive]}
+            />
+          ))}
+        </View>
+
+        <TouchableOpacity style={styles.button} onPress={handleNext} activeOpacity={0.8}>
+          <Text style={styles.buttonText}>
+            {isLast ? t('onboarding.getStarted') : t('onboarding.next')}
+          </Text>
+        </TouchableOpacity>
+
+        {!isLast && (
+          <TouchableOpacity onPress={handleComplete} style={styles.skipButton}>
+            <Text style={styles.skipText}>{t('onboarding.getStarted')}</Text>
+          </TouchableOpacity>
+        )}
+      </View>
+    </SafeAreaView>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: theme.colors.background,
+  },
+  slide: {
+    width: SCREEN_WIDTH,
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingHorizontal: theme.spacing.xl,
+  },
+  emojiCircle: {
+    width: 120,
+    height: 120,
+    borderRadius: 60,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: theme.spacing.xl,
+  },
+  emoji: {
+    fontSize: 52,
+  },
+  title: {
+    fontSize: 28,
+    fontWeight: '700',
+    color: theme.colors.text,
+    textAlign: 'center',
+    marginBottom: theme.spacing.md,
+  },
+  subtitle: {
+    fontSize: 16,
+    color: theme.colors.textSecondary,
+    textAlign: 'center',
+    lineHeight: 24,
+  },
+  footer: {
+    paddingHorizontal: theme.spacing.xl,
+    paddingBottom: theme.spacing.xl,
+    alignItems: 'center',
+  },
+  dots: {
+    flexDirection: 'row',
+    gap: 8,
+    marginBottom: theme.spacing.lg,
+  },
+  dot: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    backgroundColor: theme.colors.border,
+  },
+  dotActive: {
+    backgroundColor: theme.colors.primary,
+    width: 24,
+  },
+  button: {
+    backgroundColor: theme.colors.primaryDark,
+    paddingVertical: 16,
+    borderRadius: theme.radius.md,
+    alignItems: 'center',
+    width: '100%',
+  },
+  buttonText: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#FFFFFF',
+  },
+  skipButton: {
+    marginTop: theme.spacing.md,
+    padding: theme.spacing.sm,
+  },
+  skipText: {
+    fontSize: 14,
+    color: theme.colors.textSecondary,
+  },
+});

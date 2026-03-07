@@ -2,6 +2,7 @@ import {createSlice, PayloadAction} from '@reduxjs/toolkit';
 import type {Service, ServiceFilter, Review, ReviewDraft} from '@/types';
 
 const initialFilter: ServiceFilter = {
+  searchQuery: '',
   categories: [],
   dateFrom: null,
   dateTo: null,

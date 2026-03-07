@@ -5,7 +5,6 @@ import {
   StyleSheet,
   ScrollView,
   TouchableOpacity,
-  ActivityIndicator,
   RefreshControl,
 } from 'react-native';
 import {useDispatch, useSelector} from 'react-redux';
@@ -14,6 +13,7 @@ import {useFocusEffect} from '@react-navigation/native';
 import {loadSpending, setSpendingMonth} from '../bookingSlice';
 import {theme} from '@/utils/theme';
 import type {RootState} from '@/store';
+import SpendingSkeleton from '@/components/Skeleton/SpendingSkeleton';
 
 const MONTH_NAMES = [
   'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
@@ -73,9 +73,7 @@ export default function SpendingScreen() {
       </View>
 
       {spendingLoading && !spending ? (
-        <View style={styles.centered}>
-          <ActivityIndicator size="large" color={theme.colors.primary} />
-        </View>
+        <SpendingSkeleton />
       ) : !spending ? (
         <Text style={styles.emptyText}>{t('spending.noData')}</Text>
       ) : (

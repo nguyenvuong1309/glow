@@ -4,7 +4,6 @@ import {
   Text,
   StyleSheet,
   FlatList,
-  ActivityIndicator,
   RefreshControl,
   TouchableOpacity,
   Image,
@@ -18,6 +17,7 @@ import type {RootState} from '@/store';
 import type {Service} from '@/types';
 import type {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import type {ProfileStackParamList} from '@/navigation/types';
+import MyServicesSkeleton from '@/components/Skeleton/MyServicesSkeleton';
 
 interface Props {
   navigation: NativeStackNavigationProp<ProfileStackParamList>;
@@ -43,8 +43,8 @@ export default function MyServicesScreen({navigation}: Props) {
     <TouchableOpacity
       style={styles.card}
       onPress={() => navigation.navigate('PostService', {service: item})}>
-      {item.image_url ? (
-        <Image source={{uri: item.image_url}} style={styles.cardImage} />
+      {item.image_urls.length > 0 ? (
+        <Image source={{uri: item.image_urls[0]}} style={styles.cardImage} />
       ) : null}
       <View style={styles.cardContent}>
         <Text style={styles.serviceName} numberOfLines={1}>
@@ -62,11 +62,7 @@ export default function MyServicesScreen({navigation}: Props) {
   );
 
   if (loading && services.length === 0) {
-    return (
-      <View style={styles.centered}>
-        <ActivityIndicator size="large" color={theme.colors.primary} />
-      </View>
-    );
+    return <MyServicesSkeleton />;
   }
 
   return (

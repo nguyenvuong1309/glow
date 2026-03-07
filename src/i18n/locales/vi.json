@@ -16,8 +16,19 @@
     "greeting": "Xin chào, {{name}} ✨",
     "defaultName": "Bạn",
     "whatWouldYouLike": "Bạn muốn gì hôm nay?",
+    "searchPlaceholder": "Tìm dịch vụ...",
     "categories": "Danh mục",
-    "popularServices": "Dịch vụ phổ biến"
+    "newServices": "Dịch vụ mới",
+    "topRated": "Đánh giá cao",
+    "topRatedBadge": "Nổi bật",
+    "recentBooking": "Lịch hẹn gần đây",
+    "bookAgain": "Đặt lại",
+    "promoTitle1": "Ưu đãi mùa xuân",
+    "promoSubtitle1": "Giảm 20% tất cả dịch vụ spa",
+    "promoTitle2": "Khách hàng mới",
+    "promoSubtitle2": "Tư vấn miễn phí lần đầu",
+    "promoTitle3": "Giới thiệu bạn bè",
+    "promoSubtitle3": "Cả hai nhận 100K credits"
   },
   "services": {
     "all": "Tất cả",
@@ -25,6 +36,9 @@
     "noServicesFound": "Không tìm thấy dịch vụ",
     "serviceNotFound": "Không tìm thấy dịch vụ",
     "bookNow": "Đặt ngay",
+    "editService": "Chỉnh sửa dịch vụ",
+    "yourService": "Dịch vụ của bạn",
+    "cannotBookOwn": "Bạn không thể đặt dịch vụ của chính mình",
     "price": "{{price}}đ",
     "duration": "{{minutes}} phút",
     "rating": "★ {{rating}}"
@@ -61,6 +75,9 @@
     "confirmCancel": "Huỷ lịch hẹn",
     "confirmCancelMessage": "Bạn có chắc muốn huỷ lịch hẹn này?",
     "writeReview": "Viết đánh giá",
+    "listView": "Danh sách",
+    "calendarView": "Lịch",
+    "noBookingsOnDate": "Không có lịch hẹn ngày này",
     "status": {
       "pending": "Chờ xác nhận",
       "confirmed": "Đã xác nhận",
@@ -130,7 +147,11 @@
     "bookingRequests": "Yêu cầu đặt lịch",
     "favorites": "Yêu thích",
     "servicesSection": "Dịch vụ",
-    "accountSection": "Tài khoản"
+    "accountSection": "Tài khoản",
+    "deleteAccount": "Xoá tài khoản",
+    "deleteAccountTitle": "Xoá tài khoản vĩnh viễn",
+    "deleteAccountWarning": "Hành động này KHÔNG THỂ HOÀN TÁC. Tất cả dữ liệu sau sẽ bị xoá vĩnh viễn:\n\n• Thông tin cá nhân\n• Tất cả dịch vụ bạn đã đăng\n• Lịch sử đặt lịch\n• Đánh giá bạn đã viết\n• Danh sách yêu thích\n• Ảnh và media đã tải lên\n\nCác lịch hẹn đang chờ xử lý cũng sẽ bị huỷ.",
+    "deleteAccountConfirm": "Xoá vĩnh viễn"
   },
   "navigation": {
     "home": "Trang chủ",
@@ -161,6 +182,22 @@
   },
   "favorites": {
     "empty": "Chưa có dịch vụ yêu thích nào"
+  },
+  "provider": {
+    "services": "Dịch vụ",
+    "avgRating": "Đánh giá TB",
+    "totalBookings": "Lượt đặt",
+    "noBio": "Chưa có giới thiệu"
+  },
+  "onboarding": {
+    "title1": "Khám phá dịch vụ",
+    "subtitle1": "Tìm kiếm dịch vụ làm đẹp & chăm sóc sức khỏe dành cho bạn",
+    "title2": "Đặt lịch nhanh chóng",
+    "subtitle2": "Chọn ngày, giờ và đặt lịch chỉ trong vài giây",
+    "title3": "Đánh giá & Nhận xét",
+    "subtitle3": "Chia sẻ trải nghiệm và giúp người khác lựa chọn",
+    "next": "Tiếp tục",
+    "getStarted": "Bắt đầu"
   },
   "spending": {
     "title": "Chi tiêu",

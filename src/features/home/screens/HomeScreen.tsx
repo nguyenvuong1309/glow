@@ -1,23 +1,24 @@
-import React, {useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
-  View,
   Text,
+  TextInput,
   StyleSheet,
   ScrollView,
-  TouchableOpacity,
-  ActivityIndicator,
+  RefreshControl,
 } from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
-import Animated, {
-  FadeInDown,
-  LinearTransition,
-} from 'react-native-reanimated';
+import Animated, {FadeInDown} from 'react-native-reanimated';
 import {useDispatch, useSelector} from 'react-redux';
 import {useTranslation} from 'react-i18next';
-import {loadCategories} from '../homeSlice';
-import {loadServices, selectService, setFilter} from '@/features/services/serviceSlice';
+import {loadHome} from '../homeSlice';
+import {selectService, setFilter} from '@/features/services/serviceSlice';
 import {loadFavorites, toggleFavorite} from '@/features/favorites/favoritesSlice';
 import ServiceCard from '@/components/ServiceCard/ServiceCard';
+import CategoryGrid from '@/components/CategoryGrid/CategoryGrid';
+import PromoBanner from '@/components/PromoBanner/PromoBanner';
+import type {Banner} from '@/components/PromoBanner/PromoBanner';
+import RecentBookingCard from '@/components/RecentBookingCard/RecentBookingCard';
+import HomeScreenSkeleton from '@/components/Skeleton/HomeScreenSkeleton';
 import {theme} from '@/utils/theme';
 import type {RootState} from '@/store';
 import type {Service} from '@/types';
@@ -37,22 +38,40 @@ interface Props {
 export default function HomeScreen({navigation}: Props) {
   const {t} = useTranslation();
   const dispatch = useDispatch();
-  const {categories, loading: catLoading} = useSelector(
-    (state: RootState) => state.home,
-  );
-  const {list: services, loading: svcLoading, filter} = useSelector(
-    (state: RootState) => state.services,
-  );
+  const {
+    categories,
+    newServices,
+    topRatedServices,
+    recentBooking,
+    loading,
+  } = useSelector((state: RootState) => state.home);
   const user = useSelector((state: RootState) => state.auth.user);
   const favoriteIds = useSelector((state: RootState) => state.favorites.ids);
+  const [searchText, setSearchText] = useState('');
+  const [refreshing, setRefreshing] = useState(false);
 
   useEffect(() => {
-    dispatch(loadCategories());
-    dispatch(loadServices());
+    dispatch(loadHome());
     dispatch(loadFavorites());
   }, [dispatch]);
 
-  const popularServices = services.slice(0, 6);
+  useEffect(() => {
+    if (!loading && refreshing) {
+      setRefreshing(false);
+    }
+  }, [loading, refreshing]);
+
+  const handleRefresh = () => {
+    setRefreshing(true);
+    dispatch(loadHome());
+    dispatch(loadFavorites());
+  };
+
+  const banners: Banner[] = [
+    {id: '1', color: '#E07A94', title: t('home.promoTitle1'), subtitle: t('home.promoSubtitle1')},
+    {id: '2', color: '#7B68EE', title: t('home.promoTitle2'), subtitle: t('home.promoSubtitle2')},
+    {id: '3', color: '#4CAF50', title: t('home.promoTitle3'), subtitle: t('home.promoSubtitle3')},
+  ];
 
   const handleServicePress = (service: Service) => {
     dispatch(selectService(service));
@@ -60,28 +79,34 @@ export default function HomeScreen({navigation}: Props) {
   };
 
   const handleCategoryPress = (categoryName: string) => {
-    const isSelected = filter.categories.includes(categoryName);
-    dispatch(
-      setFilter({
-        categories: isSelected ? [] : [categoryName],
-      }),
-    );
+    dispatch(setFilter({categories: [categoryName]}));
     navigation.navigate('Services');
   };
 
-  if (catLoading || svcLoading) {
-    return (
-      <View style={styles.centered}>
-        <ActivityIndicator size="large" color={theme.colors.primary} />
-      </View>
-    );
+  const handleSearch = () => {
+    if (!searchText.trim()) return;
+    dispatch(setFilter({searchQuery: searchText.trim()}));
+    navigation.navigate('Services');
+  };
+
+  if (loading) {
+    return <HomeScreenSkeleton />;
   }
 
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView
         contentContainerStyle={styles.content}
-        showsVerticalScrollIndicator={false}>
+        showsVerticalScrollIndicator={false}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={handleRefresh}
+            tintColor={theme.colors.primary}
+          />
+        }>
+
+        {/* Greeting */}
         <Animated.View entering={FadeInDown.duration(500)}>
           <Text style={styles.greeting}>
             {t('home.greeting', {name: user?.name ?? t('home.defaultName')})}
@@ -89,56 +114,82 @@ export default function HomeScreen({navigation}: Props) {
           <Text style={styles.subtitle}>{t('home.whatWouldYouLike')}</Text>
         </Animated.View>
 
+        {/* Recent Booking */}
+        {recentBooking && (
+          <Animated.View entering={FadeInDown.duration(500).delay(50)}>
+            <RecentBookingCard
+              booking={recentBooking}
+              onBookAgain={() =>
+                navigation.navigate('Booking', {serviceId: recentBooking.service_id})
+              }
+            />
+          </Animated.View>
+        )}
+
+        {/* Search Bar */}
         <Animated.View entering={FadeInDown.duration(500).delay(100)}>
-          <Text style={styles.sectionTitle}>{t('home.categories')}</Text>
-          <ScrollView
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            contentContainerStyle={styles.chips}>
-            {categories.map(cat => (
-              <TouchableOpacity
-                key={cat.id}
-                style={[
-                  styles.chip,
-                  filter.categories.includes(cat.name) && styles.chipSelected,
-                ]}
-                onPress={() => handleCategoryPress(cat.name)}>
-                <Text
-                  style={[
-                    styles.chipText,
-                    filter.categories.includes(cat.name) &&
-                      styles.chipTextSelected,
-                  ]}>
-                  {cat.name}
-                </Text>
-              </TouchableOpacity>
-            ))}
-          </ScrollView>
+          <TextInput
+            style={styles.searchBar}
+            placeholder={t('home.searchPlaceholder')}
+            placeholderTextColor={theme.colors.textSecondary}
+            value={searchText}
+            onChangeText={setSearchText}
+            onSubmitEditing={handleSearch}
+            returnKeyType="search"
+          />
         </Animated.View>
 
+        {/* Promo Banner */}
+        <Animated.View entering={FadeInDown.duration(500).delay(150)}>
+          <PromoBanner banners={banners} />
+        </Animated.View>
+
+        {/* Categories */}
         <Animated.View entering={FadeInDown.duration(500).delay(200)}>
-          <Text style={styles.sectionTitle}>{t('home.popularServices')}</Text>
-          <Animated.FlatList
-            data={popularServices}
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            keyExtractor={item => item.id}
-            itemLayoutAnimation={LinearTransition.springify().damping(18).stiffness(120)}
-            renderItem={({item, index}) => (
-              <Animated.View entering={FadeInDown.duration(400).delay(index * 80)}>
+          <Text style={styles.sectionTitle}>{t('home.categories')}</Text>
+          <CategoryGrid categories={categories} onPress={handleCategoryPress} />
+        </Animated.View>
+
+        {/* New Services */}
+        {newServices.length > 0 && (
+          <Animated.View entering={FadeInDown.duration(500).delay(250)}>
+            <Text style={styles.sectionTitle}>{t('home.newServices')}</Text>
+            <ScrollView
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              contentContainerStyle={styles.horizontalList}>
+              {newServices.map(item => (
                 <ServiceCard
+                  key={item.id}
                   service={item}
                   onPress={() => handleServicePress(item)}
                   horizontal
                   isFavorite={favoriteIds.includes(item.id)}
                   onToggleFavorite={() => dispatch(toggleFavorite(item.id))}
+                  isOwner={item.provider_id === user?.id}
                 />
-              </Animated.View>
-            )}
-            scrollEnabled={false}
-            contentContainerStyle={styles.horizontalList}
-          />
-        </Animated.View>
+              ))}
+            </ScrollView>
+          </Animated.View>
+        )}
+
+        {/* Top Rated */}
+        {topRatedServices.length > 0 && (
+          <Animated.View entering={FadeInDown.duration(500).delay(300)}>
+            <Text style={styles.sectionTitle}>{t('home.topRated')}</Text>
+            {topRatedServices.slice(0, 3).map(item => (
+              <ServiceCard
+                key={item.id}
+                service={item}
+                onPress={() => handleServicePress(item)}
+                featured
+                isFavorite={favoriteIds.includes(item.id)}
+                onToggleFavorite={() => dispatch(toggleFavorite(item.id))}
+                isOwner={item.provider_id === user?.id}
+              />
+            ))}
+          </Animated.View>
+        )}
       </ScrollView>
     </SafeAreaView>
   );
@@ -153,12 +204,6 @@ const styles = StyleSheet.create({
     padding: theme.spacing.lg,
     paddingBottom: 40,
   },
-  centered: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: theme.colors.background,
-  },
   greeting: {
     fontSize: 28,
     fontWeight: '700',
@@ -168,7 +213,18 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: theme.colors.textSecondary,
     marginTop: theme.spacing.xs,
-    marginBottom: theme.spacing.lg,
+    marginBottom: theme.spacing.md,
+  },
+  searchBar: {
+    backgroundColor: theme.colors.surface,
+    borderRadius: theme.radius.full,
+    paddingHorizontal: theme.spacing.lg,
+    paddingVertical: 12,
+    fontSize: 15,
+    color: theme.colors.text,
+    borderWidth: 1,
+    borderColor: theme.colors.border,
+    marginBottom: theme.spacing.md,
   },
   sectionTitle: {
     fontSize: 20,
@@ -176,30 +232,6 @@ const styles = StyleSheet.create({
     color: theme.colors.text,
     marginBottom: theme.spacing.md,
     marginTop: theme.spacing.md,
-  },
-  chips: {
-    gap: theme.spacing.sm,
-    paddingBottom: theme.spacing.sm,
-  },
-  chip: {
-    paddingHorizontal: theme.spacing.md,
-    paddingVertical: theme.spacing.sm,
-    borderRadius: theme.radius.full,
-    backgroundColor: theme.colors.surface,
-    borderWidth: 1,
-    borderColor: theme.colors.border,
-  },
-  chipSelected: {
-    backgroundColor: theme.colors.primary,
-    borderColor: theme.colors.primary,
-  },
-  chipText: {
-    fontSize: 14,
-    color: theme.colors.text,
-  },
-  chipTextSelected: {
-    color: theme.colors.surface,
-    fontWeight: '600',
   },
   horizontalList: {
     paddingBottom: theme.spacing.md,

@@ -4,7 +4,6 @@ import {
   Text,
   StyleSheet,
   FlatList,
-  ActivityIndicator,
   RefreshControl,
   TouchableOpacity,
   Alert,
@@ -17,6 +16,7 @@ import {loadProviderBookings, updateBookingStatus, completeBooking} from '../boo
 import {theme} from '@/utils/theme';
 import type {RootState} from '@/store';
 import type {Booking} from '@/types';
+import BookingCardSkeleton from '@/components/Skeleton/BookingCardSkeleton';
 
 const STATUS_COLORS: Record<Booking['status'], string> = {
   pending: '#FF9800',
@@ -158,11 +158,7 @@ export default function BookingRequestsScreen() {
   );
 
   if (loading && bookings.length === 0) {
-    return (
-      <View style={styles.centered}>
-        <ActivityIndicator size="large" color={theme.colors.primary} />
-      </View>
-    );
+    return <BookingCardSkeleton />;
   }
 
   return (

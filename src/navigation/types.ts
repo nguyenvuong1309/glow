@@ -5,6 +5,8 @@ export type HomeStackParamList = {
   ServiceDetail: {serviceId: string};
   Booking: {serviceId: string};
   BookingConfirm: undefined;
+  ProviderProfile: {userId: string};
+  PostService: {service?: Service} | undefined;
 };
 
 export type ServiceStackParamList = {
@@ -12,6 +14,8 @@ export type ServiceStackParamList = {
   ServiceDetail: {serviceId: string};
   Booking: {serviceId: string};
   BookingConfirm: undefined;
+  ProviderProfile: {userId: string};
+  PostService: {service?: Service} | undefined;
 };
 
 export type BookingStackParamList = {
@@ -28,6 +32,7 @@ export type ProfileStackParamList = {
   PostService: {service?: Service} | undefined;
   BookingRequests: undefined;
   ServiceDetail: {serviceId: string};
+  ProviderProfile: {userId: string};
 };
 
 export type TabParamList = {

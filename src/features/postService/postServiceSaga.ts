@@ -13,6 +13,7 @@ import type {UpdateServicePayload} from './postServiceSlice';
 import {
   createService,
   uploadServiceMedia,
+  deleteServiceMedia,
   getMyServices,
   updateService,
 } from '@/lib/supabase';
@@ -21,10 +22,10 @@ import type {Service, SubmitServicePayload} from '@/types';
 import type {PayloadAction} from '@reduxjs/toolkit';
 
 function* handleSubmitService(action: PayloadAction<SubmitServicePayload>) {
+  const uploadedUrls: string[] = [];
   try {
     const {localMedia, ...rest} = action.payload;
 
-    const urls: string[] = [];
     for (const file of localMedia) {
       const publicUrl: string = yield call(
         uploadServiceMedia,
@@ -32,16 +33,16 @@ function* handleSubmitService(action: PayloadAction<SubmitServicePayload>) {
         file.fileName,
         file.type,
       );
-      urls.push(publicUrl);
+      uploadedUrls.push(publicUrl);
     }
 
-    const service: Service = yield call(createService, {
-      ...rest,
-      image_url: urls[0] || '',
-    });
+    const service: Service = yield call(createService, rest, uploadedUrls);
     yield put(submitServiceSuccess(service));
     yield put(loadServices());
   } catch (e: any) {
+    if (uploadedUrls.length > 0) {
+      yield call(deleteServiceMedia, uploadedUrls);
+    }
     yield put(submitServiceFailure(e.message ?? 'Failed to create service'));
   }
 }
@@ -56,23 +57,34 @@ function* handleLoadMyServices() {
 }
 
 function* handleUpdateService(action: PayloadAction<UpdateServicePayload>) {
+  const newUploadedUrls: string[] = [];
   try {
-    const {id, localMedia, existingImageUrl, ...rest} = action.payload;
+    const {id, localMedia, existingImageUrls, originalImageUrls, ...rest} = action.payload;
 
-    let imageUrl = existingImageUrl;
-    if (localMedia.length > 0) {
-      imageUrl = yield call(
+    for (const file of localMedia) {
+      const publicUrl: string = yield call(
         uploadServiceMedia,
-        localMedia[0].uri,
-        localMedia[0].fileName,
-        localMedia[0].type,
+        file.uri,
+        file.fileName,
+        file.type,
       );
+      newUploadedUrls.push(publicUrl);
     }
 
-    yield call(updateService, id, {...rest, image_url: imageUrl});
+    const allUrls = [...existingImageUrls, ...newUploadedUrls];
+    yield call(updateService, id, rest, allUrls);
+
+    const removedUrls = originalImageUrls.filter(url => !existingImageUrls.includes(url));
+    if (removedUrls.length > 0) {
+      yield call(deleteServiceMedia, removedUrls);
+    }
+
     yield put(updateServiceSuccess());
     yield put(loadServices());
   } catch (e: any) {
+    if (newUploadedUrls.length > 0) {
+      yield call(deleteServiceMedia, newUploadedUrls);
+    }
     yield put(updateServiceFailure(e.message ?? 'Failed to update service'));
   }
 }

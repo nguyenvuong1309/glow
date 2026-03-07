@@ -1,14 +1,14 @@
-import React, {useCallback, useEffect} from 'react';
+import React, {useCallback, useEffect, useMemo, useState} from 'react';
 import {
   View,
   Text,
   StyleSheet,
   FlatList,
-  ActivityIndicator,
   RefreshControl,
   TouchableOpacity,
   Alert,
 } from 'react-native';
+import {Calendar, DateData} from 'react-native-calendars';
 import {useDispatch, useSelector} from 'react-redux';
 import {useTranslation} from 'react-i18next';
 import {useFocusEffect} from '@react-navigation/native';
@@ -19,6 +19,7 @@ import type {RootState} from '@/store';
 import type {Booking} from '@/types';
 import type {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import type {BookingStackParamList} from '@/navigation/types';
+import BookingCardSkeleton from '@/components/Skeleton/BookingCardSkeleton';
 
 const STATUS_COLORS: Record<Booking['status'], string> = {
   pending: '#FF9800',
@@ -36,16 +37,29 @@ export default function BookingHistoryScreen({navigation}: Props) {
   const dispatch = useDispatch();
   const bookings = useSelector((state: RootState) => state.booking.history);
   const loading = useSelector((state: RootState) => state.booking.loading);
+  const [viewMode, setViewMode] = useState<'list' | 'calendar'>('list');
+  const [selectedDate, setSelectedDate] = useState<string | null>(null);
 
   useEffect(() => {
     navigation.setOptions({
       headerRight: () => (
-        <TouchableOpacity onPress={() => navigation.navigate('Spending')}>
-          <Text style={styles.headerButton}>{t('spending.title')}</Text>
-        </TouchableOpacity>
+        <View style={styles.headerActions}>
+          <TouchableOpacity
+            onPress={() => setViewMode(v => (v === 'list' ? 'calendar' : 'list'))}
+            style={styles.headerBtn}>
+            <Text style={styles.headerButton}>
+              {viewMode === 'list'
+                ? t('bookingHistory.calendarView')
+                : t('bookingHistory.listView')}
+            </Text>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={() => navigation.navigate('Spending')}>
+            <Text style={styles.headerButton}>{t('spending.title')}</Text>
+          </TouchableOpacity>
+        </View>
       ),
     });
-  }, [navigation, t]);
+  }, [navigation, t, viewMode]);
 
   useFocusEffect(
     useCallback(() => {
@@ -76,6 +90,36 @@ export default function BookingHistoryScreen({navigation}: Props) {
         },
       ],
     );
+  };
+
+  const markedDates = useMemo(() => {
+    const marks: Record<string, any> = {};
+    bookings.forEach(b => {
+      const existing = marks[b.date];
+      const dot = {key: b.id, color: STATUS_COLORS[b.status]};
+      if (existing) {
+        existing.dots.push(dot);
+      } else {
+        marks[b.date] = {dots: [dot]};
+      }
+    });
+    if (selectedDate) {
+      marks[selectedDate] = {
+        ...marks[selectedDate],
+        selected: true,
+        selectedColor: theme.colors.primary,
+      };
+    }
+    return marks;
+  }, [bookings, selectedDate]);
+
+  const displayBookings =
+    viewMode === 'calendar' && selectedDate
+      ? bookings.filter(b => b.date === selectedDate)
+      : bookings;
+
+  const handleDayPress = (day: DateData) => {
+    setSelectedDate(prev => (prev === day.dateString ? null : day.dateString));
   };
 
   const renderItem = ({item}: {item: Booking}) => (
@@ -134,20 +178,18 @@ export default function BookingHistoryScreen({navigation}: Props) {
   );
 
   if (loading && bookings.length === 0) {
-    return (
-      <View style={styles.centered}>
-        <ActivityIndicator size="large" color={theme.colors.primary} />
-      </View>
-    );
+    return <BookingCardSkeleton />;
   }
 
   return (
     <FlatList
       style={styles.container}
       contentContainerStyle={
-        bookings.length === 0 ? styles.centered : styles.listContent
+        displayBookings.length === 0 && viewMode === 'list'
+          ? styles.centered
+          : styles.listContent
       }
-      data={bookings}
+      data={displayBookings}
       keyExtractor={item => item.id}
       renderItem={renderItem}
       refreshControl={
@@ -157,8 +199,34 @@ export default function BookingHistoryScreen({navigation}: Props) {
           tintColor={theme.colors.primary}
         />
       }
+      ListHeaderComponent={
+        viewMode === 'calendar' ? (
+          <Calendar
+            markedDates={markedDates}
+            markingType="multi-dot"
+            onDayPress={handleDayPress}
+            theme={{
+              backgroundColor: theme.colors.background,
+              calendarBackground: theme.colors.surface,
+              todayTextColor: theme.colors.primaryDark,
+              selectedDayBackgroundColor: theme.colors.primary,
+              selectedDayTextColor: '#fff',
+              arrowColor: theme.colors.primaryDark,
+              monthTextColor: theme.colors.text,
+              textDayFontWeight: '500',
+              textMonthFontWeight: '600',
+              textDayHeaderFontWeight: '500',
+            }}
+            style={styles.calendar}
+          />
+        ) : null
+      }
       ListEmptyComponent={
-        <Text style={styles.emptyText}>{t('bookingHistory.empty')}</Text>
+        <Text style={styles.emptyText}>
+          {viewMode === 'calendar' && selectedDate
+            ? t('bookingHistory.noBookingsOnDate')
+            : t('bookingHistory.empty')}
+        </Text>
       }
     />
   );
@@ -178,6 +246,15 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  headerActions: {
+    flexDirection: 'row',
+    gap: theme.spacing.md,
+  },
+  headerBtn: {},
+  calendar: {
+    borderRadius: theme.radius.md,
+    marginBottom: theme.spacing.md,
   },
   card: {
     backgroundColor: theme.colors.surface,

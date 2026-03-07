@@ -23,6 +23,7 @@ import ProviderDashboardScreen from '@/features/provider/screens/ProviderDashboa
 import ReviewScreen from '@/features/booking/screens/ReviewScreen';
 import SpendingScreen from '@/features/booking/screens/SpendingScreen';
 import FavoritesScreen from '@/features/favorites/screens/FavoritesScreen';
+import ProviderProfileScreen from '@/features/provider/screens/ProviderProfileScreen';
 import {theme} from '@/utils/theme';
 
 const Tab = createBottomTabNavigator<TabParamList>();
@@ -60,6 +61,16 @@ function HomeStackScreen() {
         component={BookingConfirmScreen}
         options={{headerShown: false}}
       />
+      <HomeStack.Screen
+        name="ProviderProfile"
+        component={ProviderProfileScreen}
+        options={{title: t('navigation.profile')}}
+      />
+      <HomeStack.Screen
+        name="PostService"
+        component={PostServiceScreen}
+        options={{title: t('navigation.postService')}}
+      />
     </HomeStack.Navigator>
   );
 }
@@ -92,6 +103,16 @@ function ServiceStackScreen() {
         name="BookingConfirm"
         component={BookingConfirmScreen}
         options={{headerShown: false}}
+      />
+      <ServiceStack.Screen
+        name="ProviderProfile"
+        component={ProviderProfileScreen}
+        options={{title: t('navigation.profile')}}
+      />
+      <ServiceStack.Screen
+        name="PostService"
+        component={PostServiceScreen}
+        options={{title: t('navigation.postService')}}
       />
     </ServiceStack.Navigator>
   );
@@ -168,6 +189,11 @@ function ProfileStackScreen() {
         name="BookingRequests"
         component={BookingRequestsScreen}
         options={{title: t('navigation.bookingRequests')}}
+      />
+      <ProfileStack.Screen
+        name="ProviderProfile"
+        component={ProviderProfileScreen}
+        options={{title: t('navigation.profile')}}
       />
     </ProfileStack.Navigator>
   );
