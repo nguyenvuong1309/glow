@@ -11,6 +11,7 @@ import {useTranslation} from 'react-i18next';
 import {loadProviderProfile} from '../providerSlice';
 import {selectService, loadReviews} from '@/features/services/serviceSlice';
 import {toggleFavorite} from '@/features/favorites/favoritesSlice';
+import {useRequireAuth} from '@/hooks/useRequireAuth';
 import ServiceCard from '@/components/ServiceCard/ServiceCard';
 import {theme} from '@/utils/theme';
 import type {RootState} from '@/store';
@@ -28,6 +29,7 @@ interface Props {
 export default function ProviderProfileScreen({navigation, route}: Props) {
   const {t} = useTranslation();
   const dispatch = useDispatch();
+  const requireAuth = useRequireAuth();
   const {profile, profileLoading} = useSelector(
     (state: RootState) => state.provider,
   );
@@ -43,6 +45,11 @@ export default function ProviderProfileScreen({navigation, route}: Props) {
     dispatch(selectService(service));
     dispatch(loadReviews(service.id));
     navigation.navigate('ServiceDetail', {serviceId: service.id});
+  };
+
+  const handleToggleFavorite = (serviceId: string) => {
+    if (!requireAuth()) return;
+    dispatch(toggleFavorite(serviceId));
   };
 
   if (profileLoading || !profile) {
@@ -101,7 +108,7 @@ export default function ProviderProfileScreen({navigation, route}: Props) {
           service={item}
           onPress={() => handleServicePress(item)}
           isFavorite={favoriteIds.includes(item.id)}
-          onToggleFavorite={() => dispatch(toggleFavorite(item.id))}
+          onToggleFavorite={() => handleToggleFavorite(item.id)}
           isOwner={item.provider_id === currentUser?.id}
         />
       ))}

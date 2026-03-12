@@ -79,7 +79,7 @@ PODS:
     - ReactCommon/turbomodule/core
     - ReactNativeDependencies
     - Yoga
-  - NitroModules (0.34.1):
+  - NitroModules (0.35.0):
     - hermes-engine
     - RCTRequired
     - RCTTypeSafety
@@ -2545,10 +2545,10 @@ SPEC CHECKSUMS:
   GoogleUtilities: 00c88b9a86066ef77f0da2fab05f65d7768ed8e1
   GTMAppAuth: 217a876b249c3c585a54fd6f73e6b58c4f5c4238
   GTMSessionFetcher: 5aea5ba6bd522a239e236100971f10cb71b96ab6
-  hermes-engine: 8378dbdcc7ab1bb03036ec419dc3bd28ca58d077
+  hermes-engine: f8dca0856efa2d316acafad80ef7af0becbdae8b
   MMKVCore: d078dce7d6586a888b2c2ef5343b6242678e3ee8
   NitroMmkv: 38dfb2983c83e9bbbb64423ff48fbeaaa097cc38
-  NitroModules: 1cebf8f4ba098b9f950a3d18127bb741325d9849
+  NitroModules: ff0d24be334de628166b9ac63661c998c732de7d
   PromisesObjC: f5707f49cb48b9636751c5b2e7d227e43fba9f47
   RCTDeprecation: af44b104091a34482596cd9bd7e8d90c4e9b4bd7
   RCTRequired: bb77b070f75f53398ce43c0aaaa58337cebe2bf6
@@ -2620,16 +2620,16 @@ SPEC CHECKSUMS:
   React-utils: 8d888b379f0808bfabaea03d85f9e8dd9b8548da
   React-webperformancenativemodule: c10016db7f1bb1153060d4aa9f7dbde2c88c845d
   ReactAppDependencyProvider: e96e93b493d8d86eeaee3e590ba0be53f6abe46f
-  ReactCodegen: b34628bf501a3506f5fa213618405ee240bd40aa
+  ReactCodegen: 797de5178718324c6eba3327b07f9a423fbd5787
   ReactCommon: 07572bf9e687c8a52fbe4a3641e9e3a1a477c78e
   ReactNativeDependencies: 8b733db4e11a4393c46a05ca1c315b672051bba8
   RNAppleAuthentication: a89c9804592b38ed4ab11f0aee68d05ba12ad432
   RNGestureHandler: 07de6f059e0ee5744ae9a56feb07ee345338cc31
   RNGoogleSignin: 104dd7238c56fe354e4b0a8fd267f866039ffdf3
   RNLocalize: 1e6eb4290e89502c3d2193d82dfb7de14a9e672b
-  RNReanimated: 7cf610c2ad6f494f79507c31c0100a3075231b04
+  RNReanimated: 0bd1ce50af6b64eb05bdf38078dd890e91d60239
   RNScreens: 6cb648bdad8fe9bee9259fe144df95b6d1d5b707
-  RNWorklets: c19f873aa0eca7240e96dd6cc1a1ecffe710a3f7
+  RNWorklets: 30f9a363d681c776a5f9d74f6d21a6d1bb7bfe80
   Yoga: c0b3f2c7e8d3e327e450223a2414ca3fa296b9a2
 
 PODFILE CHECKSUM: a53bd816eb672af90f9b268b9a9db20d005e0d68

@@ -14,6 +14,7 @@ import {loadHome} from '../homeSlice';
 import {selectService, setFilter, loadReviews} from '@/features/services/serviceSlice';
 import {loadAvailability} from '@/features/booking/bookingSlice';
 import {loadFavorites, toggleFavorite} from '@/features/favorites/favoritesSlice';
+import {useRequireAuth} from '@/hooks/useRequireAuth';
 import ServiceCard from '@/components/ServiceCard/ServiceCard';
 import CategoryGrid from '@/components/CategoryGrid/CategoryGrid';
 import PromoBanner from '@/components/PromoBanner/PromoBanner';
@@ -39,6 +40,7 @@ interface Props {
 export default function HomeScreen({navigation}: Props) {
   const {t} = useTranslation();
   const dispatch = useDispatch();
+  const requireAuth = useRequireAuth();
   const {
     categories,
     newServices,
@@ -91,6 +93,18 @@ export default function HomeScreen({navigation}: Props) {
     navigation.navigate('Services');
   };
 
+  const handleToggleFavorite = (serviceId: string) => {
+    if (!requireAuth()) return;
+    dispatch(toggleFavorite(serviceId));
+  };
+
+  const handleBookAgain = () => {
+    if (!recentBooking) return;
+    if (!requireAuth()) return;
+    dispatch(loadAvailability(recentBooking.service_id));
+    navigation.navigate('Booking', {serviceId: recentBooking.service_id});
+  };
+
   if (loading) {
     return <HomeScreenSkeleton />;
   }
@@ -121,10 +135,7 @@ export default function HomeScreen({navigation}: Props) {
           <Animated.View entering={FadeInDown.duration(500).delay(50)}>
             <RecentBookingCard
               booking={recentBooking}
-              onBookAgain={() => {
-                dispatch(loadAvailability(recentBooking.service_id));
-                navigation.navigate('Booking', {serviceId: recentBooking.service_id});
-              }}
+              onBookAgain={handleBookAgain}
             />
           </Animated.View>
         )}
@@ -168,7 +179,7 @@ export default function HomeScreen({navigation}: Props) {
                   onPress={() => handleServicePress(item)}
                   horizontal
                   isFavorite={favoriteIds.includes(item.id)}
-                  onToggleFavorite={() => dispatch(toggleFavorite(item.id))}
+                  onToggleFavorite={() => handleToggleFavorite(item.id)}
                   isOwner={item.provider_id === user?.id}
                 />
               ))}
@@ -187,7 +198,7 @@ export default function HomeScreen({navigation}: Props) {
                 onPress={() => handleServicePress(item)}
                 featured
                 isFavorite={favoriteIds.includes(item.id)}
-                onToggleFavorite={() => dispatch(toggleFavorite(item.id))}
+                onToggleFavorite={() => handleToggleFavorite(item.id)}
                 isOwner={item.provider_id === user?.id}
               />
             ))}

@@ -1,17 +1,19 @@
 import {createSlice, PayloadAction} from '@reduxjs/toolkit';
 import type {User} from '@/types';
 
+type LoginProvider = 'google' | 'apple';
+
 interface AuthState {
   user: User | null;
   isAuthenticated: boolean;
-  loading: boolean;
+  loadingProvider: LoginProvider | null;
   error: string | null;
 }
 
 const initialState: AuthState = {
   user: null,
   isAuthenticated: false,
-  loading: false,
+  loadingProvider: null,
   error: null,
 };
 
@@ -20,44 +22,38 @@ const authSlice = createSlice({
   initialState,
   reducers: {
     googleLoginRequest(state) {
-      state.loading = true;
+      state.loadingProvider = 'google';
       state.error = null;
     },
     appleLoginRequest(state) {
-      state.loading = true;
+      state.loadingProvider = 'apple';
       state.error = null;
     },
     loginSuccess(state, action: PayloadAction<User>) {
       state.user = action.payload;
       state.isAuthenticated = true;
-      state.loading = false;
+      state.loadingProvider = null;
       state.error = null;
     },
     loginFailure(state, action: PayloadAction<string>) {
-      state.loading = false;
+      state.loadingProvider = null;
       state.error = action.payload;
     },
-    logoutRequest(state) {
-      state.loading = true;
-    },
+    logoutRequest() {},
     logout(state) {
       state.user = null;
       state.isAuthenticated = false;
-      state.loading = false;
+      state.loadingProvider = null;
       state.error = null;
     },
-    deleteAccountRequest(state) {
-      state.loading = true;
-      state.error = null;
-    },
+    deleteAccountRequest() {},
     deleteAccountSuccess(state) {
       state.user = null;
       state.isAuthenticated = false;
-      state.loading = false;
+      state.loadingProvider = null;
       state.error = null;
     },
     deleteAccountFailure(state, action: PayloadAction<string>) {
-      state.loading = false;
       state.error = action.payload;
     },
   },

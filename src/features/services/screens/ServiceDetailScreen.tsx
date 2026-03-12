@@ -17,6 +17,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 import { toggleFavorite } from '@/features/favorites/favoritesSlice';
 import { loadAvailability } from '@/features/booking/bookingSlice';
+import { useRequireAuth } from '@/hooks/useRequireAuth';
 import { theme } from '@/utils/theme';
 import type { RootState } from '@/store';
 import type { Review } from '@/types';
@@ -30,6 +31,7 @@ interface Props {
 export default function ServiceDetailScreen({ navigation }: Props) {
   const { t } = useTranslation();
   const dispatch = useDispatch();
+  const requireAuth = useRequireAuth();
   const { width: screenWidth } = useWindowDimensions();
   const service = useSelector((state: RootState) => state.services.selected);
   const reviews = useSelector((state: RootState) => state.services.reviews);
@@ -82,6 +84,19 @@ export default function ServiceDetailScreen({ navigation }: Props) {
     [screenWidth, service?.id],
   );
 
+  const handleToggleFavorite = () => {
+    if (!service) return;
+    if (!requireAuth()) return;
+    dispatch(toggleFavorite(service.id));
+  };
+
+  const handleBookNow = () => {
+    if (!service) return;
+    if (!requireAuth()) return;
+    dispatch(loadAvailability(service.id));
+    navigation.navigate('Booking', { serviceId: service.id });
+  };
+
   if (!service) {
     return (
       <View style={styles.centered}>
@@ -128,7 +143,7 @@ export default function ServiceDetailScreen({ navigation }: Props) {
             {service.name}
           </Animated.Text>
           <TouchableOpacity
-            onPress={() => dispatch(toggleFavorite(service.id))}
+            onPress={handleToggleFavorite}
             hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
           >
             <Text
@@ -208,10 +223,7 @@ export default function ServiceDetailScreen({ navigation }: Props) {
         ) : (
           <TouchableOpacity
             style={styles.bookButton}
-            onPress={() => {
-              dispatch(loadAvailability(service.id));
-              navigation.navigate('Booking', { serviceId: service.id });
-            }}
+            onPress={handleBookNow}
           >
             <Text style={styles.bookButtonText}>{t('services.bookNow')}</Text>
           </TouchableOpacity>

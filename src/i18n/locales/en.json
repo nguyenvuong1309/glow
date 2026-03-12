@@ -10,7 +10,13 @@
     "tagline": "Your beauty, your schedule",
     "signingIn": "Signing in...",
     "continueWithGoogle": "Continue with Google",
-    "continueWithApple": "Continue with Apple"
+    "continueWithApple": "Continue with Apple",
+    "loginRequired": "Sign in to continue",
+    "loginRequiredMessage": "You need to sign in to access this feature",
+    "loginRequiredBookings": "Sign in to view your bookings",
+    "loginRequiredProfile": "Sign in to access your profile",
+    "signIn": "Sign In",
+    "skipForNow": "Skip for now"
   },
   "home": {
     "greeting": "Hello, {{name}} \u2728",

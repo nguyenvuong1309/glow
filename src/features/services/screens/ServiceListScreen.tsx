@@ -17,6 +17,7 @@ import {useDispatch, useSelector} from 'react-redux';
 import {useTranslation} from 'react-i18next';
 import {loadServices, selectService, setFilter, loadReviews} from '../serviceSlice';
 import {toggleFavorite} from '@/features/favorites/favoritesSlice';
+import {useRequireAuth} from '@/hooks/useRequireAuth';
 import FilterBottomSheet from '@/components/FilterBottomSheet/FilterBottomSheet';
 import ServiceCard from '@/components/ServiceCard/ServiceCard';
 import {theme} from '@/utils/theme';
@@ -33,6 +34,7 @@ interface Props {
 export default function ServiceListScreen({navigation}: Props) {
   const {t} = useTranslation();
   const dispatch = useDispatch();
+  const requireAuth = useRequireAuth();
   const {list: services, loading, filter} = useSelector(
     (state: RootState) => state.services,
   );
@@ -73,6 +75,11 @@ export default function ServiceListScreen({navigation}: Props) {
     dispatch(setFilter({searchQuery: searchText.trim()}));
   };
 
+  const handleToggleFavorite = (serviceId: string) => {
+    if (!requireAuth()) return;
+    dispatch(toggleFavorite(serviceId));
+  };
+
   // Client-side filter by selected category chip and search query
   const filteredServices = useMemo(() => {
     let result = services;
@@ -94,7 +101,7 @@ export default function ServiceListScreen({navigation}: Props) {
         service={item}
         onPress={() => handleServicePress(item)}
         isFavorite={favoriteIds.includes(item.id)}
-        onToggleFavorite={() => dispatch(toggleFavorite(item.id))}
+        onToggleFavorite={() => handleToggleFavorite(item.id)}
         isOwner={item.provider_id === user?.id}
       />
     </Animated.View>

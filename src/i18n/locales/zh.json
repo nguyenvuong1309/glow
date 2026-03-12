@@ -10,7 +10,13 @@
     "tagline": "你的美丽，你的日程",
     "signingIn": "登录中...",
     "continueWithGoogle": "使用 Google 继续",
-    "continueWithApple": "使用 Apple 继续"
+    "continueWithApple": "使用 Apple 继续",
+    "loginRequired": "登录以继续",
+    "loginRequiredMessage": "您需要登录才能使用此功能",
+    "loginRequiredBookings": "登录以查看您的预约",
+    "loginRequiredProfile": "登录以访问您的个人资料",
+    "signIn": "登录",
+    "skipForNow": "暂时跳过"
   },
   "home": {
     "greeting": "你好，{{name}} ✨",

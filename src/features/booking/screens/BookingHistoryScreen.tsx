@@ -14,6 +14,7 @@ import { useTranslation } from 'react-i18next';
 import { useFocusEffect } from '@react-navigation/native';
 import { getDateLocale } from '@/i18n';
 import { loadBookings, cancelBooking } from '../bookingSlice';
+import { useRequireAuth } from '@/hooks/useRequireAuth';
 import { theme } from '@/utils/theme';
 import type { RootState } from '@/store';
 import type { Booking } from '@/types';
@@ -35,40 +36,66 @@ interface Props {
 export default function BookingHistoryScreen({ navigation }: Props) {
   const { t } = useTranslation();
   const dispatch = useDispatch();
+  const requireAuth = useRequireAuth();
+  const isAuthenticated = useSelector(
+    (state: RootState) => state.auth.isAuthenticated,
+  );
   const bookings = useSelector((state: RootState) => state.booking.history);
   const loading = useSelector((state: RootState) => state.booking.loading);
   const [viewMode, setViewMode] = useState<'list' | 'calendar'>('list');
   const [selectedDate, setSelectedDate] = useState<string | null>(null);
 
   useEffect(() => {
-    navigation.setOptions({
-      headerRight: () => (
-        <View style={styles.headerActions}>
-          <TouchableOpacity
-            onPress={() =>
-              setViewMode(v => (v === 'list' ? 'calendar' : 'list'))
-            }
-            style={styles.headerBtn}
-          >
-            <Text style={styles.headerButton}>
-              {viewMode === 'list'
-                ? t('bookingHistory.calendarView')
-                : t('bookingHistory.listView')}
-            </Text>
-          </TouchableOpacity>
-          <TouchableOpacity onPress={() => navigation.navigate('Spending')}>
-            <Text style={styles.headerButton}>{t('spending.title')}</Text>
-          </TouchableOpacity>
-        </View>
-      ),
-    });
-  }, [navigation, t, viewMode]);
+    if (isAuthenticated) {
+      navigation.setOptions({
+        headerRight: () => (
+          <View style={styles.headerActions}>
+            <TouchableOpacity
+              onPress={() =>
+                setViewMode(v => (v === 'list' ? 'calendar' : 'list'))
+              }
+              style={styles.headerBtn}
+            >
+              <Text style={styles.headerButton}>
+                {viewMode === 'list'
+                  ? t('bookingHistory.calendarView')
+                  : t('bookingHistory.listView')}
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => navigation.navigate('Spending')}>
+              <Text style={styles.headerButton}>{t('spending.title')}</Text>
+            </TouchableOpacity>
+          </View>
+        ),
+      });
+    } else {
+      navigation.setOptions({ headerRight: undefined });
+    }
+  }, [navigation, t, viewMode, isAuthenticated]);
 
   useFocusEffect(
     useCallback(() => {
-      dispatch(loadBookings());
-    }, [dispatch]),
+      if (isAuthenticated) {
+        dispatch(loadBookings());
+      }
+    }, [dispatch, isAuthenticated]),
   );
+
+  if (!isAuthenticated) {
+    return (
+      <View style={styles.authPrompt}>
+        <Text style={styles.authTitle}>{t('auth.loginRequiredBookings')}</Text>
+        <Text style={styles.authMessage}>
+          {t('auth.loginRequiredMessage')}
+        </Text>
+        <TouchableOpacity
+          style={styles.authButton}
+          onPress={() => requireAuth()}>
+          <Text style={styles.authButtonText}>{t('auth.signIn')}</Text>
+        </TouchableOpacity>
+      </View>
+    );
+  }
 
   const formatDate = (iso: string) => {
     const d = new Date(iso + 'T00:00:00');
@@ -337,5 +364,35 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: '600',
     color: theme.colors.primaryDark,
+  },
+  authPrompt: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: theme.spacing.xl,
+    backgroundColor: theme.colors.background,
+  },
+  authTitle: {
+    fontSize: 20,
+    fontWeight: '600',
+    color: theme.colors.text,
+    marginBottom: theme.spacing.sm,
+  },
+  authMessage: {
+    fontSize: 15,
+    color: theme.colors.textSecondary,
+    textAlign: 'center',
+    marginBottom: theme.spacing.xl,
+  },
+  authButton: {
+    backgroundColor: theme.colors.primaryDark,
+    paddingVertical: 14,
+    paddingHorizontal: 48,
+    borderRadius: theme.radius.md,
+  },
+  authButtonText: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#fff',
   },
 });

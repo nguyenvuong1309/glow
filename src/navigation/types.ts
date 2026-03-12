@@ -1,5 +1,10 @@
 import type {Service} from '@/types';
 
+export type RootStackParamList = {
+  MainTabs: undefined;
+  Login: undefined;
+};
+
 export type HomeStackParamList = {
   HomeMain: undefined;
   ServiceDetail: {serviceId: string};

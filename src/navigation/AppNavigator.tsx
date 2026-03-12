@@ -1,19 +1,20 @@
 import React, {useEffect, useState} from 'react';
 import {NavigationContainer} from '@react-navigation/native';
-import {useSelector} from 'react-redux';
-import AuthNavigator from './AuthNavigator';
+import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import MainNavigator from './MainNavigator';
+import LoginScreen from '@/features/auth/screens/LoginScreen';
 import OnboardingScreen from '@/features/onboarding/screens/OnboardingScreen';
 import {useAuthListener} from '@/features/auth/useAuthListener';
 import {mmkvStorage} from '@/lib/storage';
-import type {RootState} from '@/store';
+import type {RootStackParamList} from './types';
+
+const RootStack = createNativeStackNavigator<RootStackParamList>();
 
 export default function AppNavigator() {
   useAuthListener();
-  const isAuthenticated = useSelector(
-    (state: RootState) => state.auth.isAuthenticated,
+  const [hasSeenOnboarding, setHasSeenOnboarding] = useState<boolean | null>(
+    null,
   );
-  const [hasSeenOnboarding, setHasSeenOnboarding] = useState<boolean | null>(null);
 
   useEffect(() => {
     mmkvStorage.getItem('onboarding_completed').then(value => {
@@ -23,14 +24,6 @@ export default function AppNavigator() {
 
   if (hasSeenOnboarding === null) {
     return null;
-  }
-
-  if (!isAuthenticated) {
-    return (
-      <NavigationContainer>
-        <AuthNavigator />
-      </NavigationContainer>
-    );
   }
 
   if (!hasSeenOnboarding) {
@@ -43,7 +36,12 @@ export default function AppNavigator() {
 
   return (
     <NavigationContainer>
-      <MainNavigator />
+      <RootStack.Navigator screenOptions={{headerShown: false}}>
+        <RootStack.Screen name="MainTabs" component={MainNavigator} />
+        <RootStack.Group screenOptions={{presentation: 'modal'}}>
+          <RootStack.Screen name="Login" component={LoginScreen} />
+        </RootStack.Group>
+      </RootStack.Navigator>
     </NavigationContainer>
   );
 }

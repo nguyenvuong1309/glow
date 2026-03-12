@@ -10,7 +10,13 @@
     "tagline": "Vẻ đẹp của bạn, lịch trình của bạn",
     "signingIn": "Đang đăng nhập...",
     "continueWithGoogle": "Tiếp tục với Google",
-    "continueWithApple": "Tiếp tục với Apple"
+    "continueWithApple": "Tiếp tục với Apple",
+    "loginRequired": "Đăng nhập để tiếp tục",
+    "loginRequiredMessage": "Bạn cần đăng nhập để sử dụng tính năng này",
+    "loginRequiredBookings": "Đăng nhập để xem lịch hẹn",
+    "loginRequiredProfile": "Đăng nhập để xem hồ sơ",
+    "signIn": "Đăng nhập",
+    "skipForNow": "Bỏ qua"
   },
   "home": {
     "greeting": "Xin chào, {{name}} ✨",
