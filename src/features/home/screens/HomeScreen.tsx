@@ -110,7 +110,7 @@ export default function HomeScreen({navigation}: Props) {
   }
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={styles.container} testID="home-screen">
       <ScrollView
         contentContainerStyle={styles.content}
         showsVerticalScrollIndicator={false}
@@ -124,10 +124,10 @@ export default function HomeScreen({navigation}: Props) {
 
         {/* Greeting */}
         <Animated.View entering={FadeInDown.duration(500)}>
-          <Text style={styles.greeting}>
+          <Text style={styles.greeting} testID="home-greeting">
             {t('home.greeting', {name: user?.name ?? t('home.defaultName')})}
           </Text>
-          <Text style={styles.subtitle}>{t('home.whatWouldYouLike')}</Text>
+          <Text style={styles.subtitle} testID="home-subtitle">{t('home.whatWouldYouLike')}</Text>
         </Animated.View>
 
         {/* Recent Booking */}
@@ -150,6 +150,7 @@ export default function HomeScreen({navigation}: Props) {
             onChangeText={setSearchText}
             onSubmitEditing={handleSearch}
             returnKeyType="search"
+            testID="home-search-bar"
           />
         </Animated.View>
 
@@ -160,14 +161,14 @@ export default function HomeScreen({navigation}: Props) {
 
         {/* Categories */}
         <Animated.View entering={FadeInDown.duration(500).delay(200)}>
-          <Text style={styles.sectionTitle}>{t('home.categories')}</Text>
+          <Text style={styles.sectionTitle} testID="home-categories-title">{t('home.categories')}</Text>
           <CategoryGrid categories={categories} onPress={handleCategoryPress} />
         </Animated.View>
 
         {/* New Services */}
         {newServices.length > 0 && (
           <Animated.View entering={FadeInDown.duration(500).delay(250)}>
-            <Text style={styles.sectionTitle}>{t('home.newServices')}</Text>
+            <Text style={styles.sectionTitle} testID="home-new-services-title">{t('home.newServices')}</Text>
             <ScrollView
               horizontal
               showsHorizontalScrollIndicator={false}
@@ -190,7 +191,7 @@ export default function HomeScreen({navigation}: Props) {
         {/* Top Rated */}
         {topRatedServices.length > 0 && (
           <Animated.View entering={FadeInDown.duration(500).delay(300)}>
-            <Text style={styles.sectionTitle}>{t('home.topRated')}</Text>
+            <Text style={styles.sectionTitle} testID="home-top-rated-title">{t('home.topRated')}</Text>
             {topRatedServices.slice(0, 3).map(item => (
               <ServiceCard
                 key={item.id}

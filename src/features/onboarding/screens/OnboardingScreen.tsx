@@ -62,11 +62,11 @@ export default function OnboardingScreen({onComplete}: Props) {
   };
 
   const renderItem = ({item}: {item: Slide}) => (
-    <View style={[styles.slide, {width: screenWidth}]}>
+    <View style={[styles.slide, {width: screenWidth}]} testID={`onboarding-slide-${item.id}`}>
       <View style={[styles.emojiCircle, {backgroundColor: item.color + '20'}]}>
         <Text style={styles.emoji}>{item.emoji}</Text>
       </View>
-      <Text style={styles.title}>{t(item.titleKey)}</Text>
+      <Text style={styles.title} testID={`onboarding-title-${item.id}`}>{t(item.titleKey)}</Text>
       <Text style={styles.subtitle}>{t(item.subtitleKey)}</Text>
     </View>
   );
@@ -74,7 +74,7 @@ export default function OnboardingScreen({onComplete}: Props) {
   const isLast = activeIndex === slides.length - 1;
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={styles.container} testID="onboarding-screen">
       <FlatList
         ref={flatListRef}
         data={slides}
@@ -85,26 +85,28 @@ export default function OnboardingScreen({onComplete}: Props) {
         renderItem={renderItem}
         onViewableItemsChanged={onViewableItemsChanged}
         viewabilityConfig={viewabilityConfig}
+        testID="onboarding-slides"
       />
 
       <View style={styles.footer}>
-        <View style={styles.dots}>
+        <View style={styles.dots} testID="onboarding-dots">
           {slides.map((slide, i) => (
             <View
               key={slide.id}
+              testID={`onboarding-dot-${i}`}
               style={[styles.dot, i === activeIndex && styles.dotActive]}
             />
           ))}
         </View>
 
-        <TouchableOpacity style={styles.button} onPress={handleNext} activeOpacity={0.8}>
-          <Text style={styles.buttonText}>
+        <TouchableOpacity style={styles.button} onPress={handleNext} activeOpacity={0.8} testID="onboarding-next-button">
+          <Text style={styles.buttonText} testID="onboarding-next-text">
             {isLast ? t('onboarding.getStarted') : t('onboarding.next')}
           </Text>
         </TouchableOpacity>
 
         {!isLast && (
-          <TouchableOpacity onPress={handleComplete} style={styles.skipButton}>
+          <TouchableOpacity onPress={handleComplete} style={styles.skipButton} testID="onboarding-skip-button">
             <Text style={styles.skipText}>{t('onboarding.getStarted')}</Text>
           </TouchableOpacity>
         )}

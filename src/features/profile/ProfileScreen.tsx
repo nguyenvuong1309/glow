@@ -41,17 +41,18 @@ export default function ProfileScreen({navigation}: Props) {
 
   if (!isAuthenticated) {
     return (
-      <View style={styles.authPrompt}>
+      <View style={styles.authPrompt} testID="profile-auth-prompt">
         <View style={styles.authAvatarFallback}>
           <Text style={styles.authAvatarText}>?</Text>
         </View>
-        <Text style={styles.authTitle}>{t('auth.loginRequiredProfile')}</Text>
+        <Text style={styles.authTitle} testID="profile-auth-title">{t('auth.loginRequiredProfile')}</Text>
         <Text style={styles.authMessage}>
           {t('auth.loginRequiredMessage')}
         </Text>
         <TouchableOpacity
           style={styles.authButton}
-          onPress={() => requireAuth()}>
+          onPress={() => requireAuth()}
+          testID="profile-sign-in-button">
           <Text style={styles.authButtonText}>{t('auth.signIn')}</Text>
         </TouchableOpacity>
 
@@ -67,7 +68,8 @@ export default function ProfileScreen({navigation}: Props) {
                     styles.languageChip,
                     i18n.language === lang.code && styles.languageChipActive,
                   ]}
-                  onPress={() => changeLanguage(lang.code)}>
+                  onPress={() => changeLanguage(lang.code)}
+                  testID={`profile-language-${lang.code}`}>
                   <Text
                     style={[
                       styles.languageChipText,
@@ -151,9 +153,10 @@ export default function ProfileScreen({navigation}: Props) {
     <ScrollView
       style={styles.container}
       contentContainerStyle={styles.content}
-      showsVerticalScrollIndicator={false}>
+      showsVerticalScrollIndicator={false}
+      testID="profile-screen">
       {/* Header */}
-      <View style={styles.header}>
+      <View style={styles.header} testID="profile-header">
         {user?.avatar_url ? (
           <Image source={{uri: user.avatar_url}} style={styles.avatar} />
         ) : (
@@ -163,7 +166,7 @@ export default function ProfileScreen({navigation}: Props) {
             </Text>
           </View>
         )}
-        <Text style={styles.name}>{user?.name ?? t('profile.guest')}</Text>
+        <Text style={styles.name} testID="profile-name">{user?.name ?? t('profile.guest')}</Text>
         {user?.email ? <Text style={styles.email}>{user.email}</Text> : null}
       </View>
 

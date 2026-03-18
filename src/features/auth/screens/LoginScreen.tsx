@@ -62,19 +62,20 @@ export default function LoginScreen() {
   }, [isAuthenticated, navigation]);
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={styles.container} testID="login-screen">
       {!loading && (
         <TouchableOpacity
           style={styles.closeButton}
           onPress={() => navigation.goBack()}
-          hitSlop={{top: 8, bottom: 8, left: 8, right: 8}}>
+          hitSlop={{top: 8, bottom: 8, left: 8, right: 8}}
+          testID="login-close-button">
           <Text style={styles.closeText}>{'\u2715'}</Text>
         </TouchableOpacity>
       )}
 
       <Animated.View style={[styles.header, animatedStyle]}>
-        <Text style={styles.logo}>{t('auth.appName')}</Text>
-        <Text style={styles.tagline}>{t('auth.tagline')}</Text>
+        <Text style={styles.logo} testID="login-logo">{t('auth.appName')}</Text>
+        <Text style={styles.tagline} testID="login-tagline">{t('auth.tagline')}</Text>
       </Animated.View>
 
       <Animated.View style={[styles.buttons, buttonAnimatedStyle]}>
@@ -85,7 +86,8 @@ export default function LoginScreen() {
             loading && loadingProvider !== 'google' && styles.buttonDisabled,
           ]}
           onPress={() => dispatch(googleLoginRequest())}
-          disabled={loading}>
+          disabled={loading}
+          testID="login-google-button">
           {loadingProvider === 'google' ? (
             <ActivityIndicator size="small" color={theme.colors.text} />
           ) : (
@@ -106,7 +108,8 @@ export default function LoginScreen() {
               loading && loadingProvider !== 'apple' && styles.buttonDisabled,
             ]}
             onPress={() => dispatch(appleLoginRequest())}
-            disabled={loading}>
+            disabled={loading}
+            testID="login-apple-button">
             {loadingProvider === 'apple' ? (
               <ActivityIndicator size="small" color="#FFFFFF" />
             ) : (
@@ -126,14 +129,15 @@ export default function LoginScreen() {
 
         {error && (
           <View style={styles.errorContainer}>
-            <Text style={styles.errorText}>{error}</Text>
+            <Text style={styles.errorText} testID="login-error-text">{error}</Text>
           </View>
         )}
 
         {!loading && (
           <TouchableOpacity
             style={styles.skipButton}
-            onPress={() => navigation.goBack()}>
+            onPress={() => navigation.goBack()}
+            testID="login-skip-button">
             <Text style={styles.skipText}>{t('auth.skipForNow')}</Text>
           </TouchableOpacity>
         )}

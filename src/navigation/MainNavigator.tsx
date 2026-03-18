@@ -215,17 +215,17 @@ export default function MainNavigator() {
       <Tab.Screen
         name="Home"
         component={HomeStackScreen}
-        options={{tabBarLabel: t('navigation.home')}}
+        options={{tabBarLabel: t('navigation.home'), tabBarTestID: 'tab-home'}}
       />
       <Tab.Screen
         name="Services"
         component={ServiceStackScreen}
-        options={{tabBarLabel: t('navigation.services')}}
+        options={{tabBarLabel: t('navigation.services'), tabBarTestID: 'tab-services'}}
       />
       <Tab.Screen
         name="Bookings"
         component={BookingStackScreen}
-        options={{tabBarLabel: t('navigation.myBookings')}}
+        options={{tabBarLabel: t('navigation.myBookings'), tabBarTestID: 'tab-bookings'}}
       />
       <Tab.Screen
         name="Profile"
@@ -233,6 +233,7 @@ export default function MainNavigator() {
         options={{
           tabBarLabel: t('navigation.profile'),
           headerShown: false,
+          tabBarTestID: 'tab-profile',
         }}
       />
     </Tab.Navigator>

@@ -119,7 +119,7 @@ export default function ServiceListScreen({navigation}: Props) {
   }
 
   return (
-    <View style={styles.container}>
+    <View style={styles.container} testID="service-list-screen">
       {/* Search Bar */}
       <TextInput
         style={styles.searchBar}
@@ -129,6 +129,7 @@ export default function ServiceListScreen({navigation}: Props) {
         onChangeText={setSearchText}
         onSubmitEditing={handleSearch}
         returnKeyType="search"
+        testID="service-list-search-bar"
       />
 
       {/* Category Chips + Filter Button */}
@@ -142,7 +143,8 @@ export default function ServiceListScreen({navigation}: Props) {
               styles.chip,
               selectedCategory === null && styles.chipSelected,
             ]}
-            onPress={() => setSelectedCategory(null)}>
+            onPress={() => setSelectedCategory(null)}
+            testID="service-list-category-all">
             <Text
               style={[
                 styles.chipText,
@@ -158,7 +160,8 @@ export default function ServiceListScreen({navigation}: Props) {
                 styles.chip,
                 selectedCategory === cat.name && styles.chipSelected,
               ]}
-              onPress={() => handleCategoryPress(cat.name)}>
+              onPress={() => handleCategoryPress(cat.name)}
+              testID={`service-list-category-${cat.name}`}>
               <Text
                 style={[
                   styles.chipText,
@@ -174,7 +177,8 @@ export default function ServiceListScreen({navigation}: Props) {
             styles.filterButton,
             hasActiveFilter && styles.filterButtonActive,
           ]}
-          onPress={handleOpenFilter}>
+          onPress={handleOpenFilter}
+          testID="service-list-filter-button">
           <Text
             style={[
               styles.filterButtonText,
@@ -188,7 +192,7 @@ export default function ServiceListScreen({navigation}: Props) {
       {/* Service List */}
       {filteredServices.length === 0 ? (
         <View style={styles.centered}>
-          <Text style={styles.emptyText}>{t('services.noServicesFound')}</Text>
+          <Text style={styles.emptyText} testID="service-list-empty">{t('services.noServicesFound')}</Text>
         </View>
       ) : (
         <Animated.FlatList

@@ -21,7 +21,8 @@ function ServiceCard({service, onPress, horizontal, featured, isFavorite, onTogg
     <TouchableOpacity
       style={[styles.card, horizontal && styles.cardHorizontal]}
       onPress={onPress}
-      activeOpacity={0.8}>
+      activeOpacity={0.8}
+      testID={`service-card-${service.id}`}>
       <View>
         {service.image_urls.length > 0 && (
           <Animated.Image
@@ -49,7 +50,8 @@ function ServiceCard({service, onPress, horizontal, featured, isFavorite, onTogg
           <TouchableOpacity
             style={styles.heartButton}
             onPress={onToggleFavorite}
-            hitSlop={{top: 8, bottom: 8, left: 8, right: 8}}>
+            hitSlop={{top: 8, bottom: 8, left: 8, right: 8}}
+            testID={`service-card-favorite-${service.id}`}>
             <Text style={[styles.heart, isFavorite && styles.heartFilled]}>
               {isFavorite ? '\u2764' : '\u2661'}
             </Text>

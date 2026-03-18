@@ -83,14 +83,15 @@ export default function BookingHistoryScreen({ navigation }: Props) {
 
   if (!isAuthenticated) {
     return (
-      <View style={styles.authPrompt}>
-        <Text style={styles.authTitle}>{t('auth.loginRequiredBookings')}</Text>
+      <View style={styles.authPrompt} testID="booking-history-auth-prompt">
+        <Text style={styles.authTitle} testID="booking-history-auth-title">{t('auth.loginRequiredBookings')}</Text>
         <Text style={styles.authMessage}>
           {t('auth.loginRequiredMessage')}
         </Text>
         <TouchableOpacity
           style={styles.authButton}
-          onPress={() => requireAuth()}>
+          onPress={() => requireAuth()}
+          testID="booking-history-sign-in-button">
           <Text style={styles.authButtonText}>{t('auth.signIn')}</Text>
         </TouchableOpacity>
       </View>

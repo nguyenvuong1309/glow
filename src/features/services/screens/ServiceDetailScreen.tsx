@@ -106,7 +106,7 @@ export default function ServiceDetailScreen({ navigation }: Props) {
   }
 
   return (
-    <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
+    <ScrollView style={styles.container} showsVerticalScrollIndicator={false} testID="service-detail-screen">
       {service.image_urls.length > 0 && (
         <View>
           <FlatList
@@ -145,6 +145,7 @@ export default function ServiceDetailScreen({ navigation }: Props) {
           <TouchableOpacity
             onPress={handleToggleFavorite}
             hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+            testID="service-detail-favorite-button"
           >
             <Text
               style={[
@@ -178,7 +179,7 @@ export default function ServiceDetailScreen({ navigation }: Props) {
             {t('services.rating', { rating: service.rating })}
           </Animated.Text>
         </View>
-        <Text style={styles.category}>{service.category}</Text>
+        <Text style={styles.category} testID="service-detail-category">{service.category}</Text>
 
         {service.provider_id && (
           <TouchableOpacity
@@ -209,7 +210,7 @@ export default function ServiceDetailScreen({ navigation }: Props) {
           </TouchableOpacity>
         )}
 
-        <Text style={styles.description}>{service.description}</Text>
+        <Text style={styles.description} testID="service-detail-description">{service.description}</Text>
 
         {isOwner ? (
           <TouchableOpacity
@@ -224,14 +225,15 @@ export default function ServiceDetailScreen({ navigation }: Props) {
           <TouchableOpacity
             style={styles.bookButton}
             onPress={handleBookNow}
+            testID="service-detail-book-button"
           >
             <Text style={styles.bookButtonText}>{t('services.bookNow')}</Text>
           </TouchableOpacity>
         )}
 
         {/* Reviews */}
-        <View style={styles.reviewsSection}>
-          <Text style={styles.reviewsTitle}>
+        <View style={styles.reviewsSection} testID="service-detail-reviews-section">
+          <Text style={styles.reviewsTitle} testID="service-detail-reviews-title">
             {t('review.reviews')} ({reviews.length})
           </Text>
           {reviewsLoading ? (
