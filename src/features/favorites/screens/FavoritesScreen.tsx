@@ -50,6 +50,7 @@ export default function FavoritesScreen({ navigation }: Props) {
       data={favorites}
       keyExtractor={item => item.id}
       renderItem={renderItem}
+      testID="favorites-screen"
       ListEmptyComponent={
         <Text style={styles.emptyText}>{t('favorites.empty')}</Text>
       }

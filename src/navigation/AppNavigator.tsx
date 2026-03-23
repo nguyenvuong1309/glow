@@ -5,6 +5,7 @@ import MainNavigator from './MainNavigator';
 import LoginScreen from '@/features/auth/screens/LoginScreen';
 import OnboardingScreen from '@/features/onboarding/screens/OnboardingScreen';
 import {useAuthListener} from '@/features/auth/useAuthListener';
+import {useDevAuthDeepLink} from '@/features/auth/useDevAuthDeepLink';
 import {mmkvStorage} from '@/lib/storage';
 import type {RootStackParamList} from './types';
 
@@ -12,6 +13,7 @@ const RootStack = createNativeStackNavigator<RootStackParamList>();
 
 export default function AppNavigator() {
   useAuthListener();
+  useDevAuthDeepLink();
   const [hasSeenOnboarding, setHasSeenOnboarding] = useState<boolean | null>(
     null,
   );

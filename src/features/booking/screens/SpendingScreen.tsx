@@ -61,13 +61,13 @@ export default function SpendingScreen() {
       }>
       {/* Month selector */}
       <View style={styles.monthSelector}>
-        <TouchableOpacity onPress={() => changeMonth(-1)} style={styles.arrow}>
+        <TouchableOpacity testID="spending-prev-month" onPress={() => changeMonth(-1)} style={styles.arrow}>
           <Text style={styles.arrowText}>{'<'}</Text>
         </TouchableOpacity>
         <Text style={styles.monthText}>
           {MONTH_NAMES[spendingMonth - 1]} {spendingYear}
         </Text>
-        <TouchableOpacity onPress={() => changeMonth(1)} style={styles.arrow}>
+        <TouchableOpacity testID="spending-next-month" onPress={() => changeMonth(1)} style={styles.arrow}>
           <Text style={styles.arrowText}>{'>'}</Text>
         </TouchableOpacity>
       </View>
@@ -80,7 +80,7 @@ export default function SpendingScreen() {
         <>
           {/* Summary */}
           <View style={styles.summaryRow}>
-            <View style={[styles.summaryCard, styles.totalCard]}>
+            <View testID="spending-total-card" style={[styles.summaryCard, styles.totalCard]}>
               <Text style={[styles.summaryValue, styles.totalText]}>
                 ${spending.total.toLocaleString()}
               </Text>

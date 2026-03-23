@@ -74,6 +74,7 @@ export default function MyServicesScreen({navigation}: Props) {
       data={services}
       keyExtractor={item => item.id}
       renderItem={renderItem}
+      testID="my-services-screen"
       refreshControl={
         <RefreshControl
           refreshing={loading}

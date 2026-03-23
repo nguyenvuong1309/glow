@@ -190,6 +190,7 @@ export default function ServiceDetailScreen({ navigation }: Props) {
               })
             }
             activeOpacity={0.7}
+            testID="service-detail-provider-button"
           >
             {service.provider_avatar ? (
               <Image

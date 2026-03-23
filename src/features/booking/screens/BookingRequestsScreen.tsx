@@ -128,6 +128,7 @@ export default function BookingRequestsScreen() {
       {item.status === 'pending' && (
         <View style={styles.actions}>
           <TouchableOpacity
+            testID={`booking-requests-approve-${item.id}`}
             style={styles.approveButton}
             onPress={() => handleApprove(item.id)}>
             <Text style={styles.approveText}>
@@ -135,6 +136,7 @@ export default function BookingRequestsScreen() {
             </Text>
           </TouchableOpacity>
           <TouchableOpacity
+            testID={`booking-requests-reject-${item.id}`}
             style={styles.rejectButton}
             onPress={() => handleReject(item.id)}>
             <Text style={styles.rejectText}>
@@ -146,6 +148,7 @@ export default function BookingRequestsScreen() {
       {item.status === 'confirmed' && (
         <View style={styles.actions}>
           <TouchableOpacity
+            testID={`booking-requests-complete-${item.id}`}
             style={styles.completeButton}
             onPress={() => handleComplete(item.id)}>
             <Text style={styles.completeText}>

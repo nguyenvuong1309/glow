@@ -51,6 +51,7 @@ export default function BookingHistoryScreen({ navigation }: Props) {
         headerRight: () => (
           <View style={styles.headerActions}>
             <TouchableOpacity
+              testID="booking-history-view-toggle"
               onPress={() =>
                 setViewMode(v => (v === 'list' ? 'calendar' : 'list'))
               }
@@ -62,7 +63,7 @@ export default function BookingHistoryScreen({ navigation }: Props) {
                   : t('bookingHistory.listView')}
               </Text>
             </TouchableOpacity>
-            <TouchableOpacity onPress={() => navigation.navigate('Spending')}>
+            <TouchableOpacity testID="booking-history-spending-button" onPress={() => navigation.navigate('Spending')}>
               <Text style={styles.headerButton}>{t('spending.title')}</Text>
             </TouchableOpacity>
           </View>
@@ -80,48 +81,6 @@ export default function BookingHistoryScreen({ navigation }: Props) {
       }
     }, [dispatch, isAuthenticated]),
   );
-
-  if (!isAuthenticated) {
-    return (
-      <View style={styles.authPrompt} testID="booking-history-auth-prompt">
-        <Text style={styles.authTitle} testID="booking-history-auth-title">{t('auth.loginRequiredBookings')}</Text>
-        <Text style={styles.authMessage}>
-          {t('auth.loginRequiredMessage')}
-        </Text>
-        <TouchableOpacity
-          style={styles.authButton}
-          onPress={() => requireAuth()}
-          testID="booking-history-sign-in-button">
-          <Text style={styles.authButtonText}>{t('auth.signIn')}</Text>
-        </TouchableOpacity>
-      </View>
-    );
-  }
-
-  const formatDate = (iso: string) => {
-    const d = new Date(iso + 'T00:00:00');
-    return d.toLocaleDateString(getDateLocale(), {
-      weekday: 'short',
-      month: 'short',
-      day: 'numeric',
-      year: 'numeric',
-    });
-  };
-
-  const handleCancel = (bookingId: string) => {
-    Alert.alert(
-      t('bookingHistory.confirmCancel'),
-      t('bookingHistory.confirmCancelMessage'),
-      [
-        { text: t('common.cancel'), style: 'cancel' },
-        {
-          text: t('bookingHistory.cancelBooking'),
-          style: 'destructive',
-          onPress: () => dispatch(cancelBooking(bookingId)),
-        },
-      ],
-    );
-  };
 
   const markedDates = useMemo(() => {
     const marks: Record<string, any> = {};
@@ -144,14 +103,58 @@ export default function BookingHistoryScreen({ navigation }: Props) {
     return marks;
   }, [bookings, selectedDate]);
 
-  const displayBookings =
+  const displayBookings = useMemo(() =>
     viewMode === 'calendar' && selectedDate
       ? bookings.filter(b => b.date === selectedDate)
-      : bookings;
+      : bookings,
+    [bookings, viewMode, selectedDate],
+  );
 
-  const handleDayPress = (day: DateData) => {
+  const handleDayPress = useCallback((day: DateData) => {
     setSelectedDate(prev => (prev === day.dateString ? null : day.dateString));
-  };
+  }, []);
+
+  const handleCancel = useCallback((bookingId: string) => {
+    Alert.alert(
+      t('bookingHistory.confirmCancel'),
+      t('bookingHistory.confirmCancelMessage'),
+      [
+        { text: t('common.cancel'), style: 'cancel' },
+        {
+          text: t('bookingHistory.cancelBooking'),
+          style: 'destructive',
+          onPress: () => dispatch(cancelBooking(bookingId)),
+        },
+      ],
+    );
+  }, [t, dispatch]);
+
+  const formatDate = useCallback((iso: string) => {
+    const d = new Date(iso + 'T00:00:00');
+    return d.toLocaleDateString(getDateLocale(), {
+      weekday: 'short',
+      month: 'short',
+      day: 'numeric',
+      year: 'numeric',
+    });
+  }, []);
+
+  if (!isAuthenticated) {
+    return (
+      <View style={styles.authPrompt} testID="booking-history-auth-prompt">
+        <Text style={styles.authTitle} testID="booking-history-auth-title">{t('auth.loginRequiredBookings')}</Text>
+        <Text style={styles.authMessage}>
+          {t('auth.loginRequiredMessage')}
+        </Text>
+        <TouchableOpacity
+          style={styles.authButton}
+          onPress={() => requireAuth()}
+          testID="booking-history-sign-in-button">
+          <Text style={styles.authButtonText}>{t('auth.signIn')}</Text>
+        </TouchableOpacity>
+      </View>
+    );
+  }
 
   const renderItem = ({ item }: { item: Booking }) => (
     <View style={styles.card}>

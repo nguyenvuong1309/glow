@@ -143,6 +143,7 @@ export default function BookingScreen({navigation}: Props) {
           {availableDates.map(date => (
             <TouchableOpacity
               key={date}
+              testID={`booking-date-chip-${date}`}
               style={[
                 styles.chip,
                 selectedDate === date && styles.chipSelected,
@@ -178,6 +179,7 @@ export default function BookingScreen({navigation}: Props) {
           {availableTimeSlots.map(time => (
             <TouchableOpacity
               key={time}
+              testID={`booking-time-chip-${time}`}
               style={[
                 styles.timeChip,
                 selectedTime === time && styles.chipSelected,
@@ -201,6 +203,7 @@ export default function BookingScreen({navigation}: Props) {
         name="notes"
         render={({field: {onChange, value}}) => (
           <TextInput
+            testID="booking-notes-input"
             style={styles.textInput}
             placeholder={t('booking.placeholder')}
             placeholderTextColor={theme.colors.textSecondary}
@@ -214,6 +217,7 @@ export default function BookingScreen({navigation}: Props) {
       />
 
       <TouchableOpacity
+        testID="booking-confirm-button"
         style={styles.submitButton}
         onPress={handleSubmit(onSubmit)}
         disabled={loading}>

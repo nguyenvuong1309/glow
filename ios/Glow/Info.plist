@@ -30,6 +30,14 @@
 				<string>com.googleusercontent.apps.26026437449-2nm5l5duuuitm5079odokq5vriep3tuv</string>
 			</array>
 		</dict>
+		<dict>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>glow</string>
+			</array>
+			<key>CFBundleURLName</key>
+			<string>org.reactjs.native.example.Glow</string>
+		</dict>
 	</array>
 	<key>CFBundleVersion</key>
 	<string></string>

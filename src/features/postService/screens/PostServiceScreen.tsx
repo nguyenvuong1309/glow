@@ -171,6 +171,7 @@ export default function PostServiceScreen({navigation, route}: Props) {
             value={value}
             onChangeText={onChange}
             maxLength={100}
+            testID="post-service-name-input"
           />
         )}
       />
@@ -185,7 +186,8 @@ export default function PostServiceScreen({navigation, route}: Props) {
               styles.chip,
               selectedCategory === cat.id && styles.chipSelected,
             ]}
-            onPress={() => setValue('category_id', cat.id, {shouldValidate: true})}>
+            onPress={() => setValue('category_id', cat.id, {shouldValidate: true})}
+            testID={`post-service-category-${cat.id}`}>
             <Text
               style={[
                 styles.chipText,
@@ -212,6 +214,7 @@ export default function PostServiceScreen({navigation, route}: Props) {
             multiline
             numberOfLines={4}
             maxLength={1000}
+            testID="post-service-description-input"
           />
         )}
       />
@@ -229,6 +232,7 @@ export default function PostServiceScreen({navigation, route}: Props) {
             value={value}
             onChangeText={onChange}
             keyboardType="numeric"
+            testID="post-service-price-input"
           />
         )}
       />
@@ -236,7 +240,8 @@ export default function PostServiceScreen({navigation, route}: Props) {
       <Text style={styles.label}>{t('postService.duration')}</Text>
       <TouchableOpacity
         style={styles.durationField}
-        onPress={() => setDurationPickerOpen(true)}>
+        onPress={() => setDurationPickerOpen(true)}
+        testID="post-service-duration-button">
         <Text style={styles.durationFieldText}>
           {formatDuration(durationMinutes)}
         </Text>
@@ -272,7 +277,8 @@ export default function PostServiceScreen({navigation, route}: Props) {
       <TouchableOpacity
         style={styles.submitButton}
         onPress={handleSubmit(onSubmit)}
-        disabled={loading}>
+        disabled={loading}
+        testID="post-service-submit-button">
         {loading ? (
           <ActivityIndicator color={theme.colors.surface} />
         ) : (

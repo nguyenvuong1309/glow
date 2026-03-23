@@ -54,7 +54,7 @@ export default function ReviewScreen({navigation, route}: Props) {
       <Text style={styles.label}>{t('review.rating')}</Text>
       <View style={styles.stars}>
         {[1, 2, 3, 4, 5].map(star => (
-          <TouchableOpacity key={star} onPress={() => setRating(star)}>
+          <TouchableOpacity key={star} testID={`review-star-${star}`} onPress={() => setRating(star)}>
             <Text style={[styles.star, star <= rating && styles.starFilled]}>
               {'\u2605'}
             </Text>
@@ -64,6 +64,7 @@ export default function ReviewScreen({navigation, route}: Props) {
 
       <Text style={styles.label}>{t('review.comment')}</Text>
       <TextInput
+        testID="review-comment-input"
         style={styles.input}
         value={comment}
         onChangeText={setComment}
@@ -75,6 +76,7 @@ export default function ReviewScreen({navigation, route}: Props) {
       />
 
       <TouchableOpacity
+        testID="review-submit-button"
         style={[styles.submitButton, submitting && styles.submitDisabled]}
         onPress={handleSubmit}
         disabled={submitting}>

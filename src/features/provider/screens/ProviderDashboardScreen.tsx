@@ -64,13 +64,13 @@ export default function ProviderDashboardScreen() {
       }>
       {/* Month selector */}
       <View style={styles.monthSelector}>
-        <TouchableOpacity onPress={() => changeMonth(-1)} style={styles.arrow}>
+        <TouchableOpacity onPress={() => changeMonth(-1)} style={styles.arrow} testID="dashboard-prev-month">
           <Text style={styles.arrowText}>{'<'}</Text>
         </TouchableOpacity>
         <Text style={styles.monthText}>
           {MONTH_NAMES[selectedMonth - 1]} {selectedYear}
         </Text>
-        <TouchableOpacity onPress={() => changeMonth(1)} style={styles.arrow}>
+        <TouchableOpacity onPress={() => changeMonth(1)} style={styles.arrow} testID="dashboard-next-month">
           <Text style={styles.arrowText}>{'>'}</Text>
         </TouchableOpacity>
       </View>
@@ -83,7 +83,7 @@ export default function ProviderDashboardScreen() {
         <>
           {/* Summary cards */}
           <View style={styles.grid}>
-            <View style={[styles.statCard, styles.revenueCard]}>
+            <View style={[styles.statCard, styles.revenueCard]} testID="dashboard-revenue-card">
               <Text style={[styles.statValue, styles.revenueText]}>
                 ${stats.monthlyRevenue.toLocaleString()}
               </Text>

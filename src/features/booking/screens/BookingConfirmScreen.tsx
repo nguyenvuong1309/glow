@@ -65,7 +65,7 @@ export default function BookingConfirmScreen({navigation}: Props) {
         <Text style={styles.checkmark}>{'\u2713'}</Text>
       </Animated.View>
 
-      <Animated.View style={[styles.details, detailsStyle]}>
+      <Animated.View testID="booking-confirm-details" style={[styles.details, detailsStyle]}>
         <Text style={styles.title}>{t('bookingConfirm.title')}</Text>
 
         {service && (
@@ -94,6 +94,7 @@ export default function BookingConfirmScreen({navigation}: Props) {
         )}
 
         <TouchableOpacity
+          testID="booking-confirm-done-button"
           style={styles.doneButton}
           onPress={() => navigation.navigate('Home')}>
           <Text style={styles.doneText}>{t('bookingConfirm.done')}</Text>

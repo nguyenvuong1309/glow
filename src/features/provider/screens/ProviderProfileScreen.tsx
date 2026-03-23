@@ -60,7 +60,8 @@ export default function ProviderProfileScreen({navigation, route}: Props) {
     <ScrollView
       style={styles.container}
       contentContainerStyle={styles.content}
-      showsVerticalScrollIndicator={false}>
+      showsVerticalScrollIndicator={false}
+      testID="provider-profile-screen">
       {/* Header */}
       <View style={styles.header}>
         {profile.avatar_url ? (
