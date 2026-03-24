@@ -1,6 +1,6 @@
 {
   "name": "Glow",
-  "version": "0.0.1",
+  "version": "1.0.1",
   "private": true,
   "scripts": {
     "android": "react-native run-android",
@@ -19,7 +19,9 @@
     "@hookform/resolvers": "^5.2.2",
     "@invertase/react-native-apple-authentication": "^2.5.1",
     "@react-native-async-storage/async-storage": "^3.0.1",
+    "@react-native-firebase/analytics": "^23.8.8",
     "@react-native-firebase/app": "^23.8.8",
+    "@react-native-firebase/app-distribution": "^23.8.8",
     "@react-native-firebase/crashlytics": "^23.8.8",
     "@react-native-google-signin/google-signin": "^16.1.1",
     "@react-native/new-app-screen": "0.84.1",
