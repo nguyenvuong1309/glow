@@ -2,6 +2,7 @@
   "name": "Glow",
   "version": "1.0.1",
   "private": true,
+  "packageManager": "pnpm@10.23.0",
   "scripts": {
     "android": "react-native run-android",
     "ios": "react-native run-ios",
