@@ -1,10 +1,12 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useMemo, useState} from 'react';
 import {
   Text,
   TextInput,
   StyleSheet,
   ScrollView,
   RefreshControl,
+  TouchableOpacity,
+  View,
 } from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import Animated, {FadeInDown} from 'react-native-reanimated';
@@ -14,7 +16,9 @@ import {loadHome} from '../homeSlice';
 import {selectService, setFilter, loadReviews} from '@/features/services/serviceSlice';
 import {loadAvailability} from '@/features/booking/bookingSlice';
 import {loadFavorites, toggleFavorite} from '@/features/favorites/favoritesSlice';
+import {loadPromotions, loadUserCoupons} from '@/features/promotions/promotionSlice';
 import {useRequireAuth} from '@/hooks/useRequireAuth';
+import {logEvent, AnalyticsEvents} from '@/lib/analytics';
 import ServiceCard from '@/components/ServiceCard/ServiceCard';
 import CategoryGrid from '@/components/CategoryGrid/CategoryGrid';
 import PromoBanner from '@/components/PromoBanner/PromoBanner';
@@ -50,12 +54,26 @@ export default function HomeScreen({navigation}: Props) {
   } = useSelector((state: RootState) => state.home);
   const user = useSelector((state: RootState) => state.auth.user);
   const favoriteIds = useSelector((state: RootState) => state.favorites.ids);
+  const promotions = useSelector((state: RootState) => state.promotions.promotions);
+  const userCoupons = useSelector((state: RootState) => state.promotions.userCoupons);
   const [searchText, setSearchText] = useState('');
   const [refreshing, setRefreshing] = useState(false);
+
+  const welcomeCoupon = useMemo(
+    () =>
+      userCoupons.find(
+        c =>
+          c.promotion?.code === 'WELCOME20' &&
+          !c.used_at,
+      ),
+    [userCoupons],
+  );
 
   useEffect(() => {
     dispatch(loadHome());
     dispatch(loadFavorites());
+    dispatch(loadPromotions());
+    dispatch(loadUserCoupons());
   }, [dispatch]);
 
   useEffect(() => {
@@ -68,13 +86,18 @@ export default function HomeScreen({navigation}: Props) {
     setRefreshing(true);
     dispatch(loadHome());
     dispatch(loadFavorites());
+    dispatch(loadPromotions());
+    dispatch(loadUserCoupons());
   };
 
-  const banners: Banner[] = [
-    {id: '1', color: '#E07A94', title: t('home.promoTitle1'), subtitle: t('home.promoSubtitle1')},
-    {id: '2', color: '#7B68EE', title: t('home.promoTitle2'), subtitle: t('home.promoSubtitle2')},
-    {id: '3', color: '#4CAF50', title: t('home.promoTitle3'), subtitle: t('home.promoSubtitle3')},
-  ];
+  const banners: Banner[] = promotions.length > 0
+    ? promotions.map(p => ({
+        id: p.id,
+        color: p.color,
+        title: p.title,
+        subtitle: p.description ?? `${p.discount_type === 'percentage' ? p.discount_value + '%' : '$' + p.discount_value} OFF`,
+      }))
+    : [];
 
   const handleServicePress = (service: Service) => {
     dispatch(selectService(service));
@@ -83,6 +106,7 @@ export default function HomeScreen({navigation}: Props) {
   };
 
   const handleCategoryPress = (categoryName: string) => {
+    logEvent(AnalyticsEvents.SELECT_CATEGORY, {category: categoryName});
     dispatch(setFilter({categories: [categoryName]}));
     navigation.navigate('Services');
   };
@@ -130,6 +154,29 @@ export default function HomeScreen({navigation}: Props) {
           <Text style={styles.subtitle} testID="home-subtitle">{t('home.whatWouldYouLike')}</Text>
         </Animated.View>
 
+        {/* Welcome Coupon Banner */}
+        {welcomeCoupon && (
+          <Animated.View entering={FadeInDown.duration(500).delay(25)}>
+            <TouchableOpacity
+              style={styles.welcomeBanner}
+              activeOpacity={0.85}
+              onPress={() => navigation.navigate('Services')}
+              testID="home-welcome-banner">
+              <View style={styles.welcomeBannerContent}>
+                <Text style={styles.welcomeBannerEmoji}>{'\u{1F389}'}</Text>
+                <View style={styles.welcomeBannerTextContainer}>
+                  <Text style={styles.welcomeBannerTitle}>
+                    {t('home.welcomeBanner')}
+                  </Text>
+                  <Text style={styles.welcomeBannerAction}>
+                    {t('home.welcomeBannerAction')}
+                  </Text>
+                </View>
+              </View>
+            </TouchableOpacity>
+          </Animated.View>
+        )}
+
         {/* Recent Booking */}
         {recentBooking && (
           <Animated.View entering={FadeInDown.duration(500).delay(50)}>
@@ -155,9 +202,11 @@ export default function HomeScreen({navigation}: Props) {
         </Animated.View>
 
         {/* Promo Banner */}
-        <Animated.View entering={FadeInDown.duration(500).delay(150)}>
-          <PromoBanner banners={banners} />
-        </Animated.View>
+        {banners.length > 0 && (
+          <Animated.View entering={FadeInDown.duration(500).delay(150)}>
+            <PromoBanner banners={banners} />
+          </Animated.View>
+        )}
 
         {/* Categories */}
         <Animated.View entering={FadeInDown.duration(500).delay(200)}>
@@ -250,5 +299,34 @@ const styles = StyleSheet.create({
   },
   horizontalList: {
     paddingBottom: theme.spacing.md,
+  },
+  welcomeBanner: {
+    backgroundColor: theme.colors.primaryDark,
+    borderRadius: theme.radius.md,
+    padding: theme.spacing.md,
+    marginBottom: theme.spacing.md,
+  },
+  welcomeBannerContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  welcomeBannerEmoji: {
+    fontSize: 32,
+    marginRight: theme.spacing.md,
+  },
+  welcomeBannerTextContainer: {
+    flex: 1,
+  },
+  welcomeBannerTitle: {
+    fontSize: 15,
+    fontWeight: '700',
+    color: '#FFFFFF',
+    marginBottom: theme.spacing.xs,
+  },
+  welcomeBannerAction: {
+    fontSize: 13,
+    fontWeight: '600',
+    color: '#FFFFFF',
+    opacity: 0.9,
   },
 });

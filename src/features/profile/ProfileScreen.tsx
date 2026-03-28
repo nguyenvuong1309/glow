@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {
   View,
   Text,
@@ -8,6 +8,7 @@ import {
   Image,
   Alert,
 } from 'react-native';
+import ImageViewing from 'react-native-image-viewing';
 import {useDispatch, useSelector} from 'react-redux';
 import {useTranslation} from 'react-i18next';
 import {logoutRequest, deleteAccountRequest} from '@/features/auth/authSlice';
@@ -38,6 +39,7 @@ export default function ProfileScreen({navigation}: Props) {
   const isAuthenticated = useSelector(
     (state: RootState) => state.auth.isAuthenticated,
   );
+  const [avatarViewerVisible, setAvatarViewerVisible] = useState(false);
 
   if (!isAuthenticated) {
     return (
@@ -87,7 +89,18 @@ export default function ProfileScreen({navigation}: Props) {
     );
   }
 
+  const subscriptionPlan = useSelector(
+    (state: RootState) => state.subscription?.plan ?? 'free',
+  );
+
   const serviceMenuItems: MenuItem[] = [
+    {
+      label: subscriptionPlan === 'free'
+        ? t('profile.upgradePlan')
+        : t('profile.managePlan'),
+      onPress: () => navigation.navigate('Subscription'),
+      icon: '⭐',
+    },
     {
       label: t('profile.dashboard'),
       onPress: () => navigation.navigate('Dashboard'),
@@ -108,8 +121,20 @@ export default function ProfileScreen({navigation}: Props) {
 
   const accountMenuItems: MenuItem[] = [
     {
+      label: t('profile.editProfile'),
+      onPress: () => navigation.navigate('EditProfile'),
+    },
+    {
       label: t('profile.favorites'),
       onPress: () => navigation.navigate('Favorites'),
+    },
+    {
+      label: t('profile.promotions'),
+      onPress: () => navigation.navigate('Promotions'),
+    },
+    {
+      label: t('profile.myCoupons'),
+      onPress: () => navigation.navigate('MyCoupons'),
     },
     {
       label: t('profile.signOut'),
@@ -158,7 +183,9 @@ export default function ProfileScreen({navigation}: Props) {
       {/* Header */}
       <View style={styles.header} testID="profile-header">
         {user?.avatar_url ? (
-          <Image source={{uri: user.avatar_url}} style={styles.avatar} />
+          <TouchableOpacity onPress={() => setAvatarViewerVisible(true)}>
+            <Image source={{uri: user.avatar_url}} style={styles.avatar} />
+          </TouchableOpacity>
         ) : (
           <View style={styles.avatarFallback}>
             <Text style={styles.avatarText}>
@@ -202,6 +229,15 @@ export default function ProfileScreen({navigation}: Props) {
 
       {/* Account */}
       <MenuSection title={t('profile.accountSection')} items={accountMenuItems} />
+
+      {user?.avatar_url && (
+        <ImageViewing
+          images={[{uri: user.avatar_url}]}
+          imageIndex={0}
+          visible={avatarViewerVisible}
+          onRequestClose={() => setAvatarViewerVisible(false)}
+        />
+      )}
     </ScrollView>
   );
 }

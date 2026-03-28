@@ -3,6 +3,7 @@ import {View, Text, StyleSheet, TouchableOpacity} from 'react-native';
 import Animated from 'react-native-reanimated';
 import {useTranslation} from 'react-i18next';
 import {theme} from '@/utils/theme';
+import SocialProofBadge from '@/components/SocialProofBadge';
 import type {Service} from '@/types';
 
 interface Props {
@@ -84,6 +85,9 @@ function ServiceCard({service, onPress, horizontal, featured, isFavorite, onTogg
             {t('services.rating', {rating: service.rating})}
           </Animated.Text>
         </View>
+        {service.booking_count !== undefined && service.booking_count > 0 && (
+          <SocialProofBadge bookingCount={service.booking_count} />
+        )}
       </View>
     </TouchableOpacity>
   );

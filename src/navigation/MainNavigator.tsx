@@ -12,10 +12,13 @@ import type {
 import HomeScreen from '@/features/home/screens/HomeScreen';
 import ServiceListScreen from '@/features/services/screens/ServiceListScreen';
 import ServiceDetailScreen from '@/features/services/screens/ServiceDetailScreen';
+import SearchScreen from '@/features/services/screens/SearchScreen';
 import BookingScreen from '@/features/booking/screens/BookingScreen';
 import BookingConfirmScreen from '@/features/booking/screens/BookingConfirmScreen';
 import BookingHistoryScreen from '@/features/booking/screens/BookingHistoryScreen';
+import RescheduleScreen from '@/features/booking/screens/RescheduleScreen';
 import ProfileScreen from '@/features/profile/ProfileScreen';
+import EditProfileScreen from '@/features/profile/screens/EditProfileScreen';
 import PostServiceScreen from '@/features/postService/screens/PostServiceScreen';
 import BookingRequestsScreen from '@/features/booking/screens/BookingRequestsScreen';
 import MyServicesScreen from '@/features/postService/screens/MyServicesScreen';
@@ -24,7 +27,13 @@ import ReviewScreen from '@/features/booking/screens/ReviewScreen';
 import SpendingScreen from '@/features/booking/screens/SpendingScreen';
 import FavoritesScreen from '@/features/favorites/screens/FavoritesScreen';
 import ProviderProfileScreen from '@/features/provider/screens/ProviderProfileScreen';
+import PromotionsScreen from '@/features/promotions/screens/PromotionsScreen';
+import MyCouponsScreen from '@/features/promotions/screens/MyCouponsScreen';
+import AvailabilityScreen from '@/features/availability/screens/AvailabilityScreen';
+import SubscriptionScreen from '@/features/subscription/screens/SubscriptionScreen';
+import PaywallScreen from '@/features/subscription/screens/PaywallScreen';
 import {theme} from '@/utils/theme';
+import LottieTabIcon from '@/components/LottieTabIcon';
 
 const Tab = createBottomTabNavigator<TabParamList>();
 const HomeStack = createNativeStackNavigator<HomeStackParamList>();
@@ -114,6 +123,11 @@ function ServiceStackScreen() {
         component={PostServiceScreen}
         options={{title: t('navigation.postService')}}
       />
+      <ServiceStack.Screen
+        name="Search"
+        component={SearchScreen}
+        options={{title: t('navigation.search')}}
+      />
     </ServiceStack.Navigator>
   );
 }
@@ -141,6 +155,11 @@ function BookingStackScreen() {
         name="Spending"
         component={SpendingScreen}
         options={{title: t('navigation.spending')}}
+      />
+      <BookingStack.Screen
+        name="Reschedule"
+        component={RescheduleScreen}
+        options={{title: t('navigation.reschedule')}}
       />
     </BookingStack.Navigator>
   );
@@ -195,6 +214,36 @@ function ProfileStackScreen() {
         component={ProviderProfileScreen}
         options={{title: t('navigation.profile')}}
       />
+      <ProfileStack.Screen
+        name="EditProfile"
+        component={EditProfileScreen}
+        options={{title: t('navigation.editProfile')}}
+      />
+      <ProfileStack.Screen
+        name="Promotions"
+        component={PromotionsScreen}
+        options={{title: t('navigation.promotions')}}
+      />
+      <ProfileStack.Screen
+        name="MyCoupons"
+        component={MyCouponsScreen}
+        options={{title: t('navigation.myCoupons')}}
+      />
+      <ProfileStack.Screen
+        name="Availability"
+        component={AvailabilityScreen}
+        options={{title: t('navigation.availability')}}
+      />
+      <ProfileStack.Screen
+        name="Subscription"
+        component={SubscriptionScreen}
+        options={{title: t('navigation.subscription')}}
+      />
+      <ProfileStack.Screen
+        name="Paywall"
+        component={PaywallScreen}
+        options={{headerShown: false, presentation: 'modal'}}
+      />
     </ProfileStack.Navigator>
   );
 }
@@ -215,17 +264,29 @@ export default function MainNavigator() {
       <Tab.Screen
         name="Home"
         component={HomeStackScreen}
-        options={{tabBarLabel: t('navigation.home'), tabBarTestID: 'tab-home'}}
+        options={{
+          tabBarLabel: t('navigation.home'),
+          tabBarIcon: ({ focused }) => <LottieTabIcon name="home" focused={focused} />,
+          tabBarTestID: 'tab-home',
+        }}
       />
       <Tab.Screen
         name="Services"
         component={ServiceStackScreen}
-        options={{tabBarLabel: t('navigation.services'), tabBarTestID: 'tab-services'}}
+        options={{
+          tabBarLabel: t('navigation.services'),
+          tabBarIcon: ({ focused }) => <LottieTabIcon name="services" focused={focused} />,
+          tabBarTestID: 'tab-services',
+        }}
       />
       <Tab.Screen
         name="Bookings"
         component={BookingStackScreen}
-        options={{tabBarLabel: t('navigation.myBookings'), tabBarTestID: 'tab-bookings'}}
+        options={{
+          tabBarLabel: t('navigation.myBookings'),
+          tabBarIcon: ({ focused }) => <LottieTabIcon name="bookings" focused={focused} />,
+          tabBarTestID: 'tab-bookings',
+        }}
       />
       <Tab.Screen
         name="Profile"
@@ -233,6 +294,7 @@ export default function MainNavigator() {
         options={{
           tabBarLabel: t('navigation.profile'),
           headerShown: false,
+          tabBarIcon: ({ focused }) => <LottieTabIcon name="profile" focused={focused} />,
           tabBarTestID: 'tab-profile',
         }}
       />

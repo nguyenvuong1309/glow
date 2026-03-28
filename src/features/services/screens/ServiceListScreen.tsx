@@ -2,7 +2,6 @@ import React, {useCallback, useEffect, useMemo, useRef, useState} from 'react';
 import {
   View,
   Text,
-  TextInput,
   StyleSheet,
   TouchableOpacity,
   ScrollView,
@@ -121,16 +120,13 @@ export default function ServiceListScreen({navigation}: Props) {
   return (
     <View style={styles.container} testID="service-list-screen">
       {/* Search Bar */}
-      <TextInput
+      <TouchableOpacity
         style={styles.searchBar}
-        placeholder={t('home.searchPlaceholder')}
-        placeholderTextColor={theme.colors.textSecondary}
-        value={searchText}
-        onChangeText={setSearchText}
-        onSubmitEditing={handleSearch}
-        returnKeyType="search"
-        testID="service-list-search-bar"
-      />
+        onPress={() => navigation.navigate('Search')}
+        activeOpacity={0.7}
+        testID="service-list-search-bar">
+        <Text style={styles.searchPlaceholder}>{t('home.searchPlaceholder')}</Text>
+      </TouchableOpacity>
 
       {/* Category Chips + Filter Button */}
       <View style={styles.categoryRow}>
@@ -286,13 +282,15 @@ const styles = StyleSheet.create({
     backgroundColor: theme.colors.surface,
     borderRadius: theme.radius.full,
     paddingHorizontal: theme.spacing.lg,
-    paddingVertical: 10,
-    fontSize: 15,
-    color: theme.colors.text,
+    paddingVertical: 12,
     borderWidth: 1,
     borderColor: theme.colors.border,
     marginHorizontal: theme.spacing.md,
     marginTop: theme.spacing.sm,
+  },
+  searchPlaceholder: {
+    fontSize: 15,
+    color: theme.colors.textSecondary,
   },
   emptyText: {
     fontSize: 16,

@@ -1,4 +1,4 @@
-import React, { useCallback, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import {
   View,
   Text,
@@ -17,6 +17,8 @@ import { useSelector, useDispatch } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 import { toggleFavorite } from '@/features/favorites/favoritesSlice';
 import { loadAvailability } from '@/features/booking/bookingSlice';
+import { ShareButton } from '@/features/sharing';
+import { logEvent, AnalyticsEvents } from '@/lib/analytics';
 import { useRequireAuth } from '@/hooks/useRequireAuth';
 import { theme } from '@/utils/theme';
 import type { RootState } from '@/store';
@@ -45,6 +47,17 @@ export default function ServiceDetailScreen({ navigation }: Props) {
   const [activeImageIndex, setActiveImageIndex] = useState(0);
   const [galleryVisible, setGalleryVisible] = useState(false);
   const [galleryIndex, setGalleryIndex] = useState(0);
+
+  useEffect(() => {
+    if (service) {
+      logEvent(AnalyticsEvents.VIEW_SERVICE, {
+        service_id: service.id,
+        service_name: service.name,
+        category: service.category,
+        price: service.price,
+      });
+    }
+  }, [service?.id]);
 
   const onViewableItemsChanged = useCallback(
     ({ viewableItems }: { viewableItems: ViewToken[] }) => {
@@ -88,6 +101,10 @@ export default function ServiceDetailScreen({ navigation }: Props) {
     if (!service) return;
     if (!requireAuth()) return;
     dispatch(toggleFavorite(service.id));
+    logEvent(
+      isFavorite ? AnalyticsEvents.REMOVE_FAVORITE : AnalyticsEvents.ADD_FAVORITE,
+      {service_id: service.id, service_name: service.name},
+    );
   };
 
   const handleBookNow = () => {
@@ -95,6 +112,11 @@ export default function ServiceDetailScreen({ navigation }: Props) {
     if (!requireAuth()) return;
     dispatch(loadAvailability(service.id));
     navigation.navigate('Booking', { serviceId: service.id });
+    logEvent(AnalyticsEvents.BEGIN_BOOKING, {
+      service_id: service.id,
+      service_name: service.name,
+      price: service.price,
+    });
   };
 
   if (!service) {
@@ -142,6 +164,7 @@ export default function ServiceDetailScreen({ navigation }: Props) {
           >
             {service.name}
           </Animated.Text>
+          <ShareButton service={service} size={22} style={styles.shareButton} />
           <TouchableOpacity
             onPress={handleToggleFavorite}
             hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
@@ -338,6 +361,9 @@ const styles = StyleSheet.create({
     fontSize: 26,
     fontWeight: '700',
     color: theme.colors.text,
+  },
+  shareButton: {
+    marginRight: theme.spacing.sm,
   },
   detailHeart: {
     fontSize: 24,

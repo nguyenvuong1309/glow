@@ -3,7 +3,14 @@
     "cancel": "取消",
     "done": "完成",
     "apply": "应用",
-    "clear": "清除"
+    "clear": "清除",
+    "save": "保存",
+    "delete": "删除",
+    "edit": "编辑",
+    "loading": "加载中...",
+    "error": "错误",
+    "success": "成功",
+    "confirm": "确认"
   },
   "auth": {
     "appName": "Glow",
@@ -19,7 +26,7 @@
     "skipForNow": "暂时跳过"
   },
   "home": {
-    "greeting": "你好，{{name}} ✨",
+    "greeting": "你好，{{name}} \u2728",
     "defaultName": "美丽",
     "whatWouldYouLike": "今天想要什么服务？",
     "searchPlaceholder": "搜索服务...",
@@ -29,12 +36,9 @@
     "topRatedBadge": "好评",
     "recentBooking": "最近预约",
     "bookAgain": "再次预约",
-    "promoTitle1": "春季特惠",
-    "promoSubtitle1": "所有水疗项目8折",
-    "promoTitle2": "新客户",
-    "promoSubtitle2": "首次预约免费咨询",
-    "promoTitle3": "推荐好友",
-    "promoSubtitle3": "双方各得10元优惠"
+    "promotions": "优惠活动",
+    "welcomeBanner": "新用户专享8折优惠！使用码 WELCOME20",
+    "welcomeBannerAction": "立即浏览服务"
   },
   "services": {
     "all": "全部",
@@ -45,9 +49,12 @@
     "editService": "编辑服务",
     "yourService": "您的服务",
     "cannotBookOwn": "您不能预约自己的服务",
-    "price": "¥{{price}}",
+    "price": "\u00a5{{price}}",
     "duration": "{{minutes}} 分钟",
-    "rating": "★ {{rating}}"
+    "rating": "\u2605 {{rating}}",
+    "distance": "{{distance}} 公里",
+    "bookedThisWeek": "本周{{count}}人预约",
+    "popularBookedThisWeek": "热门 - 本周{{count}}人预约"
   },
   "filterSheet": {
     "title": "筛选服务",
@@ -57,7 +64,19 @@
     "timeFrom": "开始时间",
     "timeTo": "结束时间",
     "selectDate": "选择日期",
-    "selectTime": "选择时间"
+    "selectTime": "选择时间",
+    "priceRange": "价格范围",
+    "minPrice": "最低价",
+    "maxPrice": "最高价",
+    "minRating": "最低评分",
+    "maxDistance": "最大距离（公里）",
+    "sortBy": "排序方式",
+    "sortDefault": "默认",
+    "sortPriceAsc": "价格：低到高",
+    "sortPriceDesc": "价格：高到低",
+    "sortRating": "评分最高",
+    "sortDistance": "最近",
+    "sortNewest": "最新"
   },
   "booking": {
     "selectDate": "选择日期",
@@ -70,10 +89,17 @@
     "validationTime": "请选择时间",
     "confirmTitle": "确认预约",
     "confirmMessage": "确定要预约此服务吗？",
-    "serviceMeta": "¥{{price}} · {{minutes}} 分钟",
+    "serviceMeta": "\u00a5{{price}} \u00b7 {{minutes}} 分钟",
     "noAvailableDates": "该服务暂无可用日期",
     "noAvailableSlots": "该日期暂无可用时段",
-    "selectDateFirst": "请先选择日期"
+    "selectDateFirst": "请先选择日期",
+    "tapToSelectTime": "点击选择时间",
+    "slotAvailable": "该时间段可预约",
+    "applyCoupon": "使用优惠券",
+    "couponApplied": "已使用优惠：-\u00a5{{discount}}",
+    "removeCoupon": "移除",
+    "noCoupons": "暂无优惠券",
+    "selectCoupon": "选择优惠券"
   },
   "bookingHistory": {
     "empty": "您还没有预约记录",
@@ -84,6 +110,9 @@
     "listView": "列表",
     "calendarView": "日历",
     "noBookingsOnDate": "该日期没有预约",
+    "reschedule": "改期",
+    "rescheduled": "已改期",
+    "originalDate": "原定：{{date}} {{time}}",
     "status": {
       "pending": "待确认",
       "confirmed": "已确认",
@@ -96,7 +125,20 @@
     "date": "日期",
     "time": "时间",
     "notes": "备注",
-    "done": "完成"
+    "done": "完成",
+    "discount": "折扣"
+  },
+  "reschedule": {
+    "title": "改期预约",
+    "originalDate": "原日期",
+    "originalTime": "原时间",
+    "newDate": "新日期",
+    "newTime": "新时间",
+    "confirm": "确认改期",
+    "confirmTitle": "改期预约",
+    "confirmMessage": "确定要改期此预约吗？",
+    "success": "已改期！",
+    "successMessage": "您的预约已成功改期。"
   },
   "postService": {
     "title": "发布服务",
@@ -105,7 +147,7 @@
     "category": "分类",
     "description": "描述",
     "descriptionPlaceholder": "描述您的服务...",
-    "price": "价格（¥）",
+    "price": "价格（\u00a5）",
     "pricePlaceholder": "0",
     "duration": "时长",
     "media": "照片和视频",
@@ -123,7 +165,9 @@
     "validationPrice": "价格必须在1到100,000之间",
     "validationMedia": "请至少添加一张照片",
     "fileTooLarge": "文件太大（最大10MB）",
-    "invalidFileType": "仅支持JPEG、PNG和WebP格式的图片"
+    "invalidFileType": "仅支持JPEG、PNG和WebP格式的图片",
+    "address": "服务地址",
+    "addressPlaceholder": "输入地址"
   },
   "myServices": {
     "empty": "您还没有发布任何服务",
@@ -156,8 +200,35 @@
     "accountSection": "账户",
     "deleteAccount": "删除账户",
     "deleteAccountTitle": "永久删除账户",
-    "deleteAccountWarning": "此操作无法撤销。以下所有数据将被永久删除：\n\n• 您的个人信息\n• 您发布的所有服务\n• 预约历史记录\n• 您撰写的评价\n• 收藏列表\n• 已上传的照片和媒体\n\n所有待处理的预约也将被取消。",
-    "deleteAccountConfirm": "永久删除"
+    "deleteAccountWarning": "此操作无法撤销。以下所有数据将被永久删除：\n\n\u2022 您的个人信息\n\u2022 您发布的所有服务\n\u2022 预约历史记录\n\u2022 您撰写的评价\n\u2022 收藏列表\n\u2022 已上传的照片和媒体\n\n所有待处理的预约也将被取消。",
+    "deleteAccountConfirm": "永久删除",
+    "editProfile": "编辑资料",
+    "promotions": "优惠活动",
+    "myCoupons": "我的优惠券",
+    "availability": "管理工作时间",
+    "upgradePlan": "升级到Pro",
+    "managePlan": "管理订阅"
+  },
+  "editProfile": {
+    "title": "编辑资料",
+    "name": "姓名",
+    "namePlaceholder": "您的姓名",
+    "phone": "电话",
+    "phonePlaceholder": "您的电话号码",
+    "bio": "简介",
+    "bioPlaceholder": "介绍一下自己...",
+    "address": "地址",
+    "addressPlaceholder": "您的地址",
+    "changePhoto": "更换头像",
+    "save": "保存更改",
+    "success": "资料已更新！",
+    "successTitle": "成功",
+    "successMessage": "资料更新成功！",
+    "validationName": "请输入姓名",
+    "validationPhone": "请输入有效的电话号码",
+    "validationBio": "简介不能超过500个字符",
+    "validationAddress": "地址不能超过200个字符",
+    "errorTitle": "错误"
   },
   "navigation": {
     "home": "首页",
@@ -172,7 +243,14 @@
     "dashboard": "数据面板",
     "writeReview": "写评价",
     "favorites": "收藏",
-    "spending": "消费"
+    "spending": "消费",
+    "editProfile": "编辑资料",
+    "promotions": "优惠活动",
+    "myCoupons": "优惠券",
+    "availability": "工作时间",
+    "reschedule": "改期",
+    "search": "搜索",
+    "subscription": "订阅"
   },
   "review": {
     "reviews": "评价",
@@ -193,15 +271,34 @@
     "services": "服务",
     "avgRating": "平均评分",
     "totalBookings": "预约数",
-    "noBio": "暂无简介"
+    "noBio": "暂无简介",
+    "phone": "电话",
+    "address": "地址",
+    "contactInfo": "联系方式"
   },
   "onboarding": {
     "title1": "发现服务",
-    "subtitle1": "探索为您量身定制的美容与健康服务",
-    "title2": "即时预约",
-    "subtitle2": "选择日期、时间，几秒钟即可预约",
-    "title3": "评价与评论",
-    "subtitle3": "分享您的体验，帮助他人做出选择",
+    "subtitle1": "找到您附近的美容、健康和家政服务",
+    "feature1_1": "按类别浏览：按摩、美容、清洁等",
+    "feature1_2": "按价格、评分、距离和时间筛选",
+    "feature1_3": "阅读真实客户的评价",
+    "title2": "几秒钟即可预约",
+    "subtitle2": "轻松选择日期和时间，快速确认",
+    "feature2_1": "实时查看服务商的可用时间",
+    "feature2_2": "随时改期或取消 — 无忧无虑",
+    "feature2_3": "结算时使用优惠券和促销活动",
+    "title3": "值得信赖的服务商",
+    "subtitle3": "每项服务都透明且有质量保障",
+    "feature3_1": "查看服务商资料、评分和预约记录",
+    "feature3_2": "每次服务后可以评价和评论",
+    "feature3_3": "收藏喜欢的服务，方便再次预约",
+    "slide4Title": "您是服务商吗？",
+    "slide4Description": "在Glow上发展您的业务",
+    "feature4_1": "发布服务并自主定价",
+    "feature4_2": "轻松管理预约和工作时间",
+    "feature4_3": "在数据面板上追踪收入和业绩",
+    "slide5Title": "新人礼物",
+    "slide5Description": "使用码 WELCOME20 首次预约享8折！",
     "next": "下一步",
     "getStarted": "开始使用"
   },
@@ -225,5 +322,147 @@
     "totalBookings": "总预约数",
     "peakHours": "高峰时段",
     "busiestDays": "最忙碌的日子"
+  },
+  "notifications": {
+    "newBooking": "新预约请求",
+    "newBookingBody": "{{customerName}} 预约了 {{serviceName}}",
+    "bookingConfirmed": "预约已确认",
+    "bookingConfirmedBody": "您的 {{serviceName}} 预约已确认",
+    "bookingCancelled": "预约已取消",
+    "bookingCancelledBody": "您的 {{serviceName}} 预约已取消",
+    "bookingCompleted": "预约已完成",
+    "bookingCompletedBody": "您的 {{serviceName}} 预约已完成，快来评价吧！",
+    "bookingRescheduled": "预约已改期",
+    "bookingRescheduledBody": "{{serviceName}} 的预约已改期"
+  },
+  "promotions": {
+    "title": "优惠活动",
+    "claim": "领取",
+    "claimed": "已领取",
+    "validUntil": "有效期至 {{date}}",
+    "off": "折扣",
+    "empty": "暂无优惠活动",
+    "minPurchase": "最低消费 \u00a5{{amount}}"
+  },
+  "coupons": {
+    "title": "我的优惠券",
+    "available": "可使用",
+    "used": "已使用",
+    "empty": "暂无优惠券",
+    "code": "代码：{{code}}",
+    "minPurchase": "最低消费 \u00a5{{amount}}"
+  },
+  "availability": {
+    "weeklySchedule": "每周排班",
+    "blockedDates": "休息日",
+    "addBlockedDate": "添加休息日",
+    "save": "保存排班",
+    "saved": "排班已保存！",
+    "on": "开启",
+    "off": "关闭",
+    "noBlockedDates": "暂无休息日",
+    "days": {
+      "sun": "星期日",
+      "mon": "星期一",
+      "tue": "星期二",
+      "wed": "星期三",
+      "thu": "星期四",
+      "fri": "星期五",
+      "sat": "星期六"
+    }
+  },
+  "search": {
+    "title": "搜索",
+    "placeholder": "搜索服务...",
+    "history": "最近搜索",
+    "clearHistory": "清除",
+    "filters": "筛选条件",
+    "priceRange": "价格范围",
+    "minPrice": "最低",
+    "maxPrice": "最高",
+    "minRating": "最低评分",
+    "sortBy": "排序",
+    "sortDefault": "默认",
+    "sortPriceAsc": "价格 \u2191",
+    "sortPriceDesc": "价格 \u2193",
+    "sortRating": "评分",
+    "sortNewest": "最新",
+    "noResults": "未找到结果",
+    "apply": "搜索"
+  },
+  "sharing": {
+    "share": "分享",
+    "shareWithFriends": "分享给朋友",
+    "serviceMessage": "来看看Glow上的{{name}}！{{price}} · {{rating}}星",
+    "providerMessage": "来看看Glow上的{{name}}！{{rating}}星 · {{bookings}}次预约"
+  },
+  "rateApp": {
+    "title": "喜欢Glow吗？",
+    "message": "如果您喜欢使用Glow，请花一点时间给我们评分吧！",
+    "noThanks": "不用了",
+    "rateLater": "以后再说",
+    "rateNow": "立即评分"
+  },
+  "subscription": {
+    "title": "订阅",
+    "currentPlan": "当前套餐",
+    "freePlan": "免费",
+    "basicPlan": "Glow Basic",
+    "proPlan": "Glow Pro",
+    "monthly": "月付",
+    "yearly": "年付",
+    "yearlyDiscount": "节省 {{percent}}%",
+    "perMonth": "/月",
+    "perYear": "/年",
+    "subscribe": "订阅",
+    "upgrade": "升级",
+    "downgrade": "降级",
+    "currentPlanBadge": "当前套餐",
+    "mostPopular": "最受欢迎",
+    "managePlan": "管理订阅",
+    "restorePurchases": "恢复购买",
+    "restoreSuccess": "购买已恢复！",
+    "restoreNoPurchases": "未找到之前的购买记录",
+    "expires": "到期日 {{date}}",
+    "features": {
+      "services": "可发布的服务数",
+      "photos": "每个服务的照片数",
+      "analytics": "数据分析",
+      "badge": "个人资料徽章",
+      "promotions": "创建促销活动",
+      "searchBoost": "搜索排名提升",
+      "unlimited": "无限制",
+      "basicAnalytics": "当前月份",
+      "fullAnalytics": "完整历史",
+      "fullAnalyticsPro": "完整 + 洞察",
+      "verifiedBadge": "已认证",
+      "proBadge": "Pro",
+      "minor": "轻微",
+      "significant": "显著"
+    },
+    "paywall": {
+      "serviceLimit": "已达服务数量上限",
+      "photoLimit": "升级以添加更多照片",
+      "analytics": "解锁完整数据分析",
+      "default": "升级您的套餐",
+      "serviceLimitDesc": "当前套餐最多允许 {{limit}} 个服务。升级以发布更多。",
+      "photoLimitDesc": "获取更多照片以更好地展示您的服务。",
+      "analyticsDesc": "获取完整的收入分析和业绩追踪。",
+      "defaultDesc": "解锁高级功能，在Glow上发展您的业务。",
+      "upgradeNow": "立即升级",
+      "notNow": "暂时不用"
+    },
+    "status": {
+      "active": "活跃",
+      "expired": "已过期",
+      "gracePeriod": "宽限期",
+      "cancelled": "已取消"
+    },
+    "trial": "免费试用",
+    "trialDays": "{{days}}天免费试用",
+    "cancelAnytime": "随时取消",
+    "appleDisclaimer": "确认购买时将从您的Apple ID账户扣款。订阅将自动续订，除非在当前订阅期结束前至少24小时取消。",
+    "termsOfService": "服务条款",
+    "privacyPolicy": "隐私政策"
   }
 }

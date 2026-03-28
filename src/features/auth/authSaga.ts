@@ -10,7 +10,11 @@ import {
   deleteAccountSuccess,
   deleteAccountFailure,
 } from './authSlice';
+import {unregisterToken} from '@/features/notifications/notificationSlice';
+import {loadUserCoupons} from '@/features/promotions/promotionSlice';
+import {initSubscription} from '@/features/subscription/subscriptionSlice';
 import {supabase, deleteUserAccount} from '@/lib/supabase';
+import {logEvent, AnalyticsEvents} from '@/lib/analytics';
 import {GoogleSignin} from '@react-native-google-signin/google-signin';
 import {appleAuth} from '@invertase/react-native-apple-authentication';
 import {GOOGLE_WEB_CLIENT_ID, GOOGLE_IOS_CLIENT_ID} from '@env';
@@ -60,6 +64,9 @@ function* handleGoogleLogin() {
     }
 
     yield put(loginSuccess(mapSessionToUser(data.session)));
+    yield put(loadUserCoupons());
+    yield put(initSubscription());
+    yield call(logEvent, AnalyticsEvents.LOGIN, {method: 'google'});
   } catch (err: any) {
     yield put(loginFailure(err?.message ?? 'Google sign-in failed'));
   }
@@ -102,6 +109,9 @@ function* handleAppleLogin() {
     }
 
     yield put(loginSuccess(user));
+    yield put(loadUserCoupons());
+    yield put(initSubscription());
+    yield call(logEvent, AnalyticsEvents.LOGIN, {method: 'apple'});
   } catch (err: any) {
     yield put(loginFailure(err?.message ?? 'Apple sign-in failed'));
   }
@@ -109,6 +119,7 @@ function* handleAppleLogin() {
 
 function* handleLogout() {
   try {
+    yield call(logEvent, AnalyticsEvents.LOGOUT);
     yield call([supabase.auth, supabase.auth.signOut]);
     yield put(logout());
   } catch {
@@ -118,6 +129,8 @@ function* handleLogout() {
 
 function* handleDeleteAccount() {
   try {
+    yield call(logEvent, AnalyticsEvents.DELETE_ACCOUNT);
+    yield put(unregisterToken());
     yield call(deleteUserAccount);
     yield call([supabase.auth, supabase.auth.signOut]);
     yield put(deleteAccountSuccess());

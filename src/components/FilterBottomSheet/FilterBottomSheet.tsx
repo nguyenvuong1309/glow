@@ -1,5 +1,5 @@
 import React, {forwardRef, useCallback, useMemo, useState} from 'react';
-import {View, Text, StyleSheet} from 'react-native';
+import {View, Text, TextInput, StyleSheet} from 'react-native';
 import {TouchableOpacity} from 'react-native-gesture-handler';
 import {
   BottomSheetModal,
@@ -228,6 +228,85 @@ const FilterBottomSheet = forwardRef<BottomSheetModal, Props>(
                   {filter.timeTo || t('filterSheet.selectTime')}
                 </Text>
               </TouchableOpacity>
+              {/* Price Range */}
+              <Text style={styles.sectionLabel}>{t('filterSheet.priceRange')}</Text>
+              <View style={styles.priceRow}>
+                <TextInput
+                  style={styles.priceInput}
+                  placeholder={t('filterSheet.minPrice')}
+                  placeholderTextColor={theme.colors.textSecondary}
+                  keyboardType="numeric"
+                  value={filter.priceMin?.toString() ?? ''}
+                  onChangeText={v => {
+                    const n = v ? Number(v) : null;
+                    dispatch(setFilter({priceMin: n}));
+                  }}
+                />
+                <Text style={styles.priceSeparator}>-</Text>
+                <TextInput
+                  style={styles.priceInput}
+                  placeholder={t('filterSheet.maxPrice')}
+                  placeholderTextColor={theme.colors.textSecondary}
+                  keyboardType="numeric"
+                  value={filter.priceMax?.toString() ?? ''}
+                  onChangeText={v => {
+                    const n = v ? Number(v) : null;
+                    dispatch(setFilter({priceMax: n}));
+                  }}
+                />
+              </View>
+
+              {/* Minimum Rating */}
+              <Text style={styles.sectionLabel}>{t('filterSheet.minRating')}</Text>
+              <View style={styles.ratingRow}>
+                {[1, 2, 3, 4, 5].map(star => (
+                  <TouchableOpacity
+                    key={star}
+                    style={[
+                      styles.ratingChip,
+                      filter.minRating === star && styles.chipSelected,
+                    ]}
+                    onPress={() =>
+                      dispatch(setFilter({minRating: filter.minRating === star ? null : star}))
+                    }>
+                    <Text
+                      style={[
+                        styles.ratingChipText,
+                        filter.minRating === star && styles.chipTextSelected,
+                      ]}>
+                      {'\u2605'.repeat(star)}
+                    </Text>
+                  </TouchableOpacity>
+                ))}
+              </View>
+
+              {/* Sort By */}
+              <Text style={styles.sectionLabel}>{t('filterSheet.sortBy')}</Text>
+              <View style={styles.chipsWrap}>
+                {([
+                  {key: 'default', label: t('filterSheet.sortDefault')},
+                  {key: 'price_asc', label: t('filterSheet.sortPriceAsc')},
+                  {key: 'price_desc', label: t('filterSheet.sortPriceDesc')},
+                  {key: 'rating', label: t('filterSheet.sortRating')},
+                  {key: 'newest', label: t('filterSheet.sortNewest')},
+                ] as const).map(item => (
+                  <TouchableOpacity
+                    key={item.key}
+                    style={[
+                      styles.chip,
+                      filter.sortBy === item.key && styles.chipSelected,
+                    ]}
+                    onPress={() => dispatch(setFilter({sortBy: item.key}))}>
+                    <Text
+                      style={[
+                        styles.chipText,
+                        filter.sortBy === item.key && styles.chipTextSelected,
+                      ]}>
+                      {item.label}
+                    </Text>
+                  </TouchableOpacity>
+                ))}
+              </View>
             </BottomSheetScrollView>
 
             {/* Action Buttons */}
@@ -383,6 +462,44 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '600',
     color: theme.colors.text,
+  },
+  priceRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: theme.spacing.sm,
+    marginBottom: theme.spacing.sm,
+  },
+  priceInput: {
+    flex: 1,
+    paddingHorizontal: theme.spacing.md,
+    paddingVertical: 10,
+    borderRadius: theme.radius.md,
+    backgroundColor: theme.colors.background,
+    borderWidth: 1,
+    borderColor: theme.colors.border,
+    fontSize: 14,
+    color: theme.colors.text,
+  },
+  priceSeparator: {
+    fontSize: 16,
+    color: theme.colors.textSecondary,
+  },
+  ratingRow: {
+    flexDirection: 'row',
+    gap: theme.spacing.xs,
+    marginBottom: theme.spacing.sm,
+  },
+  ratingChip: {
+    paddingHorizontal: theme.spacing.sm,
+    paddingVertical: theme.spacing.xs,
+    borderRadius: theme.radius.full,
+    backgroundColor: theme.colors.surface,
+    borderWidth: 1,
+    borderColor: theme.colors.border,
+  },
+  ratingChipText: {
+    fontSize: 12,
+    color: '#FF9800',
   },
 });
 

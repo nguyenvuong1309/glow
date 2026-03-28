@@ -8,6 +8,11 @@ const initialFilter: ServiceFilter = {
   dateTo: null,
   timeFrom: null,
   timeTo: null,
+  priceMin: null,
+  priceMax: null,
+  minRating: null,
+  maxDistance: null,
+  sortBy: 'default',
 };
 
 interface ServiceState {

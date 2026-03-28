@@ -3,6 +3,10 @@ export interface User {
   name: string;
   email: string;
   avatar_url?: string;
+  phone?: string;
+  bio?: string;
+  address?: string;
+  subscription_plan?: 'free' | 'basic' | 'pro';
 }
 
 export interface Category {
@@ -17,9 +21,12 @@ export interface ProviderProfile {
   name: string;
   avatar_url?: string;
   bio?: string;
+  phone?: string;
+  address?: string;
   services: Service[];
   averageRating: number;
   totalBookings: number;
+  subscription_plan?: 'free' | 'basic' | 'pro';
 }
 
 export interface Service {
@@ -35,6 +42,11 @@ export interface Service {
   provider_id?: string;
   provider_name?: string;
   provider_avatar?: string;
+  latitude?: number;
+  longitude?: number;
+  address?: string;
+  distance?: number;
+  booking_count?: number;
 }
 
 export interface ServiceDraft {
@@ -43,6 +55,9 @@ export interface ServiceDraft {
   description: string;
   price: number;
   duration_minutes: number;
+  latitude?: number;
+  longitude?: number;
+  address?: string;
 }
 
 export interface MediaFile {
@@ -58,6 +73,9 @@ export interface SubmitServicePayload {
   price: number;
   duration_minutes: number;
   localMedia: MediaFile[];
+  latitude?: number;
+  longitude?: number;
+  address?: string;
 }
 
 export interface Booking {
@@ -70,6 +88,10 @@ export interface Booking {
   status: 'pending' | 'confirmed' | 'cancelled' | 'completed';
   notes?: string;
   created_at?: string;
+  original_date?: string;
+  original_time_slot?: string;
+  rescheduled_at?: string;
+  discount_amount?: number;
 }
 
 export interface BookingDraft {
@@ -77,6 +99,8 @@ export interface BookingDraft {
   date: string;
   time_slot: string;
   notes?: string;
+  coupon_id?: string;
+  discount_amount?: number;
 }
 
 export interface ServiceAvailability {
@@ -85,6 +109,13 @@ export interface ServiceAvailability {
   day_of_week: number;
   start_time: string;
   end_time: string;
+}
+
+export interface BlockedDate {
+  id: string;
+  service_id: string;
+  blocked_date: string;
+  reason?: string;
 }
 
 export interface Review {
@@ -113,4 +144,53 @@ export interface ServiceFilter {
   dateTo: string | null;
   timeFrom: string | null;
   timeTo: string | null;
+  priceMin: number | null;
+  priceMax: number | null;
+  minRating: number | null;
+  maxDistance: number | null;
+  sortBy: 'default' | 'price_asc' | 'price_desc' | 'rating' | 'distance' | 'newest';
+}
+
+export interface Promotion {
+  id: string;
+  code: string;
+  title: string;
+  description?: string;
+  discount_type: 'percentage' | 'fixed';
+  discount_value: number;
+  min_purchase: number;
+  max_uses?: number;
+  current_uses: number;
+  start_date: string;
+  end_date: string;
+  color: string;
+  active: boolean;
+}
+
+export interface UserCoupon {
+  id: string;
+  user_id: string;
+  promotion_id: string;
+  claimed_at: string;
+  used_at?: string;
+  booking_id?: string;
+  promotion?: Promotion;
+}
+
+export interface NotificationPayload {
+  booking_id?: string;
+  screen?: string;
+  event_type?: 'created' | 'confirmed' | 'cancelled' | 'completed' | 'rescheduled';
+}
+
+export interface ProfileUpdatePayload {
+  name?: string;
+  phone?: string;
+  bio?: string;
+  address?: string;
+}
+
+export interface LocationCoords {
+  latitude: number;
+  longitude: number;
 }

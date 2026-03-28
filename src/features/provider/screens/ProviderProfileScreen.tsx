@@ -1,17 +1,20 @@
-import React, {useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   View,
   Text,
   Image,
   StyleSheet,
   ScrollView,
+  TouchableOpacity,
 } from 'react-native';
+import ImageViewing from 'react-native-image-viewing';
 import {useDispatch, useSelector} from 'react-redux';
 import {useTranslation} from 'react-i18next';
 import {loadProviderProfile} from '../providerSlice';
 import {selectService, loadReviews} from '@/features/services/serviceSlice';
 import {toggleFavorite} from '@/features/favorites/favoritesSlice';
 import {useRequireAuth} from '@/hooks/useRequireAuth';
+import {logEvent, AnalyticsEvents} from '@/lib/analytics';
 import ServiceCard from '@/components/ServiceCard/ServiceCard';
 import {theme} from '@/utils/theme';
 import type {RootState} from '@/store';
@@ -35,10 +38,12 @@ export default function ProviderProfileScreen({navigation, route}: Props) {
   );
   const favoriteIds = useSelector((state: RootState) => state.favorites.ids);
   const currentUser = useSelector((state: RootState) => state.auth.user);
+  const [avatarViewerVisible, setAvatarViewerVisible] = useState(false);
   const {userId} = route.params;
 
   useEffect(() => {
     dispatch(loadProviderProfile(userId));
+    logEvent(AnalyticsEvents.VIEW_PROVIDER, {provider_id: userId});
   }, [dispatch, userId]);
 
   const handleServicePress = (service: Service) => {
@@ -65,7 +70,9 @@ export default function ProviderProfileScreen({navigation, route}: Props) {
       {/* Header */}
       <View style={styles.header}>
         {profile.avatar_url ? (
-          <Image source={{uri: profile.avatar_url}} style={styles.avatar} />
+          <TouchableOpacity onPress={() => setAvatarViewerVisible(true)}>
+            <Image source={{uri: profile.avatar_url}} style={styles.avatar} />
+          </TouchableOpacity>
         ) : (
           <View style={styles.avatarFallback}>
             <Text style={styles.avatarText}>
@@ -80,6 +87,25 @@ export default function ProviderProfileScreen({navigation, route}: Props) {
           <Text style={styles.noBio}>{t('provider.noBio')}</Text>
         )}
       </View>
+
+      {/* Contact Info */}
+      {(profile.phone || profile.address) && (
+        <View style={styles.contactSection}>
+          <Text style={styles.contactTitle}>{t('provider.contactInfo')}</Text>
+          {profile.phone && (
+            <View style={styles.contactRow}>
+              <Text style={styles.contactLabel}>{t('provider.phone')}</Text>
+              <Text style={styles.contactValue}>{profile.phone}</Text>
+            </View>
+          )}
+          {profile.address && (
+            <View style={styles.contactRow}>
+              <Text style={styles.contactLabel}>{t('provider.address')}</Text>
+              <Text style={styles.contactValue}>{profile.address}</Text>
+            </View>
+          )}
+        </View>
+      )}
 
       {/* Stats */}
       <View style={styles.statsRow}>
@@ -113,6 +139,15 @@ export default function ProviderProfileScreen({navigation, route}: Props) {
           isOwner={item.provider_id === currentUser?.id}
         />
       ))}
+
+      {profile.avatar_url && (
+        <ImageViewing
+          images={[{uri: profile.avatar_url}]}
+          imageIndex={0}
+          visible={avatarViewerVisible}
+          onRequestClose={() => setAvatarViewerVisible(false)}
+        />
+      )}
     </ScrollView>
   );
 }
@@ -205,6 +240,35 @@ const styles = StyleSheet.create({
   statDivider: {
     width: 1,
     backgroundColor: theme.colors.border,
+  },
+  contactSection: {
+    marginTop: theme.spacing.md,
+    marginHorizontal: theme.spacing.lg,
+    backgroundColor: theme.colors.surface,
+    borderRadius: theme.radius.md,
+    padding: theme.spacing.md,
+    borderWidth: 1,
+    borderColor: theme.colors.border,
+  },
+  contactTitle: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: theme.colors.text,
+    marginBottom: theme.spacing.sm,
+  },
+  contactRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    paddingVertical: 4,
+  },
+  contactLabel: {
+    fontSize: 14,
+    color: theme.colors.textSecondary,
+  },
+  contactValue: {
+    fontSize: 14,
+    color: theme.colors.text,
+    fontWeight: '500',
   },
   sectionTitle: {
     fontSize: 18,

@@ -25,6 +25,19 @@ target 'Glow' do
     :app_path => "#{Pod::Config.instance.installation_root}/.."
   )
 
+  # Auto-switch Firebase config + app name: Debug → Dev, Release → Prod
+  script_phase :name => 'Select Environment',
+               :script => 'if [ "${CONFIGURATION}" == "Debug" ]; then
+  cp "${PODS_ROOT}/../Glow/Firebase/Dev/GoogleService-Info.plist" "${BUILT_PRODUCTS_DIR}/${PRODUCT_NAME}.app/GoogleService-Info.plist"
+  /usr/libexec/PlistBuddy -c "Set :CFBundleDisplayName Glow Dev" "${BUILT_PRODUCTS_DIR}/${INFOPLIST_PATH}" 2>/dev/null || true
+  echo "Environment: DEV (Firebase Dev + App Name: Glow Dev)"
+else
+  cp "${PODS_ROOT}/../Glow/Firebase/Prod/GoogleService-Info.plist" "${BUILT_PRODUCTS_DIR}/${PRODUCT_NAME}.app/GoogleService-Info.plist"
+  /usr/libexec/PlistBuddy -c "Set :CFBundleDisplayName Glow" "${BUILT_PRODUCTS_DIR}/${INFOPLIST_PATH}" 2>/dev/null || true
+  echo "Environment: PROD (Firebase Prod + App Name: Glow)"
+fi',
+               :execution_position => :after_compile
+
   post_install do |installer|
     react_native_post_install(
       installer,

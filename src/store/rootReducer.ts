@@ -6,6 +6,11 @@ import bookingReducer from '@/features/booking/bookingSlice';
 import postServiceReducer from '@/features/postService/postServiceSlice';
 import providerReducer from '@/features/provider/providerSlice';
 import favoritesReducer from '@/features/favorites/favoritesSlice';
+import notificationReducer from '@/features/notifications/notificationSlice';
+import promotionReducer from '@/features/promotions/promotionSlice';
+import profileReducer from '@/features/profile/profileSlice';
+import availabilityReducer from '@/features/availability/availabilitySlice';
+import subscriptionReducer from '@/features/subscription/subscriptionSlice';
 
 const rootReducer = combineReducers({
   auth: authReducer,
@@ -15,6 +20,11 @@ const rootReducer = combineReducers({
   postService: postServiceReducer,
   provider: providerReducer,
   favorites: favoritesReducer,
+  notification: notificationReducer,
+  promotions: promotionReducer,
+  profile: profileReducer,
+  availability: availabilityReducer,
+  subscription: subscriptionReducer,
 });
 
 export default rootReducer;

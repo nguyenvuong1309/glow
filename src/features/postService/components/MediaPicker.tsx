@@ -13,8 +13,6 @@ import {theme} from '@/utils/theme';
 
 const MAX_IMAGES = 5;
 const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
-const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
-
 interface Props {
   media: Asset[];
   existingImageUrls: string[];
@@ -36,7 +34,7 @@ export default function MediaPicker({
 
   const handlePick = () => {
     launchImageLibrary(
-      {mediaType: 'photo', selectionLimit: MAX_IMAGES},
+      {mediaType: 'photo', selectionLimit: MAX_IMAGES, quality: 0.8},
       response => {
         if (response.didCancel || response.errorCode) return;
         if (response.assets) {
@@ -45,7 +43,7 @@ export default function MediaPicker({
               onMediaError(t('postService.fileTooLarge'));
               return false;
             }
-            if (asset.type && !ALLOWED_TYPES.includes(asset.type)) {
+            if (asset.type && !asset.type.startsWith('image/')) {
               onMediaError(t('postService.invalidFileType'));
               return false;
             }

@@ -3,7 +3,14 @@
     "cancel": "Huỷ",
     "done": "Xong",
     "apply": "Áp dụng",
-    "clear": "Xóa"
+    "clear": "Xóa",
+    "save": "Lưu",
+    "delete": "Xóa",
+    "edit": "Sửa",
+    "loading": "Đang tải...",
+    "error": "Lỗi",
+    "success": "Thành công",
+    "confirm": "Xác nhận"
   },
   "auth": {
     "appName": "Glow",
@@ -19,7 +26,7 @@
     "skipForNow": "Bỏ qua"
   },
   "home": {
-    "greeting": "Xin chào, {{name}} ✨",
+    "greeting": "Xin chào, {{name}} \u2728",
     "defaultName": "Bạn",
     "whatWouldYouLike": "Bạn muốn gì hôm nay?",
     "searchPlaceholder": "Tìm dịch vụ...",
@@ -29,12 +36,9 @@
     "topRatedBadge": "Nổi bật",
     "recentBooking": "Lịch hẹn gần đây",
     "bookAgain": "Đặt lại",
-    "promoTitle1": "Ưu đãi mùa xuân",
-    "promoSubtitle1": "Giảm 20% tất cả dịch vụ spa",
-    "promoTitle2": "Khách hàng mới",
-    "promoSubtitle2": "Tư vấn miễn phí lần đầu",
-    "promoTitle3": "Giới thiệu bạn bè",
-    "promoSubtitle3": "Cả hai nhận 100K credits"
+    "promotions": "Khuyến mãi",
+    "welcomeBanner": "Bạn có ưu đãi giảm 20% cho lần đặt đầu tiên! Mã: WELCOME20",
+    "welcomeBannerAction": "Khám phá dịch vụ ngay"
   },
   "services": {
     "all": "Tất cả",
@@ -47,7 +51,10 @@
     "cannotBookOwn": "Bạn không thể đặt dịch vụ của chính mình",
     "price": "{{price}}đ",
     "duration": "{{minutes}} phút",
-    "rating": "★ {{rating}}"
+    "rating": "\u2605 {{rating}}",
+    "distance": "{{distance}} km",
+    "bookedThisWeek": "{{count}} lượt đặt tuần này",
+    "popularBookedThisWeek": "Phổ biến - {{count}} lượt đặt tuần này"
   },
   "filterSheet": {
     "title": "Lọc dịch vụ",
@@ -57,7 +64,19 @@
     "timeFrom": "Từ giờ",
     "timeTo": "Đến giờ",
     "selectDate": "Chọn ngày",
-    "selectTime": "Chọn giờ"
+    "selectTime": "Chọn giờ",
+    "priceRange": "Khoảng giá",
+    "minPrice": "Giá tối thiểu",
+    "maxPrice": "Giá tối đa",
+    "minRating": "Đánh giá tối thiểu",
+    "maxDistance": "Khoảng cách tối đa (km)",
+    "sortBy": "Sắp xếp theo",
+    "sortDefault": "Mặc định",
+    "sortPriceAsc": "Giá: Thấp đến Cao",
+    "sortPriceDesc": "Giá: Cao đến Thấp",
+    "sortRating": "Đánh giá cao nhất",
+    "sortDistance": "Gần nhất",
+    "sortNewest": "Mới nhất"
   },
   "booking": {
     "selectDate": "Chọn ngày",
@@ -70,10 +89,17 @@
     "validationTime": "Vui lòng chọn giờ",
     "confirmTitle": "Xác nhận đặt lịch",
     "confirmMessage": "Bạn có chắc muốn đặt lịch hẹn này?",
-    "serviceMeta": "{{price}}đ · {{minutes}} phút",
+    "serviceMeta": "{{price}}đ \u00b7 {{minutes}} phút",
     "noAvailableDates": "Không có ngày trống cho dịch vụ này",
     "noAvailableSlots": "Không có khung giờ trống cho ngày này",
-    "selectDateFirst": "Vui lòng chọn ngày trước"
+    "selectDateFirst": "Vui lòng chọn ngày trước",
+    "tapToSelectTime": "Nhấn để chọn giờ",
+    "slotAvailable": "Khung giờ này còn trống",
+    "applyCoupon": "Áp dụng mã giảm giá",
+    "couponApplied": "Đã áp dụng: -{{discount}}đ",
+    "removeCoupon": "Xóa",
+    "noCoupons": "Không có mã giảm giá",
+    "selectCoupon": "Chọn mã giảm giá"
   },
   "bookingHistory": {
     "empty": "Bạn chưa có lịch hẹn nào",
@@ -84,6 +110,9 @@
     "listView": "Danh sách",
     "calendarView": "Lịch",
     "noBookingsOnDate": "Không có lịch hẹn ngày này",
+    "reschedule": "Đổi lịch",
+    "rescheduled": "Đã đổi lịch",
+    "originalDate": "Ban đầu: {{date}} lúc {{time}}",
     "status": {
       "pending": "Chờ xác nhận",
       "confirmed": "Đã xác nhận",
@@ -96,7 +125,20 @@
     "date": "Ngày",
     "time": "Giờ",
     "notes": "Ghi chú",
-    "done": "Xong"
+    "done": "Xong",
+    "discount": "Giảm giá"
+  },
+  "reschedule": {
+    "title": "Đổi lịch hẹn",
+    "originalDate": "Ngày ban đầu",
+    "originalTime": "Giờ ban đầu",
+    "newDate": "Ngày mới",
+    "newTime": "Giờ mới",
+    "confirm": "Xác nhận đổi lịch",
+    "confirmTitle": "Đổi lịch hẹn",
+    "confirmMessage": "Bạn có chắc muốn đổi lịch hẹn này?",
+    "success": "Đã đổi lịch!",
+    "successMessage": "Lịch hẹn của bạn đã được thay đổi."
   },
   "postService": {
     "title": "Đăng dịch vụ",
@@ -123,7 +165,9 @@
     "validationPrice": "Giá phải từ 1 đến 100.000",
     "validationMedia": "Thêm ít nhất một ảnh",
     "fileTooLarge": "File quá lớn (tối đa 10MB)",
-    "invalidFileType": "Chỉ chấp nhận ảnh JPEG, PNG và WebP"
+    "invalidFileType": "Chỉ chấp nhận ảnh JPEG, PNG và WebP",
+    "address": "Địa chỉ dịch vụ",
+    "addressPlaceholder": "Nhập địa chỉ"
   },
   "myServices": {
     "empty": "Bạn chưa đăng dịch vụ nào",
@@ -156,8 +200,35 @@
     "accountSection": "Tài khoản",
     "deleteAccount": "Xoá tài khoản",
     "deleteAccountTitle": "Xoá tài khoản vĩnh viễn",
-    "deleteAccountWarning": "Hành động này KHÔNG THỂ HOÀN TÁC. Tất cả dữ liệu sau sẽ bị xoá vĩnh viễn:\n\n• Thông tin cá nhân\n• Tất cả dịch vụ bạn đã đăng\n• Lịch sử đặt lịch\n• Đánh giá bạn đã viết\n• Danh sách yêu thích\n• Ảnh và media đã tải lên\n\nCác lịch hẹn đang chờ xử lý cũng sẽ bị huỷ.",
-    "deleteAccountConfirm": "Xoá vĩnh viễn"
+    "deleteAccountWarning": "Hành động này KHÔNG THỂ HOÀN TÁC. Tất cả dữ liệu sau sẽ bị xoá vĩnh viễn:\n\n\u2022 Thông tin cá nhân\n\u2022 Tất cả dịch vụ bạn đã đăng\n\u2022 Lịch sử đặt lịch\n\u2022 Đánh giá bạn đã viết\n\u2022 Danh sách yêu thích\n\u2022 Ảnh và media đã tải lên\n\nCác lịch hẹn đang chờ xử lý cũng sẽ bị huỷ.",
+    "deleteAccountConfirm": "Xoá vĩnh viễn",
+    "editProfile": "Chỉnh sửa hồ sơ",
+    "promotions": "Khuyến mãi",
+    "myCoupons": "Mã giảm giá của tôi",
+    "availability": "Quản lý lịch làm việc",
+    "upgradePlan": "Nâng cấp lên Pro",
+    "managePlan": "Quản lý gói dịch vụ"
+  },
+  "editProfile": {
+    "title": "Chỉnh sửa hồ sơ",
+    "name": "Tên",
+    "namePlaceholder": "Tên của bạn",
+    "phone": "Số điện thoại",
+    "phonePlaceholder": "Số điện thoại",
+    "bio": "Giới thiệu",
+    "bioPlaceholder": "Hãy kể về bạn...",
+    "address": "Địa chỉ",
+    "addressPlaceholder": "Địa chỉ của bạn",
+    "changePhoto": "Đổi ảnh",
+    "save": "Lưu thay đổi",
+    "success": "Hồ sơ đã được cập nhật!",
+    "successTitle": "Thành công",
+    "successMessage": "Hồ sơ đã được cập nhật thành công!",
+    "validationName": "Vui lòng nhập tên",
+    "validationPhone": "Số điện thoại không hợp lệ",
+    "validationBio": "Giới thiệu không được vượt quá 500 ký tự",
+    "validationAddress": "Địa chỉ không được vượt quá 200 ký tự",
+    "errorTitle": "Lỗi"
   },
   "navigation": {
     "home": "Trang chủ",
@@ -172,7 +243,14 @@
     "dashboard": "Bảng điều khiển",
     "writeReview": "Viết đánh giá",
     "favorites": "Yêu thích",
-    "spending": "Chi tiêu"
+    "spending": "Chi tiêu",
+    "editProfile": "Chỉnh sửa hồ sơ",
+    "promotions": "Khuyến mãi",
+    "myCoupons": "Mã giảm giá",
+    "availability": "Lịch làm việc",
+    "reschedule": "Đổi lịch",
+    "search": "Tìm kiếm",
+    "subscription": "Gói dịch vụ"
   },
   "review": {
     "reviews": "Đánh giá",
@@ -193,15 +271,34 @@
     "services": "Dịch vụ",
     "avgRating": "Đánh giá TB",
     "totalBookings": "Lượt đặt",
-    "noBio": "Chưa có giới thiệu"
+    "noBio": "Chưa có giới thiệu",
+    "phone": "Điện thoại",
+    "address": "Địa chỉ",
+    "contactInfo": "Thông tin liên hệ"
   },
   "onboarding": {
     "title1": "Khám phá dịch vụ",
-    "subtitle1": "Tìm kiếm dịch vụ làm đẹp & chăm sóc sức khỏe dành cho bạn",
-    "title2": "Đặt lịch nhanh chóng",
-    "subtitle2": "Chọn ngày, giờ và đặt lịch chỉ trong vài giây",
-    "title3": "Đánh giá & Nhận xét",
-    "subtitle3": "Chia sẻ trải nghiệm và giúp người khác lựa chọn",
+    "subtitle1": "Tìm dịch vụ làm đẹp, chăm sóc sức khỏe & gia đình gần bạn",
+    "feature1_1": "Duyệt theo danh mục: massage, làm đẹp, dọn dẹp & hơn nữa",
+    "feature1_2": "Lọc theo giá, đánh giá, khoảng cách và lịch trống",
+    "feature1_3": "Đọc đánh giá thực từ khách hàng đã sử dụng",
+    "title2": "Đặt lịch chỉ vài giây",
+    "subtitle2": "Chọn ngày, giờ và xác nhận nhanh chóng",
+    "feature2_1": "Xem lịch trống của thợ theo thời gian thực",
+    "feature2_2": "Đổi lịch hoặc huỷ bất cứ lúc nào — không phiền phức",
+    "feature2_3": "Áp dụng mã giảm giá và khuyến mãi khi đặt",
+    "title3": "Thợ uy tín",
+    "subtitle3": "Mọi dịch vụ đều minh bạch và đảm bảo chất lượng",
+    "feature3_1": "Xem hồ sơ thợ, đánh giá và lịch sử đặt lịch",
+    "feature3_2": "Đánh giá và nhận xét sau mỗi lần sử dụng",
+    "feature3_3": "Lưu dịch vụ yêu thích để đặt lại nhanh chóng",
+    "slide4Title": "Bạn là thợ?",
+    "slide4Description": "Phát triển công việc của bạn trên Glow",
+    "feature4_1": "Đăng dịch vụ và tự định giá",
+    "feature4_2": "Quản lý lịch hẹn và lịch làm việc dễ dàng",
+    "feature4_3": "Theo dõi doanh thu và hiệu suất trên bảng điều khiển",
+    "slide5Title": "Quà chào mừng",
+    "slide5Description": "Giảm 20% cho lần đặt đầu tiên với mã WELCOME20!",
     "next": "Tiếp tục",
     "getStarted": "Bắt đầu"
   },
@@ -225,5 +322,147 @@
     "totalBookings": "tổng lượt đặt",
     "peakHours": "Giờ cao điểm",
     "busiestDays": "Ngày bận nhất"
+  },
+  "notifications": {
+    "newBooking": "Yêu cầu đặt lịch mới",
+    "newBookingBody": "{{customerName}} đã đặt {{serviceName}}",
+    "bookingConfirmed": "Đã xác nhận đặt lịch",
+    "bookingConfirmedBody": "Lịch hẹn {{serviceName}} của bạn đã được xác nhận",
+    "bookingCancelled": "Đã huỷ đặt lịch",
+    "bookingCancelledBody": "Lịch hẹn {{serviceName}} của bạn đã bị huỷ",
+    "bookingCompleted": "Hoàn thành đặt lịch",
+    "bookingCompletedBody": "Lịch hẹn {{serviceName}} đã hoàn thành. Hãy để lại đánh giá!",
+    "bookingRescheduled": "Đã đổi lịch",
+    "bookingRescheduledBody": "Lịch hẹn {{serviceName}} đã được đổi lịch"
+  },
+  "promotions": {
+    "title": "Khuyến mãi",
+    "claim": "Nhận",
+    "claimed": "Đã nhận",
+    "validUntil": "Đến {{date}}",
+    "off": "GIẢM",
+    "empty": "Không có khuyến mãi nào",
+    "minPurchase": "Đơn tối thiểu {{amount}}đ"
+  },
+  "coupons": {
+    "title": "Mã giảm giá của tôi",
+    "available": "Có thể dùng",
+    "used": "Đã dùng",
+    "empty": "Chưa có mã giảm giá",
+    "code": "Mã: {{code}}",
+    "minPurchase": "Đơn tối thiểu {{amount}}đ"
+  },
+  "availability": {
+    "weeklySchedule": "Lịch làm việc hàng tuần",
+    "blockedDates": "Ngày nghỉ",
+    "addBlockedDate": "Thêm ngày nghỉ",
+    "save": "Lưu lịch",
+    "saved": "Đã lưu lịch!",
+    "on": "Bật",
+    "off": "Tắt",
+    "noBlockedDates": "Không có ngày nghỉ",
+    "days": {
+      "sun": "Chủ nhật",
+      "mon": "Thứ hai",
+      "tue": "Thứ ba",
+      "wed": "Thứ tư",
+      "thu": "Thứ năm",
+      "fri": "Thứ sáu",
+      "sat": "Thứ bảy"
+    }
+  },
+  "search": {
+    "title": "Tìm kiếm",
+    "placeholder": "Tìm dịch vụ...",
+    "history": "Tìm kiếm gần đây",
+    "clearHistory": "Xóa",
+    "filters": "Bộ lọc",
+    "priceRange": "Khoảng giá",
+    "minPrice": "Tối thiểu",
+    "maxPrice": "Tối đa",
+    "minRating": "Đánh giá tối thiểu",
+    "sortBy": "Sắp xếp",
+    "sortDefault": "Mặc định",
+    "sortPriceAsc": "Giá \u2191",
+    "sortPriceDesc": "Giá \u2193",
+    "sortRating": "Đánh giá",
+    "sortNewest": "Mới nhất",
+    "noResults": "Không tìm thấy kết quả",
+    "apply": "Tìm kiếm"
+  },
+  "sharing": {
+    "share": "Chia sẻ",
+    "shareWithFriends": "Chia sẻ với bạn bè",
+    "serviceMessage": "Xem {{name}} trên Glow! {{price}} · {{rating}} sao",
+    "providerMessage": "Xem {{name}} trên Glow! {{rating}} sao · {{bookings}} lượt đặt"
+  },
+  "rateApp": {
+    "title": "Bạn thích Glow không?",
+    "message": "Nếu bạn yêu thích Glow, hãy dành chút thời gian đánh giá chúng tôi nhé!",
+    "noThanks": "Không, cảm ơn",
+    "rateLater": "Để sau",
+    "rateNow": "Đánh giá ngay"
+  },
+  "subscription": {
+    "title": "Gói dịch vụ",
+    "currentPlan": "Gói hiện tại",
+    "freePlan": "Miễn phí",
+    "basicPlan": "Glow Basic",
+    "proPlan": "Glow Pro",
+    "monthly": "Theo tháng",
+    "yearly": "Theo năm",
+    "yearlyDiscount": "Tiết kiệm {{percent}}%",
+    "perMonth": "/tháng",
+    "perYear": "/năm",
+    "subscribe": "Đăng ký",
+    "upgrade": "Nâng cấp",
+    "downgrade": "Hạ cấp",
+    "currentPlanBadge": "Gói hiện tại",
+    "mostPopular": "Phổ biến nhất",
+    "managePlan": "Quản lý gói",
+    "restorePurchases": "Khôi phục giao dịch",
+    "restoreSuccess": "Đã khôi phục giao dịch!",
+    "restoreNoPurchases": "Không tìm thấy giao dịch trước đó",
+    "expires": "Hết hạn {{date}}",
+    "features": {
+      "services": "Số dịch vụ được đăng",
+      "photos": "Ảnh mỗi dịch vụ",
+      "analytics": "Phân tích dữ liệu",
+      "badge": "Huy hiệu hồ sơ",
+      "promotions": "Tạo khuyến mãi",
+      "searchBoost": "Ưu tiên tìm kiếm",
+      "unlimited": "Không giới hạn",
+      "basicAnalytics": "Tháng hiện tại",
+      "fullAnalytics": "Toàn bộ lịch sử",
+      "fullAnalyticsPro": "Toàn bộ + phân tích",
+      "verifiedBadge": "Xác minh",
+      "proBadge": "Pro",
+      "minor": "Nhẹ",
+      "significant": "Cao"
+    },
+    "paywall": {
+      "serviceLimit": "Đã đạt giới hạn dịch vụ",
+      "photoLimit": "Nâng cấp để thêm ảnh",
+      "analytics": "Mở khóa phân tích đầy đủ",
+      "default": "Nâng cấp gói của bạn",
+      "serviceLimitDesc": "Gói hiện tại cho phép tối đa {{limit}} dịch vụ. Nâng cấp để đăng thêm.",
+      "photoLimitDesc": "Thêm nhiều ảnh hơn để giới thiệu dịch vụ tốt hơn.",
+      "analyticsDesc": "Xem toàn bộ phân tích doanh thu và hiệu suất.",
+      "defaultDesc": "Mở khóa tính năng cao cấp để phát triển trên Glow.",
+      "upgradeNow": "Nâng cấp ngay",
+      "notNow": "Để sau"
+    },
+    "status": {
+      "active": "Đang hoạt động",
+      "expired": "Hết hạn",
+      "gracePeriod": "Gia hạn",
+      "cancelled": "Đã huỷ"
+    },
+    "trial": "Dùng thử miễn phí",
+    "trialDays": "Dùng thử {{days}} ngày",
+    "cancelAnytime": "Huỷ bất cứ lúc nào",
+    "appleDisclaimer": "Thanh toán sẽ được tính vào tài khoản Apple ID khi xác nhận mua. Gói tự động gia hạn trừ khi huỷ trước ít nhất 24 giờ trước khi kết thúc kỳ hiện tại.",
+    "termsOfService": "Điều khoản dịch vụ",
+    "privacyPolicy": "Chính sách bảo mật"
   }
 }

@@ -21,12 +21,14 @@ export type ServiceStackParamList = {
   BookingConfirm: undefined;
   ProviderProfile: {userId: string};
   PostService: {service?: Service} | undefined;
+  Search: undefined;
 };
 
 export type BookingStackParamList = {
   BookingHistory: undefined;
   Review: {bookingId: string; serviceId: string};
   Spending: undefined;
+  Reschedule: {bookingId: string; serviceId: string};
 };
 
 export type ProfileStackParamList = {
@@ -38,6 +40,12 @@ export type ProfileStackParamList = {
   BookingRequests: undefined;
   ServiceDetail: {serviceId: string};
   ProviderProfile: {userId: string};
+  EditProfile: undefined;
+  Promotions: undefined;
+  MyCoupons: undefined;
+  Availability: {serviceId: string};
+  Subscription: undefined;
+  Paywall: {feature: string; requiredPlan: 'basic' | 'pro'};
 };
 
 export type TabParamList = {

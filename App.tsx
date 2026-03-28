@@ -8,6 +8,7 @@ import {PersistGate} from 'redux-persist/integration/react';
 import {store, persistor} from '@/store';
 import AppNavigator from '@/navigation/AppNavigator';
 import ErrorBoundary from '@/components/ErrorBoundary';
+import NotificationBanner from '@/components/NotificationBanner';
 import '@/i18n';
 
 export default function App() {
@@ -21,6 +22,7 @@ export default function App() {
               <ErrorBoundary>
                 <AppNavigator />
               </ErrorBoundary>
+              <NotificationBanner />
             </BottomSheetModalProvider>
           </PersistGate>
         </Provider>

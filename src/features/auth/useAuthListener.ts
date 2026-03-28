@@ -1,7 +1,9 @@
 import {useEffect} from 'react';
 import {useDispatch} from 'react-redux';
 import {supabase} from '@/lib/supabase';
+import {setUserId, setUserProperty, logEvent, AnalyticsEvents} from '@/lib/analytics';
 import {loginSuccess, logout} from './authSlice';
+import {initNotifications} from '@/features/notifications/notificationSlice';
 import type {User} from '@/types';
 
 export function useAuthListener() {
@@ -22,8 +24,14 @@ export function useAuthListener() {
             avatar_url: session.user.user_metadata?.avatar_url,
           };
           dispatch(loginSuccess(user));
+          dispatch(initNotifications());
+          // Analytics: identify user
+          setUserId(user.id);
+          setUserProperty('login_provider', session.user.app_metadata?.provider ?? 'unknown');
         } else {
           dispatch(logout());
+          // Analytics: clear user identity
+          setUserId(null);
         }
       },
     );

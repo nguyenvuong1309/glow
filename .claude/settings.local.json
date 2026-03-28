@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "mcp__firecrawl__firecrawl_search",
+      "Bash(npx tsc:*)",
+      "Bash(git diff:*)"
+    ]
+  }
+}

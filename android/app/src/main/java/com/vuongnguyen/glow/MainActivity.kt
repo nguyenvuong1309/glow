@@ -1,4 +1,4 @@
-package com.glow
+package com.vuongnguyen.glow
 
 import com.facebook.react.ReactActivity
 import com.facebook.react.ReactActivityDelegate

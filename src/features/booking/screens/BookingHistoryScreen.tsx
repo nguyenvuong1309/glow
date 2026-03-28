@@ -13,7 +13,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 import { useFocusEffect } from '@react-navigation/native';
 import { getDateLocale } from '@/i18n';
-import { loadBookings, cancelBooking } from '../bookingSlice';
+import { loadBookings, cancelBooking, loadAvailability } from '../bookingSlice';
 import { useRequireAuth } from '@/hooks/useRequireAuth';
 import { theme } from '@/utils/theme';
 import type { RootState } from '@/store';
@@ -179,20 +179,38 @@ export default function BookingHistoryScreen({ navigation }: Props) {
         <Text style={styles.infoText}>{formatDate(item.date)}</Text>
         <Text style={styles.infoText}>{item.time_slot}</Text>
       </View>
+      {item.original_date && (
+        <Text style={styles.rescheduledInfo}>
+          {t('bookingHistory.originalDate', {date: item.original_date, time: item.original_time_slot})}
+        </Text>
+      )}
       {item.notes ? (
         <Text style={styles.notes} numberOfLines={2}>
           {item.notes}
         </Text>
       ) : null}
       {(item.status === 'pending' || item.status === 'confirmed') && (
-        <TouchableOpacity
-          style={styles.cancelButton}
-          onPress={() => handleCancel(item.id)}
-        >
-          <Text style={styles.cancelButtonText}>
-            {t('bookingHistory.cancelBooking')}
-          </Text>
-        </TouchableOpacity>
+        <View style={styles.actionRow}>
+          <TouchableOpacity
+            style={styles.rescheduleButton}
+            onPress={() => {
+              dispatch(loadAvailability(item.service_id));
+              navigation.navigate('Reschedule', {bookingId: item.id, serviceId: item.service_id});
+            }}
+          >
+            <Text style={styles.rescheduleButtonText}>
+              {t('bookingHistory.reschedule')}
+            </Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.cancelButton}
+            onPress={() => handleCancel(item.id)}
+          >
+            <Text style={styles.cancelButtonText}>
+              {t('bookingHistory.cancelBooking')}
+            </Text>
+          </TouchableOpacity>
+        </View>
       )}
       {item.status === 'completed' && (
         <TouchableOpacity
@@ -339,8 +357,32 @@ const styles = StyleSheet.create({
     color: theme.colors.textSecondary,
     textAlign: 'center',
   },
-  cancelButton: {
+  actionRow: {
+    flexDirection: 'row',
+    gap: theme.spacing.sm,
     marginTop: theme.spacing.sm,
+  },
+  rescheduleButton: {
+    flex: 1,
+    paddingVertical: 8,
+    borderRadius: theme.radius.sm,
+    borderWidth: 1,
+    borderColor: theme.colors.primaryDark,
+    alignItems: 'center',
+  },
+  rescheduleButtonText: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: theme.colors.primaryDark,
+  },
+  rescheduledInfo: {
+    fontSize: 12,
+    color: '#FF9800',
+    marginTop: theme.spacing.xs,
+    fontStyle: 'italic',
+  },
+  cancelButton: {
+    flex: 1,
     paddingVertical: 8,
     borderRadius: theme.radius.sm,
     borderWidth: 1,

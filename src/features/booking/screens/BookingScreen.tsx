@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React, {useEffect, useMemo, useState, useCallback} from 'react';
 import {
   View,
   Text,
@@ -14,7 +14,8 @@ import {zodResolver} from '@hookform/resolvers/zod';
 import {z} from 'zod';
 import {useDispatch, useSelector} from 'react-redux';
 import {useTranslation} from 'react-i18next';
-import {getDateLocale} from '@/i18n';
+import {Calendar, type DateData} from 'react-native-calendars';
+import DatePicker from 'react-native-date-picker';
 import {setDraft, submitBooking, loadTimeSlots} from '../bookingSlice';
 import {theme} from '@/utils/theme';
 import type {RootState} from '@/store';
@@ -95,13 +96,85 @@ export default function BookingScreen({navigation}: Props) {
     );
   };
 
-  const formatDate = (iso: string) => {
-    const d = new Date(iso + 'T00:00:00');
-    return d.toLocaleDateString(getDateLocale(), {
-      weekday: 'short',
-      month: 'short',
-      day: 'numeric',
+  const today = new Date().toISOString().split('T')[0];
+
+  const markedDates = useMemo(() => {
+    const marks: Record<string, any> = {};
+    availableDates.forEach(date => {
+      marks[date] = {
+        marked: true,
+        dotColor: theme.colors.primary,
+      };
     });
+    if (selectedDate && marks[selectedDate]) {
+      marks[selectedDate] = {
+        ...marks[selectedDate],
+        selected: true,
+        selectedColor: theme.colors.primary,
+        selectedTextColor: theme.colors.surface,
+      };
+    }
+    return marks;
+  }, [availableDates, selectedDate]);
+
+  const handleDayPress = (day: DateData) => {
+    if (availableDates.includes(day.dateString)) {
+      setValue('date', day.dateString, {shouldValidate: true});
+    }
+  };
+
+  // Time picker state
+  const [pickerTime, setPickerTime] = useState(new Date());
+  const [timeOpen, setTimeOpen] = useState(false);
+
+  const availableSet = useMemo(
+    () => new Set(availableTimeSlots),
+    [availableTimeSlots],
+  );
+
+  const formatTimeFromSlots = (slot: string) => {
+    const [h, m] = slot.split(':').map(Number);
+    const d = new Date();
+    d.setHours(h, m, 0, 0);
+    return d;
+  };
+
+  const formatHHMM = (d: Date) =>
+    `${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`;
+
+  const findClosestSlot = useCallback(
+    (d: Date): string | null => {
+      if (availableTimeSlots.length === 0) return null;
+      const mins = d.getHours() * 60 + d.getMinutes();
+      let closest = availableTimeSlots[0];
+      let minDiff = Infinity;
+      for (const slot of availableTimeSlots) {
+        const [h, m] = slot.split(':').map(Number);
+        const diff = Math.abs(h * 60 + m - mins);
+        if (diff < minDiff) {
+          minDiff = diff;
+          closest = slot;
+        }
+      }
+      return closest;
+    },
+    [availableTimeSlots],
+  );
+
+  const handleTimeConfirm = (d: Date) => {
+    setTimeOpen(false);
+    const hhmm = formatHHMM(d);
+    if (availableSet.has(hhmm)) {
+      setPickerTime(d);
+      setValue('timeSlot', hhmm, {shouldValidate: true});
+    } else {
+      const closest = findClosestSlot(d);
+      if (closest) {
+        const closestDate = formatTimeFromSlots(closest);
+        setPickerTime(closestDate);
+        setValue('timeSlot', closest, {shouldValidate: true});
+      }
+    }
   };
 
   if (isOwner) {
@@ -133,32 +206,25 @@ export default function BookingScreen({navigation}: Props) {
           color={theme.colors.primary}
           style={styles.loader}
         />
-      ) : availableDates.length === 0 ? (
-        <Text style={styles.emptyText}>{t('booking.noAvailableDates')}</Text>
       ) : (
-        <ScrollView
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          contentContainerStyle={styles.chips}>
-          {availableDates.map(date => (
-            <TouchableOpacity
-              key={date}
-              testID={`booking-date-chip-${date}`}
-              style={[
-                styles.chip,
-                selectedDate === date && styles.chipSelected,
-              ]}
-              onPress={() => setValue('date', date, {shouldValidate: true})}>
-              <Text
-                style={[
-                  styles.chipText,
-                  selectedDate === date && styles.chipTextSelected,
-                ]}>
-                {formatDate(date)}
-              </Text>
-            </TouchableOpacity>
-          ))}
-        </ScrollView>
+        <Calendar
+          minDate={today}
+          markedDates={markedDates}
+          onDayPress={handleDayPress}
+          renderArrow={direction => (
+            <Text style={{fontSize: 18, color: theme.colors.primaryDark}}>
+              {direction === 'left' ? '‹' : '›'}
+            </Text>
+          )}
+          theme={{
+            todayTextColor: theme.colors.primaryDark,
+            textDisabledColor: theme.colors.border,
+            textDayFontSize: 15,
+            textMonthFontSize: 16,
+            textDayHeaderFontSize: 13,
+          }}
+          style={styles.calendar}
+        />
       )}
 
       <Text style={styles.label}>{t('booking.selectTime')}</Text>
@@ -175,25 +241,38 @@ export default function BookingScreen({navigation}: Props) {
       ) : availableTimeSlots.length === 0 ? (
         <Text style={styles.emptyText}>{t('booking.noAvailableSlots')}</Text>
       ) : (
-        <View style={styles.timeGrid}>
-          {availableTimeSlots.map(time => (
-            <TouchableOpacity
-              key={time}
-              testID={`booking-time-chip-${time}`}
+        <View style={styles.timePickerContainer}>
+          <TouchableOpacity
+            style={[
+              styles.timePickerButton,
+              selectedTime ? styles.timePickerButtonSelected : null,
+            ]}
+            onPress={() => setTimeOpen(true)}
+            testID="booking-time-picker-button">
+            <Text
               style={[
-                styles.timeChip,
-                selectedTime === time && styles.chipSelected,
-              ]}
-              onPress={() => setValue('timeSlot', time, {shouldValidate: true})}>
-              <Text
-                style={[
-                  styles.chipText,
-                  selectedTime === time && styles.chipTextSelected,
-                ]}>
-                {time}
-              </Text>
-            </TouchableOpacity>
-          ))}
+                styles.timePickerButtonText,
+                selectedTime
+                  ? styles.timePickerButtonTextSelected
+                  : styles.timePickerButtonTextPlaceholder,
+              ]}>
+              {selectedTime || t('booking.tapToSelectTime')}
+            </Text>
+          </TouchableOpacity>
+          {selectedTime && availableSet.has(selectedTime) && (
+            <Text style={styles.timeAvailableHint}>
+              {t('booking.slotAvailable')}
+            </Text>
+          )}
+          <DatePicker
+            modal
+            open={timeOpen}
+            date={pickerTime}
+            mode="time"
+            minuteInterval={15}
+            onConfirm={handleTimeConfirm}
+            onCancel={() => setTimeOpen(false)}
+          />
         </View>
       )}
 
@@ -288,42 +367,43 @@ const styles = StyleSheet.create({
   loader: {
     paddingVertical: theme.spacing.md,
   },
-  chips: {
-    gap: theme.spacing.sm,
-    paddingBottom: theme.spacing.sm,
+  calendar: {
+    borderRadius: theme.radius.md,
+    borderWidth: 1,
+    borderColor: theme.colors.border,
+    marginBottom: theme.spacing.sm,
   },
-  chip: {
-    paddingHorizontal: theme.spacing.md,
-    paddingVertical: theme.spacing.sm,
-    borderRadius: theme.radius.full,
+  timePickerContainer: {
+    alignItems: 'center',
+  },
+  timePickerButton: {
+    width: '100%',
+    paddingVertical: theme.spacing.md,
+    paddingHorizontal: theme.spacing.lg,
+    borderRadius: theme.radius.md,
     backgroundColor: theme.colors.surface,
     borderWidth: 1,
     borderColor: theme.colors.border,
+    alignItems: 'center',
   },
-  chipSelected: {
-    backgroundColor: theme.colors.primary,
+  timePickerButtonSelected: {
     borderColor: theme.colors.primary,
+    backgroundColor: theme.colors.primary,
   },
-  chipText: {
-    fontSize: 14,
-    color: theme.colors.text,
-  },
-  chipTextSelected: {
-    color: theme.colors.surface,
+  timePickerButtonText: {
+    fontSize: 18,
     fontWeight: '600',
   },
-  timeGrid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: theme.spacing.sm,
+  timePickerButtonTextSelected: {
+    color: theme.colors.surface,
   },
-  timeChip: {
-    paddingHorizontal: theme.spacing.lg,
-    paddingVertical: theme.spacing.sm,
-    borderRadius: theme.radius.full,
-    backgroundColor: theme.colors.surface,
-    borderWidth: 1,
-    borderColor: theme.colors.border,
+  timePickerButtonTextPlaceholder: {
+    color: theme.colors.textSecondary,
+  },
+  timeAvailableHint: {
+    fontSize: 13,
+    color: theme.colors.success,
+    marginTop: theme.spacing.xs,
   },
   textInput: {
     backgroundColor: theme.colors.surface,

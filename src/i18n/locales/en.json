@@ -3,7 +3,14 @@
     "cancel": "Cancel",
     "done": "Done",
     "apply": "Apply",
-    "clear": "Clear"
+    "clear": "Clear",
+    "save": "Save",
+    "delete": "Delete",
+    "edit": "Edit",
+    "loading": "Loading...",
+    "error": "Error",
+    "success": "Success",
+    "confirm": "Confirm"
   },
   "auth": {
     "appName": "Glow",
@@ -29,12 +36,9 @@
     "topRatedBadge": "Top Rated",
     "recentBooking": "Recent Booking",
     "bookAgain": "Book Again",
-    "promoTitle1": "Spring Special",
-    "promoSubtitle1": "20% off all spa treatments",
-    "promoTitle2": "New Customer",
-    "promoSubtitle2": "First booking free consultation",
-    "promoTitle3": "Refer a Friend",
-    "promoSubtitle3": "Both get $10 credit"
+    "promotions": "Promotions",
+    "welcomeBanner": "You have a 20% welcome discount! Use code WELCOME20",
+    "welcomeBannerAction": "Browse services now"
   },
   "services": {
     "all": "All",
@@ -47,7 +51,10 @@
     "cannotBookOwn": "You cannot book your own service",
     "price": "${{price}}",
     "duration": "{{minutes}} min",
-    "rating": "\u2605 {{rating}}"
+    "rating": "\u2605 {{rating}}",
+    "distance": "{{distance}} km",
+    "bookedThisWeek": "{{count}} booked this week",
+    "popularBookedThisWeek": "Popular - {{count}} booked this week"
   },
   "filterSheet": {
     "title": "Filter Services",
@@ -57,7 +64,19 @@
     "timeFrom": "Time From",
     "timeTo": "Time To",
     "selectDate": "Select date",
-    "selectTime": "Select time"
+    "selectTime": "Select time",
+    "priceRange": "Price Range",
+    "minPrice": "Min price",
+    "maxPrice": "Max price",
+    "minRating": "Minimum Rating",
+    "maxDistance": "Max Distance (km)",
+    "sortBy": "Sort By",
+    "sortDefault": "Default",
+    "sortPriceAsc": "Price: Low to High",
+    "sortPriceDesc": "Price: High to Low",
+    "sortRating": "Highest Rated",
+    "sortDistance": "Nearest",
+    "sortNewest": "Newest"
   },
   "booking": {
     "selectDate": "Select Date",
@@ -73,7 +92,14 @@
     "serviceMeta": "${{price}} \u00b7 {{minutes}} min",
     "noAvailableDates": "No available dates for this service",
     "noAvailableSlots": "No available time slots for this date",
-    "selectDateFirst": "Please select a date first"
+    "selectDateFirst": "Please select a date first",
+    "tapToSelectTime": "Tap to select time",
+    "slotAvailable": "This time slot is available",
+    "applyCoupon": "Apply Coupon",
+    "couponApplied": "Coupon applied: -${{discount}}",
+    "removeCoupon": "Remove",
+    "noCoupons": "No available coupons",
+    "selectCoupon": "Select Coupon"
   },
   "bookingHistory": {
     "empty": "You have no bookings yet",
@@ -84,6 +110,9 @@
     "listView": "List",
     "calendarView": "Calendar",
     "noBookingsOnDate": "No bookings on this date",
+    "reschedule": "Reschedule",
+    "rescheduled": "Rescheduled",
+    "originalDate": "Originally: {{date}} at {{time}}",
     "status": {
       "pending": "Pending",
       "confirmed": "Confirmed",
@@ -96,7 +125,20 @@
     "date": "Date",
     "time": "Time",
     "notes": "Notes",
-    "done": "Done"
+    "done": "Done",
+    "discount": "Discount"
+  },
+  "reschedule": {
+    "title": "Reschedule Booking",
+    "originalDate": "Original Date",
+    "originalTime": "Original Time",
+    "newDate": "New Date",
+    "newTime": "New Time",
+    "confirm": "Confirm Reschedule",
+    "confirmTitle": "Reschedule Booking",
+    "confirmMessage": "Are you sure you want to reschedule this booking?",
+    "success": "Rescheduled!",
+    "successMessage": "Your booking has been rescheduled."
   },
   "postService": {
     "title": "Post Service",
@@ -123,7 +165,9 @@
     "validationPrice": "Price must be between $1 and $100,000",
     "validationMedia": "Add at least one photo",
     "fileTooLarge": "File is too large (max 10MB)",
-    "invalidFileType": "Only JPEG, PNG, and WebP images are allowed"
+    "invalidFileType": "Only JPEG, PNG, and WebP images are allowed",
+    "address": "Service Location",
+    "addressPlaceholder": "Enter address"
   },
   "myServices": {
     "empty": "You haven't posted any services yet",
@@ -156,8 +200,35 @@
     "accountSection": "Account",
     "deleteAccount": "Delete Account",
     "deleteAccountTitle": "Permanently Delete Account",
-    "deleteAccountWarning": "This action CANNOT BE UNDONE. All of the following data will be permanently deleted:\n\n• Your personal information\n• All services you have posted\n• Booking history\n• Reviews you have written\n• Favorites list\n• Uploaded photos and media\n\nAny pending bookings will also be cancelled.",
-    "deleteAccountConfirm": "Delete Permanently"
+    "deleteAccountWarning": "This action CANNOT BE UNDONE. All of the following data will be permanently deleted:\n\n\u2022 Your personal information\n\u2022 All services you have posted\n\u2022 Booking history\n\u2022 Reviews you have written\n\u2022 Favorites list\n\u2022 Uploaded photos and media\n\nAny pending bookings will also be cancelled.",
+    "deleteAccountConfirm": "Delete Permanently",
+    "editProfile": "Edit Profile",
+    "promotions": "Promotions",
+    "myCoupons": "My Coupons",
+    "availability": "Manage Availability",
+    "upgradePlan": "Upgrade to Pro",
+    "managePlan": "Manage Subscription"
+  },
+  "editProfile": {
+    "title": "Edit Profile",
+    "name": "Name",
+    "namePlaceholder": "Your name",
+    "phone": "Phone",
+    "phonePlaceholder": "Your phone number",
+    "bio": "Bio",
+    "bioPlaceholder": "Tell us about yourself...",
+    "address": "Address",
+    "addressPlaceholder": "Your address",
+    "changePhoto": "Change Photo",
+    "save": "Save Changes",
+    "success": "Profile updated!",
+    "successTitle": "Success",
+    "successMessage": "Profile updated successfully!",
+    "validationName": "Name is required",
+    "validationPhone": "Please enter a valid phone number",
+    "validationBio": "Bio must be 500 characters or less",
+    "validationAddress": "Address must be 200 characters or less",
+    "errorTitle": "Error"
   },
   "navigation": {
     "home": "Home",
@@ -172,7 +243,14 @@
     "dashboard": "Dashboard",
     "writeReview": "Write Review",
     "favorites": "Favorites",
-    "spending": "Spending"
+    "spending": "Spending",
+    "editProfile": "Edit Profile",
+    "promotions": "Promotions",
+    "myCoupons": "My Coupons",
+    "availability": "Availability",
+    "reschedule": "Reschedule",
+    "search": "Search",
+    "subscription": "Subscription"
   },
   "review": {
     "reviews": "Reviews",
@@ -193,15 +271,34 @@
     "services": "Services",
     "avgRating": "Avg Rating",
     "totalBookings": "Bookings",
-    "noBio": "No bio yet"
+    "noBio": "No bio yet",
+    "phone": "Phone",
+    "address": "Address",
+    "contactInfo": "Contact Info"
   },
   "onboarding": {
-    "title1": "Find Services",
-    "subtitle1": "Discover beauty & wellness services tailored for you",
-    "title2": "Book Instantly",
-    "subtitle2": "Choose your date, time and book in seconds",
-    "title3": "Rate & Review",
-    "subtitle3": "Share your experience and help others choose",
+    "title1": "Discover Services",
+    "subtitle1": "Find the perfect beauty, wellness & home services near you",
+    "feature1_1": "Browse by category: massage, beauty, cleaning & more",
+    "feature1_2": "Filter by price, rating, distance and availability",
+    "feature1_3": "Read real reviews from verified customers",
+    "title2": "Book in Seconds",
+    "subtitle2": "Schedule appointments with just a few taps",
+    "feature2_1": "See real-time availability from providers",
+    "feature2_2": "Reschedule or cancel anytime — no hassle",
+    "feature2_3": "Apply coupons and promotions at checkout",
+    "title3": "Trusted Providers",
+    "subtitle3": "Every service is backed by quality and transparency",
+    "feature3_1": "View provider profiles, ratings and booking history",
+    "feature3_2": "Rate and review after each appointment",
+    "feature3_3": "Save your favorites for quick rebooking",
+    "slide4Title": "Are You a Provider?",
+    "slide4Description": "Grow your business on Glow",
+    "feature4_1": "Post your services and set your own prices",
+    "feature4_2": "Manage bookings and availability with ease",
+    "feature4_3": "Track revenue and performance on your dashboard",
+    "slide5Title": "Welcome Gift",
+    "slide5Description": "Get 20% off your first booking with code WELCOME20!",
     "next": "Next",
     "getStarted": "Get Started"
   },
@@ -225,5 +322,147 @@
     "totalBookings": "total bookings",
     "peakHours": "Peak Hours",
     "busiestDays": "Busiest Days"
+  },
+  "notifications": {
+    "newBooking": "New Booking Request",
+    "newBookingBody": "{{customerName}} booked {{serviceName}}",
+    "bookingConfirmed": "Booking Confirmed",
+    "bookingConfirmedBody": "Your booking for {{serviceName}} has been confirmed",
+    "bookingCancelled": "Booking Cancelled",
+    "bookingCancelledBody": "Your booking for {{serviceName}} has been cancelled",
+    "bookingCompleted": "Booking Completed",
+    "bookingCompletedBody": "Your booking for {{serviceName}} is complete. Leave a review!",
+    "bookingRescheduled": "Booking Rescheduled",
+    "bookingRescheduledBody": "Booking for {{serviceName}} has been rescheduled"
+  },
+  "promotions": {
+    "title": "Promotions",
+    "claim": "Claim",
+    "claimed": "Claimed",
+    "validUntil": "Valid until {{date}}",
+    "off": "OFF",
+    "empty": "No promotions available",
+    "minPurchase": "Min. purchase ${{amount}}"
+  },
+  "coupons": {
+    "title": "My Coupons",
+    "available": "Available",
+    "used": "Used",
+    "empty": "No coupons yet",
+    "code": "Code: {{code}}",
+    "minPurchase": "Min. purchase ${{amount}}"
+  },
+  "availability": {
+    "weeklySchedule": "Weekly Schedule",
+    "blockedDates": "Blocked Dates",
+    "addBlockedDate": "Add Blocked Date",
+    "save": "Save Schedule",
+    "saved": "Schedule saved!",
+    "on": "On",
+    "off": "Off",
+    "noBlockedDates": "No blocked dates",
+    "days": {
+      "sun": "Sunday",
+      "mon": "Monday",
+      "tue": "Tuesday",
+      "wed": "Wednesday",
+      "thu": "Thursday",
+      "fri": "Friday",
+      "sat": "Saturday"
+    }
+  },
+  "search": {
+    "title": "Search",
+    "placeholder": "Search services...",
+    "history": "Recent Searches",
+    "clearHistory": "Clear",
+    "filters": "Filters",
+    "priceRange": "Price Range",
+    "minPrice": "Min",
+    "maxPrice": "Max",
+    "minRating": "Min Rating",
+    "sortBy": "Sort By",
+    "sortDefault": "Default",
+    "sortPriceAsc": "Price \u2191",
+    "sortPriceDesc": "Price \u2193",
+    "sortRating": "Rating",
+    "sortNewest": "Newest",
+    "noResults": "No results found",
+    "apply": "Search"
+  },
+  "sharing": {
+    "share": "Share",
+    "shareWithFriends": "Share with friends",
+    "serviceMessage": "Check out {{name}} on Glow! {{price}} · {{rating}} stars",
+    "providerMessage": "Check out {{name}} on Glow! {{rating}} stars · {{bookings}} bookings"
+  },
+  "rateApp": {
+    "title": "Enjoying Glow?",
+    "message": "If you love using Glow, would you mind taking a moment to rate us? It really helps!",
+    "noThanks": "No Thanks",
+    "rateLater": "Maybe Later",
+    "rateNow": "Rate Now"
+  },
+  "subscription": {
+    "title": "Subscription",
+    "currentPlan": "Current Plan",
+    "freePlan": "Free",
+    "basicPlan": "Glow Basic",
+    "proPlan": "Glow Pro",
+    "monthly": "Monthly",
+    "yearly": "Yearly",
+    "yearlyDiscount": "Save {{percent}}%",
+    "perMonth": "/month",
+    "perYear": "/year",
+    "subscribe": "Subscribe",
+    "upgrade": "Upgrade",
+    "downgrade": "Downgrade",
+    "currentPlanBadge": "Current Plan",
+    "mostPopular": "Most Popular",
+    "managePlan": "Manage Subscription",
+    "restorePurchases": "Restore Purchases",
+    "restoreSuccess": "Purchases restored!",
+    "restoreNoPurchases": "No previous purchases found",
+    "expires": "Expires {{date}}",
+    "features": {
+      "services": "Services you can post",
+      "photos": "Photos per service",
+      "analytics": "Dashboard analytics",
+      "badge": "Profile badge",
+      "promotions": "Create promotions",
+      "searchBoost": "Search ranking boost",
+      "unlimited": "Unlimited",
+      "basicAnalytics": "Current month",
+      "fullAnalytics": "Full history",
+      "fullAnalyticsPro": "Full + insights",
+      "verifiedBadge": "Verified",
+      "proBadge": "Pro",
+      "minor": "Minor",
+      "significant": "Significant"
+    },
+    "paywall": {
+      "serviceLimit": "You've reached the service limit",
+      "photoLimit": "Upgrade for more photos",
+      "analytics": "Unlock full analytics",
+      "default": "Upgrade your plan",
+      "serviceLimitDesc": "Your current plan allows up to {{limit}} services. Upgrade to post more.",
+      "photoLimitDesc": "Get more photos per service to better showcase your work.",
+      "analyticsDesc": "Get full analytics with revenue insights and performance tracking.",
+      "defaultDesc": "Unlock premium features to grow your business on Glow.",
+      "upgradeNow": "Upgrade Now",
+      "notNow": "Not Now"
+    },
+    "status": {
+      "active": "Active",
+      "expired": "Expired",
+      "gracePeriod": "Grace Period",
+      "cancelled": "Cancelled"
+    },
+    "trial": "Free trial",
+    "trialDays": "{{days}}-day free trial",
+    "cancelAnytime": "Cancel anytime",
+    "appleDisclaimer": "Payment will be charged to your Apple ID account at confirmation of purchase. Subscription automatically renews unless cancelled at least 24 hours before the end of the current period. Your account will be charged for renewal within 24 hours prior to the end of the current period.",
+    "termsOfService": "Terms of Service",
+    "privacyPolicy": "Privacy Policy"
   }
 }

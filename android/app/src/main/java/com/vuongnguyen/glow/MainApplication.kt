@@ -1,4 +1,4 @@
-package com.glow
+package com.vuongnguyen.glow
 
 import android.app.Application
 import com.facebook.react.PackageList

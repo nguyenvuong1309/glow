@@ -79,6 +79,7 @@ export default function PostServiceScreen({navigation, route}: Props) {
       return n > 0 && n <= 100000;
     }, t('postService.validationPrice')),
     duration_minutes: z.number().min(5).max(480),
+    address: z.string().optional(),
   });
 
   type FormData = z.infer<typeof schema>;
@@ -91,6 +92,7 @@ export default function PostServiceScreen({navigation, route}: Props) {
       description: editService?.description ?? '',
       price: editService ? String(editService.price) : '',
       duration_minutes: editService?.duration_minutes ?? 60,
+      address: editService?.address ?? '',
     },
   });
 
@@ -134,6 +136,7 @@ export default function PostServiceScreen({navigation, route}: Props) {
           description: data.description,
           price: Number(data.price),
           duration_minutes: data.duration_minutes,
+          address: data.address,
           localMedia,
           existingImageUrls,
           originalImageUrls: editService!.image_urls ?? [],
@@ -147,6 +150,7 @@ export default function PostServiceScreen({navigation, route}: Props) {
           description: data.description,
           price: Number(data.price),
           duration_minutes: data.duration_minutes,
+          address: data.address,
           localMedia,
         }),
       );
@@ -263,6 +267,23 @@ export default function PostServiceScreen({navigation, route}: Props) {
           setDurationPickerOpen(false);
         }}
         onCancel={() => setDurationPickerOpen(false)}
+      />
+
+      <Text style={styles.label}>{t('postService.address')}</Text>
+      <Controller
+        control={control}
+        name="address"
+        render={({field: {onChange, value}}) => (
+          <TextInput
+            style={styles.textInput}
+            placeholder={t('postService.addressPlaceholder')}
+            placeholderTextColor={theme.colors.textSecondary}
+            value={value}
+            onChangeText={onChange}
+            maxLength={200}
+            testID="post-service-address-input"
+          />
+        )}
       />
 
       <MediaPicker

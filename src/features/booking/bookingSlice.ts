@@ -156,6 +156,43 @@ const bookingSlice = createSlice({
         booking.status = 'completed';
       }
     },
+    rescheduleBooking(
+      state,
+      _action: PayloadAction<{
+        bookingId: string;
+        newDate: string;
+        newTimeSlot: string;
+      }>,
+    ) {
+      state.loading = true;
+      state.error = null;
+    },
+    rescheduleBookingSuccess(
+      state,
+      action: PayloadAction<{
+        bookingId: string;
+        newDate: string;
+        newTimeSlot: string;
+      }>,
+    ) {
+      const { bookingId, newDate, newTimeSlot } = action.payload;
+      const booking = state.history.find(b => b.id === bookingId);
+      if (booking) {
+        if (!booking.original_date) {
+          booking.original_date = booking.date;
+          booking.original_time_slot = booking.time_slot;
+        }
+        booking.date = newDate;
+        booking.time_slot = newTimeSlot;
+        booking.rescheduled_at = new Date().toISOString();
+        booking.status = 'pending';
+      }
+      state.loading = false;
+    },
+    rescheduleBookingFailure(state, action: PayloadAction<string | undefined>) {
+      state.loading = false;
+      state.error = action.payload ?? 'Failed to reschedule';
+    },
     loadSpending(
       state,
       _action: PayloadAction<{ month: number; year: number }>,
@@ -201,6 +238,9 @@ export const {
   cancelBookingFailure,
   completeBooking,
   completeBookingSuccess,
+  rescheduleBooking,
+  rescheduleBookingSuccess,
+  rescheduleBookingFailure,
   loadSpending,
   loadSpendingSuccess,
   loadSpendingFailure,

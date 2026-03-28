@@ -1,4 +1,5 @@
 import {takeLatest, put, call, select} from 'redux-saga/effects';
+import {logEvent, AnalyticsEvents} from '@/lib/analytics';
 import {
   submitBooking,
   submitBookingSuccess,
@@ -20,6 +21,9 @@ import {
   cancelBookingFailure,
   completeBooking,
   completeBookingSuccess,
+  rescheduleBooking,
+  rescheduleBookingSuccess,
+  rescheduleBookingFailure,
   loadSpending,
   loadSpendingSuccess,
   loadSpendingFailure,
@@ -34,6 +38,7 @@ import {
   updateBookingStatus as updateBookingStatusApi,
   cancelBooking as cancelBookingApi,
   completeBooking as completeBookingApi,
+  rescheduleBooking as rescheduleBookingApi,
   getUserSpendingRows,
 } from '@/lib/supabase';
 import type {UserSpendingRow} from '@/lib/supabase';
@@ -143,6 +148,10 @@ function* handleSubmitBooking() {
     }
     const booking: Booking = yield call(createBooking, draft);
     yield put(submitBookingSuccess(booking));
+    yield call(logEvent, AnalyticsEvents.COMPLETE_BOOKING, {
+      service_id: draft.service_id,
+      date: draft.date,
+    });
   } catch {
     yield put(submitBookingFailure());
   }
@@ -184,6 +193,7 @@ function* handleCancelBooking(action: PayloadAction<string>) {
     const bookingId = action.payload;
     yield put(cancelBookingSuccess(bookingId));
     yield call(cancelBookingApi, bookingId);
+    yield call(logEvent, AnalyticsEvents.CANCEL_BOOKING, {booking_id: bookingId});
   } catch {
     yield put(cancelBookingFailure());
     yield put(loadBookings());
@@ -197,6 +207,23 @@ function* handleCompleteBooking(action: PayloadAction<string>) {
     yield call(completeBookingApi, bookingId);
   } catch {
     yield put(loadProviderBookings());
+  }
+}
+
+function* handleRescheduleBooking(
+  action: PayloadAction<{bookingId: string; newDate: string; newTimeSlot: string}>,
+) {
+  try {
+    const {bookingId, newDate, newTimeSlot} = action.payload;
+    yield call(rescheduleBookingApi, bookingId, newDate, newTimeSlot);
+    yield put(rescheduleBookingSuccess({bookingId, newDate, newTimeSlot}));
+    yield call(logEvent, AnalyticsEvents.RESCHEDULE_BOOKING, {
+      booking_id: bookingId,
+      new_date: newDate,
+    });
+  } catch (e: any) {
+    yield put(rescheduleBookingFailure(e.message));
+    yield put(loadBookings());
   }
 }
 
@@ -245,5 +272,6 @@ export function* bookingSaga() {
   yield takeLatest(updateBookingStatus.type, handleUpdateBookingStatus);
   yield takeLatest(cancelBooking.type, handleCancelBooking);
   yield takeLatest(completeBooking.type, handleCompleteBooking);
+  yield takeLatest(rescheduleBooking.type, handleRescheduleBooking);
   yield takeLatest(loadSpending.type, handleLoadSpending);
 }

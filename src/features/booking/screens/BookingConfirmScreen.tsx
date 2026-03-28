@@ -10,8 +10,10 @@ import Animated, {
 } from 'react-native-reanimated';
 import {useSelector} from 'react-redux';
 import {useTranslation} from 'react-i18next';
+import {shareService} from '@/features/sharing';
 import {getDateLocale} from '@/i18n';
 import {theme} from '@/utils/theme';
+import {useRatePrompt} from '@/hooks/useRatePrompt';
 import type {RootState} from '@/store';
 import type {NavigationProp, CompositeNavigationProp} from '@react-navigation/native';
 import type {NativeStackNavigationProp} from '@react-navigation/native-stack';
@@ -28,6 +30,7 @@ interface Props {
 
 export default function BookingConfirmScreen({navigation}: Props) {
   const {t} = useTranslation();
+  const {triggerRateCheck} = useRatePrompt();
   const latestBooking = useSelector(
     (state: RootState) => state.booking.history[0],
   );
@@ -40,6 +43,10 @@ export default function BookingConfirmScreen({navigation}: Props) {
     scale.value = withSpring(1, {damping: 8, stiffness: 120});
     opacity.value = withDelay(300, withTiming(1, {duration: 500}));
   }, [scale, opacity]);
+
+  useEffect(() => {
+    triggerRateCheck();
+  }, [triggerRateCheck]);
 
   const checkmarkStyle = useAnimatedStyle(() => ({
     transform: [{scale: scale.value}],
@@ -99,6 +106,15 @@ export default function BookingConfirmScreen({navigation}: Props) {
           onPress={() => navigation.navigate('Home')}>
           <Text style={styles.doneText}>{t('bookingConfirm.done')}</Text>
         </TouchableOpacity>
+
+        {service && (
+          <TouchableOpacity
+            testID="booking-confirm-share-button"
+            style={styles.shareButton}
+            onPress={() => shareService(service, t)}>
+            <Text style={styles.shareText}>{t('sharing.shareWithFriends')}</Text>
+          </TouchableOpacity>
+        )}
       </Animated.View>
     </SafeAreaView>
   );
@@ -171,5 +187,20 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '600',
     color: theme.colors.surface,
+  },
+  shareButton: {
+    paddingVertical: 16,
+    paddingHorizontal: 48,
+    borderRadius: theme.radius.md,
+    alignItems: 'center',
+    marginTop: theme.spacing.md,
+    borderWidth: 1,
+    borderColor: theme.colors.primaryDark,
+    backgroundColor: theme.colors.surface,
+  },
+  shareText: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: theme.colors.primaryDark,
   },
 });
