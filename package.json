@@ -8,17 +8,16 @@
     "lint": "eslint .",
     "start": "react-native start",
     "test": "jest",
-
     "android:dev": "react-native run-android --mode devDebug --appIdSuffix dev",
     "android:prod": "APP_ENV=production react-native run-android --mode prodRelease",
     "ios:dev": "react-native run-ios",
     "ios:prod": "APP_ENV=production react-native run-ios --mode Release",
-
     "appium": "appium",
     "e2e": "wdio run wdio.conf.ts",
     "e2e:spec": "wdio run wdio.conf.ts --spec",
     "e2e:single": "wdio run wdio.single.conf.ts",
-    "e2e:single:spec": "wdio run wdio.single.conf.ts --spec"
+    "e2e:single:spec": "wdio run wdio.single.conf.ts --spec",
+    "prepare": "husky"
   },
   "dependencies": {
     "@gorhom/bottom-sheet": "^5.2.8",
@@ -70,6 +69,8 @@
     "@babel/preset-env": "^7.25.3",
     "@babel/runtime": "^7.25.0",
     "@bam.tech/react-native-make": "^3.0.3",
+    "@commitlint/cli": "^20.5.0",
+    "@commitlint/config-conventional": "^20.5.0",
     "@react-native-community/cli": "20.1.3",
     "@react-native-community/cli-platform-android": "20.1.3",
     "@react-native-community/cli-platform-ios": "20.1.3",
@@ -89,7 +90,9 @@
     "babel-plugin-module-resolver": "^5.0.2",
     "dotenv": "^17.3.1",
     "eslint": "^10.1.0",
+    "husky": "^9.1.7",
     "jest": "^30.3.0",
+    "lint-staged": "^16.4.0",
     "prettier": "3.8.1",
     "react-native-dotenv": "^3.4.11",
     "react-test-renderer": "19.2.3",
@@ -97,6 +100,15 @@
   },
   "engines": {
     "node": ">= 22.11.0"
+  },
+  "lint-staged": {
+    "*.{ts,tsx}": [
+      "eslint --fix",
+      "prettier --write"
+    ],
+    "*.{json,md}": [
+      "prettier --write"
+    ]
   },
   "reanimated": {
     "staticFeatureFlags": {
